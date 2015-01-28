@@ -2,22 +2,42 @@
 <html>
 <head>
   <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
-  <title>Mechatronics Cyberphysical Architecture</title>
+  <title>Mechatronics Architecture</title>
 </head>
 <body>
-<h1 style="text-align: center;">Mechatronics - Cyberphysical Architecture<br>
+<h1 style="text-align: center;"><a href="../../../portfolio.html">Mechatronics</a> - Architecture<br>
 </h1>
 <hr style="width: 100%; height: 2px;">16-778, 18-578, 24-778 Spring 2015<br>
-Group x <br>
+Group G <br>
 Eric Newhall (enewhall) <br>
 Guillermo Cidre (gmcidre) <br>
 Christian Heaney-Secord (cheaneys) <br>
 Michael O'Connor (mkoconno) <br>
 <hr style="width: 100%; height: 2px;">
+
+<h2>Functional Architecture</h2>
+Information containing part location and orientation must be continually determined and<br>
+transmitted continually.  A part leaves the separator and arrives at the camera in one of<br>
+four possible orientations.  Vision processing determine both when the part has arrived <br>
+and it’s orientation.  When the part arrives the part separator must be told to stop while<br>
+the part is being handled.   Also, the part placer must receive part orientation from <br>
+vision processing in order to move the part correctly.  The part placer must command the <br>
+tray positioner into the proper position since the part placer only has freedom to move in<br>
+the x axis and the tray can only move in the y axis.  Once the part is in place the part<br>
+placer notifies the flux and wire dispenser that the part is available.  The flux and <br>
+wire dispenser also can only move along the x axis so it too must command the tray <br>
+positioner<br>
+<p> <img style="width: 890x; height: 414x;" alt="Functional_Architecture" src="Functional_Architecture.png"><br clear="left"> </p>
+
 <h2>Cyberphysical Architecture</h2>
-<br>
-<br>
-More contents here.&nbsp; <br>
-<br>
+The primary controller for the pretinning machine is the Arduino Microprocessor which <br>
+responsible for interpreting all feedback from sensors and sending all commands to motors<br>
+ and other physical devices.  The Raspberry Pi Microcomputer is dedicated entirely to <br>
+image processing for the camera.  The Raspberry Pi sends information about part location <br>
+and orientation which is derived from image processing back to the Arduino so that correct<br>
+movements can be made.<br>
+
+<p> <img style="width: 940x; height: 565x;" alt="Cyberphysical_Architecture" src="Cyberphysical_Architecture.png"><br clear="left"> </p>
+
 </body>
 </html>
