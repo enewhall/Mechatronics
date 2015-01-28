@@ -2,25 +2,48 @@
 <html>
 <head>
   <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
-  <title>Mechatronics Wire Placer</title>
+  <title>Mechatronics Flux and Wire Dispensor</title>
 </head>
 <body>
-<h1 style="text-align: center;">Mechatronics - Wire Placer<br>
+<h1 style="text-align: center;"><a href="../../portfolio.html">Mechatronics</a> - Flux and Wire Dispensor<br>
 </h1>
 <hr style="width: 100%; height: 2px;">16-778, 18-578, 24-778 Spring 2015<br>
-Group x <br>
+Group G <br>
 Eric Newhall (enewhall) <br>
 Guillermo Cidre (gmcidre) <br>
 Christian Heaney-Secord (cheaneys) <br>
 Michael O'Connor (mkoconno) <br>
 <hr style="width: 100%; height: 2px;">
-
 <br>
-<br>
-
-<br>
-<br>
-
-
+<h2>Systems</h2>
+<ol>
+<li><a href="Part_Seperator.html">Part Seperator Design</a></li>
+<li><a href="Vision_Processing.html">Vision Processing Design</a></li>
+<li><a href="Part_Placer.html">Part Placer Design</a></li>
+<li><a href="Tray_Positioner.html">Tray Positioner Design</a></li>
+<li><b>Flux and Wire Dispensor Design</b></li>
+</ol>
+<h2>Flux and Wire Dispensor Design</h2>
+The purpose of this subsystem is to apply a dab of flux and two pieces of wire to the <br>
+surface of each saw tip. The subsystem is mounted on a linear bearing platform, allowing <br>
+it to move in the x direction so that it may reach each saw tip after they have been laid<br>
+ down. A precise amount of flux is dispensed by a linear actuator pushing on the rear of <br>
+the flux container, pushing the flux through a plastic tube and out of an applicator tip<br>
+ that will be positioned directly above the surface of each saw tip.  This linear actuator<br>
+ will be powered by a stepper motor with a threaded rod attached to its shaft, allowing <br>
+for complete control of how far the actuator moves while also providing a significant<br>
+ amount of force to overcome the high viscosity of the flux [1]. A spool of wire will also<br>
+ be mounted to this subsystem. A motor will control the unspooling of the wire, feeding <br>
+the wire into a channel in which it will be cut. The cut pieces will then be pushed out of<br>
+ the channel which will be positioned such that the pieces come to lay on top of the dab<br>
+ of flux on the saw tip. The wire will be cut by a modified pair of wire cutters that are <br>
+actuated by a solenoid attached to one of the handles. By having the wire contained in a <br>
+channel while it is being cut, we eliminate the possibility of the cut piece flying away <br>
+in an unwanted direction from the shear forces exerted on it. This subsystem is the final <br>
+subsystem that will interact with the saw tips in pre-tinning process, completing their <br>
+preparation to be tinned.<br>
+<p> <img style="width: 869x; height: 462x;" alt="Flux_and_Wire_Dispensor" src="System_Diagrams/Flux_and_Wire_Dispensor.png"><br clear="left"> </p>
+<a href="../System_Implementation/Flux_and_Wire_Dispensor.html">Flux and Wire Dispensor Implementation</a>
+<br><br>
 </body>
 </html>

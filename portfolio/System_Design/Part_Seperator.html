@@ -2,24 +2,47 @@
 <html>
 <head>
   <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
-  <title>Mechatronics Feeder</title>
+  <title>Mechatronics Part Seperator</title>
 </head>
 <body>
-<h1 style="text-align: center;">Mechatronics - Feeder<br>
+<h1 style="text-align: center;"><a href="../../portfolio.html">Mechatronics</a> - Part Seperator<br>
 </h1>
 <hr style="width: 100%; height: 2px;">16-778, 18-578, 24-778 Spring 2015<br>
-Group x <br>
+Group G <br>
 Eric Newhall (enewhall) <br>
 Guillermo Cidre (gmcidre) <br>
 Christian Heaney-Secord (cheaneys) <br>
 Michael O'Connor (mkoconno) <br>
 <hr style="width: 100%; height: 2px;">
 <br>
-<br>
+<h2>Systems</h2>
+<ol>
+<li><b>Part Seperator Design</b></li>
+<li><a href="Vision_Processing.html">Vision Processing Design</a></li>
+<li><a href="Part_Placer.html">Part Placer Design</a></li>
+<li><a href="Tray_Positioner.html">Tray Positioner Design</a></li>
+<li><a href="Flux_and_Wire_Dispensor.html">Flux and Wire Dispensor Design</a></li>
+</ol>
 
+<h2>Part Seperator Design</h2>
+The Part Separator is responsible for isolating individual parts from the set of 20 poured<br>
+into the hopper. There is a sorting hole at the bottom of the hopper where individual <br>
+parts will fall through. The hole is shaped such that parts will fall through in one of <br>
+four orientations. In order for the parts to align correctly we will apply continuous <br>
+agitation to the hopper. We plan on applying a vertical agitation to the hopper using a <br>
+sinusoidal. We also plan on applying a horizontal agitation using a motor-powered rack<br>
+and pinion. Once parts fall through the hole they will be dropped onto a conveyor belt.<br>
+The conveyor belt will be about the width of the parts that fall through the hole and the<br>
+conveyor belt will have walls along the sides so that the parts will not deviate from the<br>
+orientation in the stage before. The hopper will continue to be agitated as the rest of <br>
+the machine functions and enough room will be allocated as parts fall through the sorting <br>
+hole to be put into a queue for the next process of the design. The parts move along the <br>
+conveyor belt and once an individual part falls off the conveyor belt, the conveyor belt <br>
+will momentarily stop as the part orientation stage deals with the part that just fell off<br>
+the conveyor belt. Once the vision processing stage deals with the individual part, the <br>
+conveyor belt will run again until the next part falls over.<br>
 <br>
-<br>
-
-
+<a href="../System_Implementation/Part_Seperator.html">Part Seperator Implementation</a>
+<br><br>
 </body>
 </html>

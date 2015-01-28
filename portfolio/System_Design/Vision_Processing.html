@@ -2,24 +2,60 @@
 <html>
 <head>
   <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
-  <title>Mechatronics Orienter</title>
+  <title>Mechatronics Vision Processing</title>
 </head>
 <body>
-<h1 style="text-align: center;">Mechatronics - Orienter<br>
+<h1 style="text-align: center;"><a href="../../portfolio.html">Mechatronics</a> - Vision Processing<br>
 </h1>
 <hr style="width: 100%; height: 2px;">16-778, 18-578, 24-778 Spring 2015<br>
-Group x <br>
+Group G <br>
 Eric Newhall (enewhall) <br>
 Guillermo Cidre (gmcidre) <br>
 Christian Heaney-Secord (cheaneys) <br>
 Michael O'Connor (mkoconno) <br>
 <hr style="width: 100%; height: 2px;">
 <br>
-<br>
+<h2>Systems</h2>
+<ol>
+<li><a href="Part_Seperator.html">Part Seperator Design</a></li>
+<li><b>Vision Processing Design</b></li>
+<li><a href="Part_Placer.html">Part Placer Design</a></li>
+<li><a href="Tray_Positioner.html">Tray Positioner Design</a></li>
+<li><a href="Flux_and_Wire_Dispensor.html">Flux and Wire Dispensor Design</a></li>
+</ol>
 
+<h2>Vision Processing Design</h2>
+The vision processing system determines the orientation of a part after it has left the <br>
+part separator system and relay this information to the part placer system so that the <br>
+part can be reoriented if necessary then placed. The first step in this process is to <br>
+command the conveyor belt to move until a part has arrived in front of the camera. Short<br>
+burst of movement are sent to the conveyor belt until a part is detected. The conveyor <br>
+belt then remains completely stopped until the handling of this part is complete.<br>
 <br>
+The camera then creates an image from the part (see figure 5: Orientation A). The image is<br>
+compared to a template image stored in memory. There are four different templates that <br>
+will be applied one at a time to determine which of the four orientations the part is in. <br>
+A processed image is created by the combination of the image from the camera and a <br>
+template image using color burn. The amount of black in the processed error represents the<br>
+error (see figure 5: Processed Image). Summing the RGB values of all the pixels in the <br>
+processed image will indicate the total amount of white and black pixels and thus give an <br>
+idea of the amount of error between the camera image and the template Image.<br>
 <br>
-
-
+Once the error is calculated, a template is shifted slightly in four directions: dx, -dx, <br>
+dy, and -dy. Then the error is recomputed for each case. If the resultant processed image <br>
+has a smaller error the template is moved by that amount. The shifting continues until the<br>
+error can no longer be reduced. Once a minimum error is found the next template is <br>
+applied and the process is repeated until there is a minimum error for each of the four <br>
+templates. Whichever template has the lowest error indicates the orientation that the part<br>
+is in.<br>
+<br>
+Due to the large amount of computation needed to complete the vision processing quickly a <br>
+Raspberry Pi microcomputer will be used solely for this system. The Raspberry Pi will <br>
+communication with the Arduino via a serial connection. The Raspberry Pi has the added <br>
+benefit of easily communicating with the Playstation Eye camera that will be capturing the<br>
+images of the parts.<br>
+<p> <img style="width: 750x; height: 384x;" alt="Vision_Processing" src="System_Diagrams/Vision_Processing.png"><br clear="left"> </p>
+<a href="../System_Implementation/Vision_Processing.html">Vision Processing Implementation</a>
+<br><br>
 </body>
 </html>

@@ -2,25 +2,45 @@
 <html>
 <head>
   <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
-  <title>Mechatronics Arm</title>
+  <title>Mechatronics Tray Positioner</title>
 </head>
 <body>
-<h1 style="text-align: center;">Mechatronics - Arm<br>
+<h1 style="text-align: center;"><a href="../../portfolio.html">Mechatronics</a> - Tray Position<br>
 </h1>
 <hr style="width: 100%; height: 2px;">16-778, 18-578, 24-778 Spring 2015<br>
-Group x <br>
+Group G <br>
 Eric Newhall (enewhall) <br>
 Guillermo Cidre (gmcidre) <br>
 Christian Heaney-Secord (cheaneys) <br>
 Michael O'Connor (mkoconno) <br>
 <hr style="width: 100%; height: 2px;">
-
 <br>
-<br>
+<h2>Systems</h2>
+<ol>
+<li><a href="Part_Seperator.html">Part Seperator Design</a></li>
+<li><a href="Vision_Processing.html">Vision Processing Design</a></li>
+<li><a href="Part_Placer.html">Part Placer Design</a></li>
+<li><b>Tray Positioner Design</b></li>
+<li><a href="Flux_and_Wire_Dispensor.html">Flux and Wire Dispensor Design</a></li>
+</ol>
 
+<h2>Tray Positioner Design</h2>
+The tray positioning system works in conjuncture with the part placer and the flux and <br>
+wire dispenser to allow for movement of parts in the x and y axis. The tray positioning <br>
+system is solely responsible for all movement in the y axis where the part placer and flux<br>
+and wire dispenser are responsible for all movement in the x axis. Every time a part <br>
+needs to be moved or accessed first the tray will move to the correct y position before <br>
+any other system moves to get to the correct x position.<br>
 <br>
-<br>
-
-
+The tray is placed on two sliding rails with rubber mounts to prevent the tray from <br>
+sliding while moving. The sliding rails are driven by a stepper motor that is geared with<br>
+a rack and pinion to allow for linear movement. The gearing will support a slow, high <br>
+torque motion which is important since any large accelerations would slide the parts on <br>
+the tray. Also, to ensure that part do not slide the motor will use a ramp acceleration <br>
+and deceleration profile. A slide potentiometer will be connected to the rail so that the<br>
+microcontroller can receive feedback on the current position of the rail.<br>
+<p> <img style="width: 829x; height: 272x;" alt="Tray_Positioner" src="System_Diagrams/Tray_Positioner.png"><br clear="left"> </p>
+<a href="../System_Implementation/Tray_Positioner.html">Tray Positioner Implementation</a>
+<br><br>
 </body>
 </html>
