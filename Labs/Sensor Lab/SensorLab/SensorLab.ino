@@ -22,7 +22,12 @@ void setup() {
 }
 
 void loop() {
-  
+
+  for(int i=0; i < 4; i++){
+    IRLPF[i] = IRLPF[i+1];
+    PotLPF[i] = PotLPF[i+1];
+    FlexLPF[i] = FlexLPF[i+1];
+  }  
   
   IRValue = analogRead(IRPin);    
   IRVoltage= IRValue * (5.0 / 1023.0);
@@ -36,11 +41,7 @@ void loop() {
   FlexVoltage= FlexValue * (5.0 / 1023.0);
   FlexLPF[4] = FlexVoltage;
   
-  for(int i=0; i < 4; i++){
-    IRLPF[i] = IRLPF[i+1];
-    PotLPF[i] = PotLPF[i+1];
-    FlexLPF[i] = FlexLPF[i+1];
-  }
+
   
   IRVoltage = (IRLPF[0]+IRLPF[1]+IRLPF[2]+IRLPF[3]+IRLPF[4])/5;
   Serial.print("IR voltage is: ");
