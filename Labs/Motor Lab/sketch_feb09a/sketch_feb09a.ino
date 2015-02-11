@@ -1,8 +1,8 @@
 int potPin = A1;
 float potAngle = 0.0;
 
-int encoderAPin = A4;
-int encoderBPin = A5;
+int encoderAPin = 2;
+int encoderBPin = 3;
 int encoderAValue = 0;
 int encoderAPrev = 0;
 int encoderBValue = 0;
@@ -10,7 +10,7 @@ int encoderBPrev = 0;
 
 int DCMotorAngle = 0;
 int DCMotorPinA = 7;
-int DCMotorPinB = 7;
+int DCMotorPinB = 8;
 
 int IRPin = A0;
 float IRDistance = 0.0;
@@ -61,7 +61,69 @@ void loop() {
     state = (state+1)%4; 
   }
   button = digitalRead(limitSwitchPin);
+
+   //DC Motor Controlled by Potiometer and encoder
+  encoderAPrev = encoderAValue;
+  encoderAValue = digitalRead(encoderAPin);
   
+  encoderBPrev = encoderBValue;
+  encoderBValue = digitalRead(encoderBPin);
+  
+  if(!encoderAPrev && encoderAValue){
+    if(encoderBPrev){
+      //clockwise
+      DCMotorAngle = (DCMotorAngle+4)%360;       
+    }else{
+      //counterclockwise
+      DCMotorAngle = (DCMotorAngle-4)%360;
+    }
+  }else if(!encoderBPrev && encoderBValue ){
+    if(encoderAPrev){
+      //counterclockwise
+      DCMotorAngle = (DCMotorAngle-4)%360; 
+    }else{
+      //clockwise
+      DCMotorAngle = (DCMotorAngle+4)%360;
+    }
+  }else if(encoderAPrev && !encoderAValue){
+    if(!encoderBPrev){
+      //clockwise
+      DCMotorAngle = (DCMotorAngle+4)%360;   
+    }else{
+      //counterclockwise
+      DCMotorAngle = (DCMotorAngle-4)%360;
+    }
+  }else if(encoderBPrev && !encoderBValue ){
+    if(!encoderAPrev){
+      //counterclockwise
+      DCMotorAngle = (DCMotorAngle-4)%360; 
+    }else{
+      //clockwise
+      DCMotorAngle = (DCMotorAngle+4)%360;
+    }
+  }
+  
+  
+  
+  if(DCMotorAngle < 0){
+      DCMotorAngle = DCMotorAngle + 360;
+  }
+  
+  potAngle = (analogRead(potPin)/1024.0)*315.0;
+  if(potAngle < (DCMotorAngle - 8.0)){
+    digitalWrite(DCMotorPinA,LOW);
+    digitalWrite(DCMotorPinB,HIGH);
+  }else if(potAngle > (DCMotorAngle + 8.0)){
+    digitalWrite(DCMotorPinA,HIGH);
+    digitalWrite(DCMotorPinB,LOW);
+  }else{
+    digitalWrite(DCMotorPinA,LOW);
+    digitalWrite(DCMotorPinB,LOW);
+  }    
+  
+  Serial.print(potAngle);
+  Serial.print(" ");
+  Serial.println(DCMotorAngle);
   
   /* 
   switch(state){
@@ -88,10 +150,10 @@ void loop() {
       }
       
       potAngle = analogRead(potPin)*5*360/1024;
-      if(potAngle < DCMotorAngle - 4){
+      if(potAngle < DCMotorAngle - 4.0){
         digitalWrite(DCMotorPinA,LOW);
         digitalWrite(DCMotorPinB,HIGH);
-      }else if(potAngle > DCMotorAngle + 4){
+      }else if(potAngle > DCMotorAngle + 4.0){
         digitalWrite(DCMotorPinA,HIGH);
         digitalWrite(DCMotorPinB,LOW);
       }else{
@@ -120,7 +182,6 @@ void loop() {
      break; 
   }
 */    
-  delay(500);                   
   Serial.flush();
 }
 
