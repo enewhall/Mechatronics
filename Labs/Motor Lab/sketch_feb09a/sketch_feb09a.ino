@@ -55,59 +55,15 @@ void setup() {
    
 }
 
-void loop() {
-  //debounce handled in hardware 
+void loop() { 
   if(digitalRead(limitSwitchPin) == HIGH && button == LOW){
     state = (state+1)%4; 
   }
   button = digitalRead(limitSwitchPin);
 
    //DC Motor Controlled by Potiometer and encoder
-  encoderAPrev = encoderAValue;
-  encoderAValue = digitalRead(encoderAPin);
-  
-  encoderBPrev = encoderBValue;
-  encoderBValue = digitalRead(encoderBPin);
-  
-  if(!encoderAPrev && encoderAValue){
-    if(encoderBPrev){
-      //clockwise
-      DCMotorAngle = (DCMotorAngle+4)%360;       
-    }else{
-      //counterclockwise
-      DCMotorAngle = (DCMotorAngle-4)%360;
-    }
-  }else if(!encoderBPrev && encoderBValue ){
-    if(encoderAPrev){
-      //counterclockwise
-      DCMotorAngle = (DCMotorAngle-4)%360; 
-    }else{
-      //clockwise
-      DCMotorAngle = (DCMotorAngle+4)%360;
-    }
-  }else if(encoderAPrev && !encoderAValue){
-    if(!encoderBPrev){
-      //clockwise
-      DCMotorAngle = (DCMotorAngle+4)%360;   
-    }else{
-      //counterclockwise
-      DCMotorAngle = (DCMotorAngle-4)%360;
-    }
-  }else if(encoderBPrev && !encoderBValue ){
-    if(!encoderAPrev){
-      //counterclockwise
-      DCMotorAngle = (DCMotorAngle-4)%360; 
-    }else{
-      //clockwise
-      DCMotorAngle = (DCMotorAngle+4)%360;
-    }
-  }
-  
-  
-  
-  if(DCMotorAngle < 0){
-      DCMotorAngle = DCMotorAngle + 360;
-  }
+  attachInterrupt(0, PinA, CHANGE);
+  attachInterrupt(1, PinB, CHANGE);
   
   potAngle = (analogRead(potPin)/1024.0)*315.0;
   if(potAngle < (DCMotorAngle - 8.0)){
@@ -184,4 +140,58 @@ void loop() {
 */    
   Serial.flush();
 }
+
+
+void PinA(){
+   encoderAPrev = encoderAValue;
+   encoderAValue = digitalRead(encoderAPin);
+  if(encoderAPrev){
+    if(encoderBPrev){
+      //counterclockwise
+      DCMotorAngle -= 4;
+    } else{
+      //clockwise
+      DCMotorAngle += 4;
+    }  
+  }else{
+    if(encoderBPrev){
+      //clockwise
+      DCMotorAngle += 4;
+    } else{
+      //counterclockwise
+      DCMotorAngle -= 4;
+    }
+  } 
+}
+
+void PinB(){
+   encoderBPrev = encoderBValue;
+   encoderBValue = digitalRead(encoderBPin);
+  if(encoderBPrev){
+    if(encoderAPrev){
+      //clockwise
+      DCMotorAngle += 4;
+    } else{
+      //counterclockwise
+      DCMotorAngle -= 4;
+    }  
+  }else{
+    if(encoderAPrev){
+      //counterclockwise
+      DCMotorAngle -= 4;
+    } else{
+      //clockwise
+      DCMotorAngle += 4;
+    }
+  } 
+}
+
+
+
+
+
+
+
+
+
 
