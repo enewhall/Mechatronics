@@ -16,17 +16,17 @@ Michael O'Connor (mkoconno) <br>
 <hr style="width: 100%; height: 2px;">
 <h2>Use Cases</h2>
 <ul>
-<li><a href="#1.1">1.1 Move part from seperator to camera</a></li>
+<li><a href="#1.1">1.1 Move part from separator to camera</a></li>
 <li><a href="#2.1">2.1 Pick up part from camera (correct orientation)</a></li>
 <li><a href="#2.2">2.2 Pick up part from camera (180 degrees flipped)</a></li>
 <li><a href="#2.3">2.3 Pick up part from camera (upsidedown)</a></li>
-<li><a href="#2.4">2.4 Pick up part from camera (upsidedown and 180 degreea flipped)</a></li>
+<li><a href="#2.4">2.4 Pick up part from camera (upsidedown and 180 degrees flipped)</a></li>
 <li><a href="#3.1">3.1 Place part on tray</a></li>
 <li><a href="#4.1">4.1 Place flux on part</a></li>
 <li><a href="#5.1">5.1 Dispense wire onto part</a></li>
 </ul>
 
-<h3><a name="1.1"></a> 1.1 Move part from seperator to camera</h3>
+<h3><a name="1.1"></a> 1.1 Move part from separator to camera</h3>
 <h4>Initial Conditions</h4>
 <ul>
 <li>Part is in hopper</li>
@@ -46,94 +46,101 @@ Michael O'Connor (mkoconno) <br>
 <h4>Initial Conditions</h4>
 <ul>
 <li>Part is front of camera in correct orientation</li>
-<li>Magnet is off</li>
+<li>Magnet for part placer is off</li>
+<li>Flipper Magnet is on</li>
 <li>Part placer located over tray</li>
 <li>Placer arm is retracted</li>
-<li>Slide in neutral position</li>
 <li>Flipper in neutral position</li>
 </ul>
 <h4>Final Conditions</h4>
 <ul>
-<li>Part is on tray</li>
-<li>Magnet is off</li>
-<li>Part placer located over tray</li>
+<li>Magnet for part placer is on</li>
+<li>Flipper Magnet is on</li>
+<li>Part placer located over camera</li>
 <li>Placer arm is retracted</li>
-<li>Slide in neutral position</li>
 <li>Flipper in neutral position</li>
 </ul>
 <h4>Sequence Diagram</h4>
-<img style="width: 875x; height: 408x;" alt="D2.1" src="D2_1.png"><br>
+<img style="width: 635x; height: 423x;" alt="D2.1" src="D2_1.png"><br>
 
 <h3><a name="2.2"></a> 2.2 Pick up part from camera (180 degrees flipped)</h3>
 <h4>Initial Conditions</h4>
 <ul>
-<li>Part is front of camera in correct orientation</li>
-<li>Magnet is off</li>
+<li>Part is front of camera but is 180 degrees flipped</li>
+<li>Magnet for part placer is off</li>
+<li>Flipper Magnet is on</li>
 <li>Part placer located over tray</li>
 <li>Placer arm is retracted</li>
-<li>Slide in neutral position</li>
 <li>Flipper in neutral position</li>
 </ul>
 <h4>Final Conditions</h4>
 <ul>
-<li>Part is on tray</li>
-<li>Magnet is off</li>
-<li>Part placer located over tray</li>
+<li>Magnet for part placer is on</li>
+<li>Flipper Magnet is on</li>
+<li>Part placer located over camera</li>
 <li>Placer arm is retracted</li>
-<li>Slide in neutral position</li>
 <li>Flipper in neutral position</li>
 </ul>
 <h4>Sequence Diagram</h4>
-<img style="width: 993x; height: 501x;" alt="D2.2" src="D2_2.png"><br>
+<img style="width: 753x; height: 299x;" alt="D2.2" src="D2_2.png"><br>
 
 <h3><a name="2.3"></a> 2.3 Pick up part from camera (upsidedown)</h3>
 <h4>Initial Conditions</h4>
 <ul>
-<li>Part is front of camera in correct orientation</li>
-<li>Magnet is off</li>
+<li>Part is front of camera but upsidedown</li>
+<li>Magnet for part placer is off</li>
+<li>Flipper Magnet is on</li>
 <li>Part placer located over tray</li>
 <li>Placer arm is retracted</li>
-<li>Slide in neutral position</li>
 <li>Flipper in neutral position</li>
 </ul>
 <h4>Final Conditions</h4>
 <ul>
-<li>Part is on tray</li>
-<li>Magnet is off</li>
-<li>Part placer located over tray</li>
+<li>Magnet for part placer is on</li>
+<li>Flipper Magnet is on</li>
+<li>Part placer located over camera</li>
 <li>Placer arm is retracted</li>
-<li>Slide in neutral position</li>
 <li>Flipper in neutral position</li>
 </ul>
 <h4>Sequence Diagram</h4>
-<img style="width: 875x; height: 426x;" alt="D2.3" src="D2_3.png"><br>
+<img style="width: 767x; height: 345x;" alt="D2.3" src="D2_3.png"><br>
 
 <h3><a name="2.4"></a> 2.4 Pick up part from camera (upsidedown and 180 degrees flipped)</h3>
 <h4>Initial Conditions</h4>
 <ul>
-<li>Part is front of camera in correct orientation</li>
-<li>Magnet is off</li>
+<li>Part is front of camera but upsidedown and 180 degrees flipped</li>
+<li>Magnet for part placer is off</li>
+<li>Flipper Magnet is on</li>
 <li>Part placer located over tray</li>
 <li>Placer arm is retracted</li>
-<li>Slide in neutral position</li>
 <li>Flipper in neutral position</li>
 </ul>
 <h4>Final Conditions</h4>
 <ul>
-<li>Part is on tray</li>
-<li>Magnet is off</li>
-<li>Part placer located over tray</li>
+<li>Magnet for part placer is on</li>
+<li>Flipper Magnet is on</li>
+<li>Part placer located over camera</li>
 <li>Placer arm is retracted</li>
-<li>Slide in neutral position</li>
 <li>Flipper in neutral position</li>
 </ul>
 <h4>Sequence Diagram</h4>
-<img style="width: 993x; height: 501x;" alt="D2.4" src="D2_4.png"><br>
+<img style="width: 885x; height: 367x;" alt="D2.4" src="D2_4.png"><br>
 
 <h3><a name="3.1"></a> 3.1 Place part on tray</h3>
 <h4>Initial Conditions</h4>
+<ul>
+<li>part is being held by magnet</li>
+<li>part is correct orientation</li>
+<li>linear actuator is retracted</li>
+</ul>
 <h4>Final Conditions</h4>
+<ul>
+<li>magnet is off</li>
+<li>part is on tray</li>
+<li>linear actuator is retracted</li>
+</ul>
 <h4>Sequence Diagram</h4>
+<img style="width: 637x; height: 201x;" alt="D3.1" src="D3_1.png"><br>
 
 <h3><a name="4.1"></a> 4.1 Place flux on part</h3>
 <h4>Initial Conditions</h4>
