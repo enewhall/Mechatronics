@@ -17,7 +17,7 @@ Michael O'Connor (mkoconno) <br>
 <br>
 <h2>Systems</h2>
 <ol>
-<li><a href="Part_Seperator.html">Part Seperator Design</a></li>
+<li><a href="Part_Separator.html">Part Separator Design</a></li>
 <li><a href="Vision_Processing.html">Vision Processing Design</a></li>
 <li><a href="Part_Placer.html">Part Placer Design</a></li>
 <li><b>Tray Positioner Design</b></li>
@@ -25,17 +25,17 @@ Michael O'Connor (mkoconno) <br>
 </ol>
 
 <h2>Tray Positioner Design</h2>
-The tray positioning system works in conjuncture with the part placer and the flux and <br>
+The tray positioning system works in conjunction with the part placer and the flux and <br>
 wire dispenser to allow for movement of parts in the x and y axis. The tray positioning <br>
-system is solely responsible for all movement in the y axis where the part placer and flux<br>
+system is solely responsible for all movement in the y axis whereas the part placer and flux<br>
 and wire dispenser are responsible for all movement in the x axis. Every time a part <br>
 needs to be moved or accessed first the tray will move to the correct y position before <br>
 any other system moves to get to the correct x position.<br>
 <br>
 The tray is placed on two sliding rails with rubber mounts to prevent the tray from <br>
 sliding while moving. The sliding rails are driven by a stepper motor that is geared with<br>
-a rack and pinion to allow for linear movement. The gearing will support a slow, high <br>
-torque motion which is important since any large accelerations would slide the parts on <br>
+a rack and pinion to allow for linear movement. The gearing will support a slow, high-torque <br>
+ motion which is important since any large accelerations would slide the parts on <br>
 the tray. Also, to ensure that part do not slide the motor will use a ramp acceleration <br>
 and deceleration profile. A slide potentiometer will be connected to the rail so that the<br>
 microcontroller can receive feedback on the current position of the rail.<br>

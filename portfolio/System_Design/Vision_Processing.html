@@ -17,7 +17,7 @@ Michael O'Connor (mkoconno) <br>
 <br>
 <h2>Systems</h2>
 <ol>
-<li><a href="Part_Seperator.html">Part Seperator Design</a></li>
+<li><a href="Part_Separator.html">Part Separator Design</a></li>
 <li><b>Vision Processing Design</b></li>
 <li><a href="Part_Placer.html">Part Placer Design</a></li>
 <li><a href="Tray_Positioner.html">Tray Positioner Design</a></li>
@@ -26,10 +26,10 @@ Michael O'Connor (mkoconno) <br>
 
 <h2>Vision Processing Design</h2>
 The vision processing system determines the orientation of a part after it has left the <br>
-part separator system and relay this information to the part placer system so that the <br>
+part separator system and relays this information to the part placer system so that the <br>
 part can be reoriented if necessary then placed. The first step in this process is to <br>
 command the conveyor belt to move until a part has arrived in front of the camera. Short<br>
-burst of movement are sent to the conveyor belt until a part is detected. The conveyor <br>
+bursts of movement are sent to the conveyor belt until a part is detected. The conveyor <br>
 belt then remains completely stopped until the handling of this part is complete.<br>
 <br>
 The camera then creates an image from the part (see figure 5: Orientation A). The image is<br>
@@ -51,7 +51,7 @@ is in.<br>
 <br>
 Due to the large amount of computation needed to complete the vision processing quickly a <br>
 Raspberry Pi microcomputer will be used solely for this system. The Raspberry Pi will <br>
-communication with the Arduino via a serial connection. The Raspberry Pi has the added <br>
+communicate with the Arduino via a serial connection. The Raspberry Pi has the added <br>
 benefit of easily communicating with the Playstation Eye camera that will be capturing the<br>
 images of the parts.<br>
 <p> <img style="width: 750x; height: 384x;" alt="Vision_Processing" src="System_Diagrams/Vision_Processing.png"><br clear="left"> </p>

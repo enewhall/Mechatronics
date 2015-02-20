@@ -17,7 +17,7 @@ Michael O'Connor (mkoconno) <br>
 <br>
 <h2>Systems</h2>
 <ol>
-<li><a href="Part_Seperator.html">Part Seperator Design</a></li>
+<li><a href="Part_Separator.html">Part Separator Design</a></li>
 <li><a href="Vision_Processing.html">Vision Processing Design</a></li>
 <li><b>Part Placer Design</b></li>
 <li><a href="Tray_Positioner.html">Tray Positioner Design</a></li>
@@ -28,10 +28,10 @@ Michael O'Connor (mkoconno) <br>
 This subsystem is responsible for correctly orienting the parts and placing the parts into<br>
 the tray. This subsystem only moves in the X direction and picks up the parts by inducing<br>
 electromagnetism, but must deal with most of the complexities in this project. One such<br>
-complexity is orientating the parts itself given the information given from the camera. <br>
+complexity is orientating the part itself given the information from the camera. <br>
 If the part is not upside down, then the orientator can quickly fix the part by picking it<br>
 up and rotating 180 degrees. If the part is upside down, the subsystem will attempt to <br>
-flip the part over by grabbing it and inserting it into a horizontal U shaped conveyor<br>
+flip the part over by grabbing it and inserting it into a horizontal U-shaped conveyor<br>
 belt so the part comes right side up. In addition, this system strongly relies on the use<br>
 of software accuracy and programming to decide upon which of these actions should it <br>
 take. Another complexity it introduces, as shown before, is the tuning of its <br>
