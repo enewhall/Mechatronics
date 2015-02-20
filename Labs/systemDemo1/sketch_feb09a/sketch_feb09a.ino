@@ -55,10 +55,7 @@ void loop() {
   else {
     digitalWrite(enPin, HIGH);
   }
-  //digitalWrite(DCMotorPinA,LOW);
-  //digitalWrite(DCMotorPinB,LOW);
-  //analogWrite(servoPin,0);
-  delay(1);
+  delay(1); //For fast speed
   
   
   Serial.flush();
