@@ -18,6 +18,8 @@ HEADERS += \
     settingsdialog.h \
     console.h
 
+CONFIG += static
+
 FORMS += \
     mainwindow.ui \
     settingsdialog.ui

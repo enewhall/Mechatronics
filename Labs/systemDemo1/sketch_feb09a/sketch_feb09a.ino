@@ -37,7 +37,7 @@ void loop() {
   } //attributed sensor readings
 
   //Stepper Motor controlled by IR sensor
-  IRDistance = (primaryValue*2)/(255*2.5); //approx distance in cm
+  IRDistance = (primaryValue*2.5)/(255*2.5); //approx distance in cm
  
   if(stepDistance < IRDistance-.005 && IRDistance < 2.0){
      digitalWrite(enPin, LOW);
