@@ -1,0 +1,2 @@
+ssh pi@169.254.216.2
+password: raspberry
