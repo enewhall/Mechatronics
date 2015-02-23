@@ -233,3 +233,4 @@ void MainWindow::on_horizontalSlider_2_sliderReleased()
     writeData(A);
     //ui->lineEdit->setText(QString::number(A[1]));
 }
+
