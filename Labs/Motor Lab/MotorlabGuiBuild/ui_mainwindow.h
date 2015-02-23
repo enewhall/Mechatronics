@@ -38,7 +38,6 @@ public:
     QAction *actionConfigure;
     QAction *actionClear;
     QAction *actionQuit;
-    QAction *actionConfigure2;
     QWidget *centralWidget;
     QStackedWidget *widget;
     QWidget *page;
@@ -97,9 +96,6 @@ public:
         QIcon icon4;
         icon4.addFile(QStringLiteral(":/images/application-exit.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionQuit->setIcon(icon4);
-        actionConfigure2 = new QAction(MainWindow);
-        actionConfigure2->setObjectName(QStringLiteral("actionConfigure2"));
-        actionConfigure2->setIcon(icon2);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         widget = new QStackedWidget(centralWidget);
@@ -211,10 +207,6 @@ public:
         actionClear->setShortcut(QApplication::translate("MainWindow", "Alt+L", 0));
         actionQuit->setText(QApplication::translate("MainWindow", "&Quit", 0));
         actionQuit->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", 0));
-        actionConfigure2->setText(QApplication::translate("MainWindow", "Configure2", 0));
-#ifndef QT_NO_TOOLTIP
-        actionConfigure2->setToolTip(QApplication::translate("MainWindow", "Configure serial port 2", 0));
-#endif // QT_NO_TOOLTIP
         pushButton->setText(QApplication::translate("MainWindow", "Send", 0));
 #ifndef QT_NO_STATUSTIP
         label->setStatusTip(QApplication::translate("MainWindow", "Input for primary", 0));

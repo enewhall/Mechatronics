@@ -286,18 +286,6 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionConfigure2">
-   <property name="icon">
-    <iconset resource="terminal.qrc">
-     <normaloff>:/images/settings.png</normaloff>:/images/settings.png</iconset>
-   </property>
-   <property name="text">
-    <string>Configure2</string>
-   </property>
-   <property name="toolTip">
-    <string>Configure serial port 2</string>
-   </property>
-  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

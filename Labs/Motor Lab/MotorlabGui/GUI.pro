@@ -21,6 +21,7 @@ HEADERS += \
 CONFIG += static
 
 FORMS += \
+    mainwindow.ui \
     settingsdialog.ui
 
 RESOURCES += \
