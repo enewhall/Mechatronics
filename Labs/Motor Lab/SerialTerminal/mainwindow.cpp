@@ -307,6 +307,6 @@ void MainWindow::on_horizontalSlider_3_sliderReleased()
     //update third variable
     QByteArray A = QByteArray("ab");
     A[0] = 90;
-    A[1] = ui->horizontalSlider_2->value();
+    A[1] = ui->horizontalSlider_3->value();
     writeData(A);
 }

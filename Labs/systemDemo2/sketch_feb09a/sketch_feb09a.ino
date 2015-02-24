@@ -1,17 +1,15 @@
-int IRPin = A0;
 float IRDistance = 0.0;
 int stepPin = 6; 
 int dirPin = 5;
-int enPin = 2;
+int enPin = 0;
 int toggle = 0;
 float stepDistance = 0.0;
 
 //Second Motor need to access pin values
-int IRPin2 = A0;
 float IRDistance2 = 0.0;
-int stepPin2 = 6; 
-int dirPin2 = 5;
-int enPin2 = 2;
+int stepPin2 = 4; 
+int dirPin2 = 1;
+int enPin2 = 12;
 int toggle2 = 0;
 float stepDistance2 = 0.0;
 
@@ -20,6 +18,15 @@ float potAngle = 0.0;
 int DCMotorAngle = 0;
 int DCMotorPinA = 7;
 int DCMotorPinB = 8;
+
+//And encoder
+int encoderAPin = 2;
+int encoderBPin = 3;
+int encoderAValue = 0;
+int encoderAPrev = 0;
+int encoderBValue = 0;
+int encoderBPrev = 0;
+
 
 
 
@@ -30,6 +37,9 @@ boolean primaryWrite = false;
 
 float secondaryValue = 0;
 boolean secondaryWrite = false;
+
+float trimaryValue = 0;
+boolean trimaryWrite = false;
 
 void setup() {
    Serial.begin(9600); 
@@ -43,6 +53,10 @@ void setup() {
    pinMode(stepPin2,OUTPUT);
    pinMode(dirPin2,OUTPUT);
    pinMode(enPin2,OUTPUT);
+   
+   //create interrupts
+   attachInterrupt(0, PinA, CHANGE);
+   attachInterrupt(1, PinB, CHANGE);
 }
 
 void loop() { 
@@ -52,13 +66,21 @@ void loop() {
     if(primaryWrite)
     {
       primaryValue = serialValue;
-      primaryValue = serialValue;
       primaryWrite = false;
     }
     else if(secondaryWrite)
     {
       secondaryValue = serialValue;
       secondaryWrite = false;
+    }
+    else if(trimaryWrite)
+    {
+      trimaryValue = serialValue;
+      trimaryWrite = false;
+    }
+    else if(serialValue == 90)
+    {
+      trimaryWrite = true;
     }
     else if(serialValue == 30)
     {
@@ -72,7 +94,7 @@ void loop() {
 
   //Stepper Motor controlled by IR sensor
   IRDistance = (primaryValue*2.5)/(255*2.5); //approx distance in cm
-  IRDistance2 = (primaryValue*2.5)/(255*2.5);
+  IRDistance2 = (secondaryValue*2.5)/(255*2.5);
   
   //Motor 1
   if(stepDistance < IRDistance-.005 && IRDistance < 2.0){
@@ -111,7 +133,7 @@ void loop() {
   }
   
   //DC Motor Implementation(TO DO)
-  potAngle = 40*primaryValue; // copy
+  potAngle = trimaryValue; // copy
   if(potAngle < DCMotorAngle - 8.0){
     digitalWrite(DCMotorPinA,LOW);
     digitalWrite(DCMotorPinB,HIGH);
@@ -123,9 +145,59 @@ void loop() {
     digitalWrite(DCMotorPinB,LOW);
   }
   
+  Serial.print("Measure = ");        
+  Serial.println(DCMotorAngle);
+  
   delay(1); //For fast speed
   
   
   Serial.flush();
 }
+
+
+
+void PinA(){
+   encoderAPrev = encoderAValue;
+   encoderAValue = digitalRead(encoderAPin);
+  if(encoderAPrev){
+    if(encoderBPrev){
+      //counterclockwise
+      DCMotorAngle -= 4;
+    } else{
+      //clockwise
+      DCMotorAngle += 4;
+    }  
+  }else{
+    if(encoderBPrev){
+      //clockwise
+      DCMotorAngle += 4;
+    } else{
+      //counterclockwise
+      DCMotorAngle -= 4;
+    }
+  } 
+}
+
+void PinB(){
+   encoderBPrev = encoderBValue;
+   encoderBValue = digitalRead(encoderBPin);
+  if(encoderBPrev){
+    if(encoderAPrev){
+      //clockwise
+      DCMotorAngle += 4;
+    } else{
+      //counterclockwise
+      DCMotorAngle -= 4;
+    }  
+  }else{
+    if(encoderAPrev){
+      //counterclockwise
+      DCMotorAngle -= 4;
+    } else{
+      //clockwise
+      DCMotorAngle += 4;
+    }
+  } 
+}
+
 
