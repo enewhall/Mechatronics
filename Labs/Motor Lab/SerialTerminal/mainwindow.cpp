@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //! [1]
     serial = new QSerialPort(this);
+    serialTwo = new QSerialPort(this);
 //! [1]
     settings = new SettingsDialog;
 
@@ -64,13 +65,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionQuit->setEnabled(true);
     ui->actionConfigure->setEnabled(true);
 
+    ui->actionConnect2->setEnabled(true);
+    ui->actionDisconnect2->setEnabled(false);
+
+
     initActionsConnections();
 
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
             SLOT(handleError(QSerialPort::SerialPortError)));
+    connect(serialTwo, SIGNAL(error(QSerialPort::SerialPortError)), this,
+            SLOT(handleErrorTwo(QSerialPort::SerialPortError)));
 
 //! [2]
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(serialTwo, SIGNAL(readyRead()), this, SLOT(readDataTwo()));
 //! [2]
     connect(console, SIGNAL(getData(QByteArray)), this, SLOT(writeData(QByteArray)));
 //! [3]
@@ -97,7 +105,7 @@ void MainWindow::openSerialPort()
             console->setLocalEchoEnabled(p.localEchoEnabled);
             ui->actionConnect->setEnabled(false);
             ui->actionDisconnect->setEnabled(true);
-            ui->actionConfigure->setEnabled(false);
+            //ui->actionConfigure->setEnabled(false);
             ui->statusBar->showMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
                                        .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                                        .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
@@ -113,10 +121,10 @@ void MainWindow::openSerialPort()
 void MainWindow::closeSerialPort()
 {
     serial->close();
-    console->setEnabled(false);
+    //console->setEnabled(false);
     ui->actionConnect->setEnabled(true);
     ui->actionDisconnect->setEnabled(false);
-    ui->actionConfigure->setEnabled(true);
+    //ui->actionConfigure->setEnabled(true);
     ui->statusBar->showMessage(tr("Disconnected"));
 }
 //! [5]
@@ -144,11 +152,28 @@ void MainWindow::readData()
 }
 //! [7]
 
+void MainWindow::writeDataTwo(const QByteArray &data){
+    serialTwo->write(data);
+}
+
+void MainWindow::readDataTwo(){
+    QByteArray data = serialTwo->readAll();
+    console->putData(data);
+}
+
 //! [8]
 void MainWindow::handleError(QSerialPort::SerialPortError error)
 {
     if (error == QSerialPort::ResourceError) {
         QMessageBox::critical(this, tr("Critical Error"), serial->errorString());
+        closeSerialPort();
+    }
+}
+
+void MainWindow::handleErrorTwo(QSerialPort::SerialPortError error)
+{
+    if (error == QSerialPort::ResourceError) {
+        QMessageBox::critical(this, tr("Critical Error"), serialTwo->errorString());
         closeSerialPort();
     }
 }
@@ -163,6 +188,7 @@ void MainWindow::initActionsConnections()
     connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -232,4 +258,39 @@ void MainWindow::on_horizontalSlider_2_sliderReleased()
     A[1] = ui->horizontalSlider_2->value();
     writeData(A);
     //ui->lineEdit->setText(QString::number(A[1]));
+}
+
+void MainWindow::on_actionConnect2_triggered()
+{
+    SettingsDialog::Settings p = settings->settings();
+    serialTwo->setPortName(p.name);
+    serialTwo->setBaudRate(p.baudRate);
+    serialTwo->setDataBits(p.dataBits);
+    serialTwo->setParity(p.parity);
+    serialTwo->setStopBits(p.stopBits);
+    serialTwo->setFlowControl(p.flowControl);
+    if (serial->open(QIODevice::ReadWrite)) {
+            console->setEnabled(true);
+            console->setLocalEchoEnabled(p.localEchoEnabled);
+            ui->actionConnect2->setEnabled(false);
+            ui->actionDisconnect2->setEnabled(true);
+            ui->statusBar->showMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
+                                       .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
+                                       .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
+    } else {
+        QMessageBox::critical(this, tr("Error"), serial->errorString());
+
+        ui->statusBar->showMessage(tr("Open error"));
+    }
+
+}
+
+void MainWindow::on_actionDisconnect2_triggered()
+{
+    serialTwo->close();
+    //console->setEnabled(false);
+    ui->actionConnect2->setEnabled(true);
+    ui->actionDisconnect2->setEnabled(false);
+    //ui->actionConfigure->setEnabled(true);
+    ui->statusBar->showMessage(tr("Disconnected"));
 }

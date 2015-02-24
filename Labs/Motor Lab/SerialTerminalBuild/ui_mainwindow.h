@@ -24,7 +24,6 @@
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
-#include <QtWidgets/QToolButton>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -39,6 +38,8 @@ public:
     QAction *actionConfigure;
     QAction *actionClear;
     QAction *actionQuit;
+    QAction *actionConnect2;
+    QAction *actionDisconnect2;
     QWidget *centralWidget;
     QStackedWidget *widget;
     QWidget *page;
@@ -51,8 +52,6 @@ public:
     QSlider *horizontalSlider_2;
     QLabel *label_2;
     QPushButton *pushButton_3;
-    QPushButton *pushButton_4;
-    QToolButton *toolButton;
     QMenuBar *menuBar;
     QMenu *menuCalls;
     QMenu *menuTools;
@@ -99,6 +98,12 @@ public:
         QIcon icon4;
         icon4.addFile(QStringLiteral(":/images/application-exit.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionQuit->setIcon(icon4);
+        actionConnect2 = new QAction(MainWindow);
+        actionConnect2->setObjectName(QStringLiteral("actionConnect2"));
+        actionConnect2->setIcon(icon);
+        actionDisconnect2 = new QAction(MainWindow);
+        actionDisconnect2->setObjectName(QStringLiteral("actionDisconnect2"));
+        actionDisconnect2->setIcon(icon1);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         widget = new QStackedWidget(centralWidget);
@@ -140,12 +145,6 @@ public:
         pushButton_3 = new QPushButton(centralWidget);
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
         pushButton_3->setGeometry(QRect(570, 100, 171, 23));
-        pushButton_4 = new QPushButton(centralWidget);
-        pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
-        pushButton_4->setGeometry(QRect(70, 150, 75, 23));
-        toolButton = new QToolButton(centralWidget);
-        toolButton->setObjectName(QStringLiteral("toolButton"));
-        toolButton->setGeometry(QRect(210, 120, 25, 19));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -179,6 +178,9 @@ public:
         mainToolBar->addAction(actionDisconnect);
         mainToolBar->addAction(actionConfigure);
         mainToolBar->addAction(actionClear);
+        mainToolBar->addSeparator();
+        mainToolBar->addAction(actionConnect2);
+        mainToolBar->addAction(actionDisconnect2);
 
         retranslateUi(MainWindow);
 
@@ -216,6 +218,14 @@ public:
         actionClear->setShortcut(QApplication::translate("MainWindow", "Alt+L", 0));
         actionQuit->setText(QApplication::translate("MainWindow", "&Quit", 0));
         actionQuit->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", 0));
+        actionConnect2->setText(QApplication::translate("MainWindow", "Connect2", 0));
+#ifndef QT_NO_TOOLTIP
+        actionConnect2->setToolTip(QApplication::translate("MainWindow", "Connect serial port 2", 0));
+#endif // QT_NO_TOOLTIP
+        actionDisconnect2->setText(QApplication::translate("MainWindow", "Disconnect2", 0));
+#ifndef QT_NO_TOOLTIP
+        actionDisconnect2->setToolTip(QApplication::translate("MainWindow", "Disconnect serial port 2", 0));
+#endif // QT_NO_TOOLTIP
         pushButton->setText(QApplication::translate("MainWindow", "Send", 0));
 #ifndef QT_NO_STATUSTIP
         label->setStatusTip(QApplication::translate("MainWindow", "Input for primary", 0));
@@ -224,8 +234,6 @@ public:
         pushButton_2->setText(QApplication::translate("MainWindow", "Use Slider Input", 0));
         label_2->setText(QApplication::translate("MainWindow", "Slide Number", 0));
         pushButton_3->setText(QApplication::translate("MainWindow", "Switch Stepper Motor Direction", 0));
-        pushButton_4->setText(QApplication::translate("MainWindow", "PushButton", 0));
-        toolButton->setText(QApplication::translate("MainWindow", "...", 0));
         menuCalls->setTitle(QApplication::translate("MainWindow", "Calls", 0));
         menuTools->setTitle(QApplication::translate("MainWindow", "Tools", 0));
         menuHelp->setTitle(QApplication::translate("MainWindow", "Help", 0));

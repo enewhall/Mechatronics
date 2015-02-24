@@ -776,6 +776,8 @@ debug/mainwindow.o: ../SerialTerminal/mainwindow.cpp ../SerialTerminal/mainwindo
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/QToolBar \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qtoolbar.h \
+		C:/Qt/5.4/mingw491_32/include/QtWidgets/QToolButton \
+		C:/Qt/5.4/mingw491_32/include/QtWidgets/qtoolbutton.h \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/QWidget \
 		../SerialTerminal/console.h \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/QPlainTextEdit \

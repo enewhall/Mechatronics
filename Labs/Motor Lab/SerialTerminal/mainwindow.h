@@ -67,7 +67,11 @@ private slots:
     void writeData(const QByteArray &data);
     void readData();
 
+    void writeDataTwo(const QByteArray &data);
+    void readDataTwo();
+
     void handleError(QSerialPort::SerialPortError error);
+    void handleErrorTwo(QSerialPort::SerialPortError error);
 
     void on_pushButton_clicked();
 
@@ -83,6 +87,10 @@ private slots:
 
     void on_horizontalSlider_2_sliderReleased();
 
+    void on_actionConnect2_triggered();
+
+    void on_actionDisconnect2_triggered();
+
 private:
     void initActionsConnections();
 
@@ -91,6 +99,7 @@ private:
     Console *console;
     SettingsDialog *settings;
     QSerialPort *serial;
+    QSerialPort *serialTwo;
 };
 
 #endif // MAINWINDOW_H

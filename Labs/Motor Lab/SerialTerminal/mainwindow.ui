@@ -196,6 +196,9 @@
    <addaction name="actionDisconnect"/>
    <addaction name="actionConfigure"/>
    <addaction name="actionClear"/>
+   <addaction name="separator"/>
+   <addaction name="actionConnect2"/>
+   <addaction name="actionDisconnect2"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout">
@@ -284,6 +287,30 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionConnect2">
+   <property name="icon">
+    <iconset resource="terminal.qrc">
+     <normaloff>:/images/connect.png</normaloff>:/images/connect.png</iconset>
+   </property>
+   <property name="text">
+    <string>Connect2</string>
+   </property>
+   <property name="toolTip">
+    <string>Connect serial port 2</string>
+   </property>
+  </action>
+  <action name="actionDisconnect2">
+   <property name="icon">
+    <iconset resource="terminal.qrc">
+     <normaloff>:/images/disconnect.png</normaloff>:/images/disconnect.png</iconset>
+   </property>
+   <property name="text">
+    <string>Disconnect2</string>
+   </property>
+   <property name="toolTip">
+    <string>Disconnect serial port 2</string>
    </property>
   </action>
  </widget>
