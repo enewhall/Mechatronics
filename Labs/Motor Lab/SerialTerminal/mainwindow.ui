@@ -77,9 +77,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>390</x>
       <y>30</y>
-      <width>71</width>
+      <width>111</width>
       <height>16</height>
      </rect>
     </property>
@@ -87,7 +87,7 @@
      <string>Input for primary</string>
     </property>
     <property name="text">
-     <string>Slider Number</string>
+     <string>STEP1: Slider Number</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
@@ -125,14 +125,14 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>580</x>
       <y>30</y>
-      <width>81</width>
+      <width>121</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Slide Number</string>
+     <string>STEP2: Slide Number</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_3">
@@ -146,6 +146,38 @@
     </property>
     <property name="text">
      <string>Switch Stepper Motor Direction</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="horizontalSlider_3">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>130</y>
+      <width>160</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>255</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>100</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DC MOTOR SLIDER</string>
     </property>
    </widget>
   </widget>

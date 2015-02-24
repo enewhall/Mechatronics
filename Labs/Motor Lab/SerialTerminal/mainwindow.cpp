@@ -212,6 +212,7 @@ void MainWindow::on_pushButton_2_clicked()
         ui->pushButton_2->setText("Use Slider Input");
         ui->horizontalSlider->setEnabled(false);
         ui->horizontalSlider_2->setEnabled(false);
+        ui->horizontalSlider_3->setEnabled(false);
         state = false;
         A[0] = 100;
     }
@@ -220,6 +221,7 @@ void MainWindow::on_pushButton_2_clicked()
         ui->pushButton_2->setText("Use Sensor Input");
         ui->horizontalSlider->setEnabled(true);
         ui->horizontalSlider_2->setEnabled(true);
+        ui->horizontalSlider_3->setEnabled(true);
         state = true;
         A[0] = 101;
     }
@@ -293,4 +295,18 @@ void MainWindow::on_actionDisconnect2_triggered()
     ui->actionDisconnect2->setEnabled(false);
     //ui->actionConfigure->setEnabled(true);
     ui->statusBar->showMessage(tr("Disconnected"));
+}
+
+void MainWindow::on_horizontalSlider_3_sliderMoved(int position)
+{
+    ui->label_3->setText(QString::number(position));
+}
+
+void MainWindow::on_horizontalSlider_3_sliderReleased()
+{
+    //update third variable
+    QByteArray A = QByteArray("ab");
+    A[0] = 90;
+    A[1] = ui->horizontalSlider_2->value();
+    writeData(A);
 }

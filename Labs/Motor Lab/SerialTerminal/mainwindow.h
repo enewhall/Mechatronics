@@ -91,6 +91,10 @@ private slots:
 
     void on_actionDisconnect2_triggered();
 
+    void on_horizontalSlider_3_sliderMoved(int position);
+
+    void on_horizontalSlider_3_sliderReleased();
+
 private:
     void initActionsConnections();
 
