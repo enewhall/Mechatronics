@@ -1,31 +1,28 @@
 float IRDistance = 0.0;
 int stepPin = 6; 
 int dirPin = 5;
-int enPin = 0;
+int enPin = 9;
 int toggle = 0;
 float stepDistance = 0.0;
 
 //Second Motor need to access pin values
 float IRDistance2 = 0.0;
 int stepPin2 = 4; 
-int dirPin2 = 1;
+int dirPin2 = 10;
 int enPin2 = 12;
 int toggle2 = 0;
 float stepDistance2 = 0.0;
 
 //For our DC motor
 float potAngle = 0.0;
-int DCMotorAngle = 0;
+//int DCMotorAngle = 0;
 int DCMotorPinA = 7;
 int DCMotorPinB = 8;
 
-//And encoder
-int encoderAPin = 2;
-int encoderBPin = 3;
-int encoderAValue = 0;
-int encoderAPrev = 0;
-int encoderBValue = 0;
-int encoderBPrev = 0;
+//etc
+const int limitsw = 13;
+const int elePin = 2;
+int ele = 0;
 
 
 
@@ -38,7 +35,7 @@ boolean primaryWrite = false;
 float secondaryValue = 0;
 boolean secondaryWrite = false;
 
-float trimaryValue = 0;
+unsigned char trimaryValue = 1;
 boolean trimaryWrite = false;
 
 void setup() {
@@ -54,9 +51,11 @@ void setup() {
    pinMode(dirPin2,OUTPUT);
    pinMode(enPin2,OUTPUT);
    
-   //create interrupts
-   attachInterrupt(0, PinA, CHANGE);
-   attachInterrupt(1, PinB, CHANGE);
+   pinMode(limitsw, INPUT);
+   pinMode(elePin, OUTPUT);
+   
+   pinMode(DCMotorPinA, OUTPUT);
+   pinMode(DCMotorPinB, OUTPUT);
 }
 
 void loop() { 
@@ -89,6 +88,10 @@ void loop() {
     else if(serialValue == 80)
     {
       secondaryWrite = true;
+    }
+    else if(serialValue == 50)
+    {
+      ele = (!ele) & 0x01;
     }
   } //attributed sensor readings
 
@@ -130,23 +133,48 @@ void loop() {
   }
   else {
     digitalWrite(enPin2, HIGH);
+    digitalWrite(dirPin2, LOW);
   }
   
   //DC Motor Implementation(TO DO)
-  potAngle = trimaryValue; // copy
-  if(potAngle < DCMotorAngle - 8.0){
-    digitalWrite(DCMotorPinA,LOW);
-    digitalWrite(DCMotorPinB,HIGH);
-  }else if(potAngle > DCMotorAngle + 8.0){
-    digitalWrite(DCMotorPinA,HIGH);
-    digitalWrite(DCMotorPinB,LOW);
-  }else{
-    digitalWrite(DCMotorPinA,LOW);
-    digitalWrite(DCMotorPinB,LOW);
-  }
+ // if(digitalRead(limitsw) == LOW)
+  //{
+    switch(trimaryValue) {
+      case 0:
+        //turn left
+        digitalWrite(DCMotorPinA,LOW);
+        digitalWrite(DCMotorPinB,HIGH);
+        break;
+      case 1:
+        digitalWrite(DCMotorPinA,LOW);
+        digitalWrite(DCMotorPinB,LOW);
+        break;
+      case 2:
+        digitalWrite(DCMotorPinA,HIGH);
+        digitalWrite(DCMotorPinB,LOW);
+      
+    }
+  //}
+//  else
+//  {
+//        digitalWrite(DCMotorPinA,LOW);
+//        digitalWrite(DCMotorPinB,LOW);
+//  }
   
-  Serial.print("Measure = ");        
-  Serial.println(DCMotorAngle);
+//  if(potAngle < DCMotorAngle - 8.0){
+//    digitalWrite(DCMotorPinA,LOW);
+//    digitalWrite(DCMotorPinB,HIGH);
+//  }else if(potAngle > DCMotorAngle + 8.0){
+//    digitalWrite(DCMotorPinA,HIGH);
+//    digitalWrite(DCMotorPinB,LOW);
+//  }else{
+//    digitalWrite(DCMotorPinA,LOW);
+//    digitalWrite(DCMotorPinB,LOW);
+//  }
+  
+
+   //electro magnetism
+   digitalWrite(elePin, ele);
   
   delay(1); //For fast speed
   
@@ -156,48 +184,48 @@ void loop() {
 
 
 
-void PinA(){
-   encoderAPrev = encoderAValue;
-   encoderAValue = digitalRead(encoderAPin);
-  if(encoderAPrev){
-    if(encoderBPrev){
-      //counterclockwise
-      DCMotorAngle -= 4;
-    } else{
-      //clockwise
-      DCMotorAngle += 4;
-    }  
-  }else{
-    if(encoderBPrev){
-      //clockwise
-      DCMotorAngle += 4;
-    } else{
-      //counterclockwise
-      DCMotorAngle -= 4;
-    }
-  } 
-}
-
-void PinB(){
-   encoderBPrev = encoderBValue;
-   encoderBValue = digitalRead(encoderBPin);
-  if(encoderBPrev){
-    if(encoderAPrev){
-      //clockwise
-      DCMotorAngle += 4;
-    } else{
-      //counterclockwise
-      DCMotorAngle -= 4;
-    }  
-  }else{
-    if(encoderAPrev){
-      //counterclockwise
-      DCMotorAngle -= 4;
-    } else{
-      //clockwise
-      DCMotorAngle += 4;
-    }
-  } 
-}
-
+//void PinA(){
+//   encoderAPrev = encoderAValue;
+//   encoderAValue = digitalRead(encoderAPin);
+//  if(encoderAPrev){
+//    if(encoderBPrev){
+//      //counterclockwise
+//      DCMotorAngle -= 4;
+//    } else{
+//      //clockwise
+//      DCMotorAngle += 4;
+//    }  
+//  }else{
+//    if(encoderBPrev){
+//      //clockwise
+//      DCMotorAngle += 4;
+//    } else{
+//      //counterclockwise
+//      DCMotorAngle -= 4;
+//    }
+//  } 
+//}
+//
+//void PinB(){
+//   encoderBPrev = encoderBValue;
+//   encoderBValue = digitalRead(encoderBPin);
+//  if(encoderBPrev){
+//    if(encoderAPrev){
+//      //clockwise
+//      DCMotorAngle += 4;
+//    } else{
+//      //counterclockwise
+//      DCMotorAngle -= 4;
+//    }  
+//  }else{
+//    if(encoderAPrev){
+//      //counterclockwise
+//      DCMotorAngle -= 4;
+//    } else{
+//      //clockwise
+//      DCMotorAngle += 4;
+//    }
+//  } 
+//}
+//
 

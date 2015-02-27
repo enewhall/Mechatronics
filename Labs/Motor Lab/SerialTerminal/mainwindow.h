@@ -95,6 +95,8 @@ private slots:
 
     void on_horizontalSlider_3_sliderReleased();
 
+    void on_horizontalSlider_3_valueChanged(int value);
+
 private:
     void initActionsConnections();
 

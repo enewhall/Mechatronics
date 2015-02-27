@@ -139,7 +139,7 @@ public:
         horizontalSlider_2->setObjectName(QStringLiteral("horizontalSlider_2"));
         horizontalSlider_2->setEnabled(false);
         horizontalSlider_2->setGeometry(QRect(570, 60, 160, 22));
-        horizontalSlider_2->setMaximum(255);
+        horizontalSlider_2->setMaximum(210);
         horizontalSlider_2->setOrientation(Qt::Horizontal);
         label_2 = new QLabel(centralWidget);
         label_2->setObjectName(QStringLiteral("label_2"));
@@ -151,7 +151,8 @@ public:
         horizontalSlider_3->setObjectName(QStringLiteral("horizontalSlider_3"));
         horizontalSlider_3->setEnabled(false);
         horizontalSlider_3->setGeometry(QRect(100, 130, 160, 22));
-        horizontalSlider_3->setMaximum(255);
+        horizontalSlider_3->setMaximum(2);
+        horizontalSlider_3->setValue(1);
         horizontalSlider_3->setOrientation(Qt::Horizontal);
         label_3 = new QLabel(centralWidget);
         label_3->setObjectName(QStringLiteral("label_3"));
@@ -244,7 +245,7 @@ public:
         label->setText(QApplication::translate("MainWindow", "STEP1: Slider Number", 0));
         pushButton_2->setText(QApplication::translate("MainWindow", "Use Slider Input", 0));
         label_2->setText(QApplication::translate("MainWindow", "STEP2: Slide Number", 0));
-        pushButton_3->setText(QApplication::translate("MainWindow", "Switch Stepper Motor Direction", 0));
+        pushButton_3->setText(QApplication::translate("MainWindow", "Electromagnet ON/OFF", 0));
         label_3->setText(QApplication::translate("MainWindow", "DC MOTOR SLIDER", 0));
         menuCalls->setTitle(QApplication::translate("MainWindow", "Calls", 0));
         menuTools->setTitle(QApplication::translate("MainWindow", "Tools", 0));

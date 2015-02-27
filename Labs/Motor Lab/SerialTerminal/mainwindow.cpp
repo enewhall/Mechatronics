@@ -248,7 +248,9 @@ void MainWindow::on_horizontalSlider_sliderReleased()
 void MainWindow::on_pushButton_3_clicked()
 {
     //switch servo direction
-
+    QByteArray A = QByteArray("a");
+    A[0] = 50;
+    writeData(A);
 
 }
 
@@ -305,6 +307,14 @@ void MainWindow::on_horizontalSlider_3_sliderMoved(int position)
 void MainWindow::on_horizontalSlider_3_sliderReleased()
 {
     //update third variable
+    QByteArray A = QByteArray("ab");
+    A[0] = 90;
+    A[1] = ui->horizontalSlider_3->value();
+    writeData(A);
+}
+
+void MainWindow::on_horizontalSlider_3_valueChanged(int value)
+{
     QByteArray A = QByteArray("ab");
     A[0] = 90;
     A[1] = ui->horizontalSlider_3->value();
