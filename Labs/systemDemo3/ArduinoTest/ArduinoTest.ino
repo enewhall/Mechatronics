@@ -1,3 +1,9 @@
+#include <Time.h>
+
+
+unsigned int apple[] = {1, 2, 3, 4};
+int len = sizeof(apple)/sizeof(int);
+int n = 0;
 void setup()
 {
   Serial.begin(9600);
@@ -7,6 +13,9 @@ void setup()
 }
 void loop()
 {
-  Serial.println("Hello World");
+  
+  Serial.println(apple[n]);
+  Serial.println(now());
+  n = (n+1)%len;
   delay(2000);
 }

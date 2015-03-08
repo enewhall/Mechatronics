@@ -60,7 +60,7 @@ void loop() {
       j = serialValue - 90; //get current index
       Write[j] = true;
     }
-    else if( (Wrote == false) && ( (serialValue) > 100) )
+    else if( (Wrote == false) && ( (serialValue) >= 100) )
     {
       j = serialValue - 100; //get current index
       Write[j] = true;
