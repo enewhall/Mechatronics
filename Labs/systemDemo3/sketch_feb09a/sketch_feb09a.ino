@@ -1,214 +1,124 @@
-float IRDistance = 0.0;
-int stepPin = 6; 
-int dirPin = 5;
-int enPin = 9;
-int toggle = 0;
-float stepDistance = 0.0;
+//variables for the three Stepper Motor
+float IRDistance[] = {0.0, 0.0};
+const int stepPin[] = {6, 4}; 
+const int dirPin[] = {5, 10};
+const int enPin[] = {9, 12};
+int toggle[] = {0, 0};
+float stepDistance[] = {0.0, 0.0};
 
-//Second Motor need to access pin values
-float IRDistance2 = 0.0;
-int stepPin2 = 4; 
-int dirPin2 = 10;
-int enPin2 = 12;
-int toggle2 = 0;
-float stepDistance2 = 0.0;
-
-//Third Stepper Motor needed
-float IRDistance3 = 0.0;
-int stepPin3 = ?; 
-int dirPin3 = ?;
-int enPin3 = ?;
-int toggle3 = 0;
-float stepDistance3 = 0.0;
-
-//For our DC motor
-float potAngle = 0.0;
-int DCMotorPinA = 7;
-int DCMotorPinB = 8;
-
-//For our Second DC motor
-float potAngle2 = 0.0;
-int DCMotorPinA2 = ?;
-int DCMotorPinB2 = ?;
+//For our DC motors
+int DCMotorPinA[] = {7};
+int DCMotorPinB[] = {8};
 
 //etc
 const int limitsw = 13;
 const int elePin = 2;
 int ele = 0;
 
-
-
-
+unsigned int j = 0; //our temporary variable for selecting proper index
+unsigned int len; //length of iterating arrays
 
 unsigned char serialValue = 0;
-float primaryValue = 0; //for GUI
-boolean primaryWrite = false;
-
-float secondaryValue = 0;
-boolean secondaryWrite = false;
-
-unsigned char trimaryValue = 1;
-boolean trimaryWrite = false;
-
-unsigned char Value4 = 0;
-boolean Write4 = false;
-
-unsigned char Value5 = 1;
-boolean Write5 = false;
+float Value[] = {0, 0}; //for GUI
+unsigned char DCValue[] = {1};
+boolean Write[] = {false, false};
+boolean DCWrite[] = {false};
+boolean Wrote = false; //Check if system wrote value
 
 void setup() {
    Serial.begin(9600); 
    while (!Serial) { //Copy
     ; // wait for serial port to connect. Needed for Leonardo only
-  }         
-   pinMode(stepPin,OUTPUT);
-   pinMode(dirPin,OUTPUT);
-   pinMode(enPin,OUTPUT);
-   
-   pinMode(stepPin2,OUTPUT);
-   pinMode(dirPin2,OUTPUT);
-   pinMode(enPin2,OUTPUT);
+  }
+   len = sizeof(stepPin)/sizeof(int);
+   for(j=0; j<len; j++)
+   {  
+     pinMode(stepPin[j],OUTPUT);
+     pinMode(dirPin[j],OUTPUT);
+     pinMode(enPin[j],OUTPUT);
+   }
    
    pinMode(limitsw, INPUT);
    pinMode(elePin, OUTPUT);
    
-   pinMode(DCMotorPinA, OUTPUT);
-   pinMode(DCMotorPinB, OUTPUT);
+   
+   len = sizeof(DCMotorPinA);
+   for(j=0; j<len; j++)
+   {
+     pinMode(DCMotorPinA[j], OUTPUT);
+     pinMode(DCMotorPinB[j], OUTPUT);
+   }
 }
 
 void loop() { 
   if(Serial.available()) //Read value and decide what to do with it
   {
     serialValue = Serial.read();
-    if(primaryWrite)
+    Wrote = updateWrite();
+    if( (Wrote == false) && ( 100 > (serialValue) >= 90) )
     {
-      primaryValue = serialValue;
-      primaryWrite = false;
+      j = serialValue - 90; //get current index
+      Write[j] = true;
     }
-    else if(secondaryWrite)
+    else if( (Wrote == false) && ( (serialValue) > 100) )
     {
-      secondaryValue = serialValue;
-      secondaryWrite = false;
+      j = serialValue - 100; //get current index
+      Write[j] = true;
     }
-    else if(trimaryWrite)
-    {
-      trimaryValue = serialValue;
-      trimaryWrite = false;
-    }
-    else if(serialValue == 90)
-    {
-      trimaryWrite = true;
-    }
-    else if(serialValue == 30)
-    {
-      primaryWrite = true; //primaryValue = next serial reading
-    }
-    else if(serialValue == 80)
-    {
-      secondaryWrite = true;
-    }
-    else if(serialValue == 50)
+    else if( (Wrote == false) && ( (serialValue) == 50))
     {
       ele = (!ele) & 0x01;
     }
   } //attributed sensor readings
 
   //Stepper Motor controlled by IR sensor
-  IRDistance = (primaryValue*2.5)/(255*2.5); //approx distance in cm
-  IRDistance2 = (secondaryValue*2.5)/(255*2.5);
-  IRDistance3 = (Value4*2.5)/(255*2.5);
-  //Motor 1
-  if(stepDistance < IRDistance-.005 && IRDistance < 2.0){
-     digitalWrite(enPin, LOW);
-     digitalWrite(dirPin, HIGH);
-     toggle = (!toggle) & 0x01;
-     digitalWrite(stepPin, toggle);
-     stepDistance += .001;
-  }else if(stepDistance > IRDistance+.005 && IRDistance < 2.0){
-    digitalWrite(enPin, LOW);
-    digitalWrite(dirPin, LOW);
-    toggle = (!toggle) & 0x01;
-    digitalWrite(stepPin, toggle);
-    stepDistance -= .001;
-  }
-  else {
-    digitalWrite(enPin, HIGH);
-  }
-  
-  //Motor 2
-  if(stepDistance2 < IRDistance2-.005 && IRDistance2 < 2.0){
-     digitalWrite(enPin2, LOW);
-     digitalWrite(dirPin2, HIGH);
-     toggle2 = (!toggle2) & 0x01;
-     digitalWrite(stepPin2, toggle2);
-     stepDistance2 += .001;
-  }else if(stepDistance2 > IRDistance2+.005 && IRDistance2 < 2.0){
-    digitalWrite(enPin2, LOW);
-    digitalWrite(dirPin2, LOW);
-    toggle2 = (!toggle2) & 0x01;
-    digitalWrite(stepPin2, toggle2);
-    stepDistance2 -= .001;
-  }
-  else {
-    digitalWrite(enPin2, HIGH);
-    digitalWrite(dirPin2, LOW);
+  len = sizeof(stepPin)/sizeof(int);
+  for(j=0; j<len; j++)
+  {
+    IRDistance[j] = (Value[j]*2.5)/(255*2.5); //approx distance in cm
+    //Motor 1
+    if(stepDistance[j] < IRDistance[j]-.005 && IRDistance[j] < 2.0){
+       digitalWrite(enPin[j], LOW);
+       digitalWrite(dirPin[j], HIGH);
+       toggle[j] = (!toggle[j]) & 0x01;
+       digitalWrite(stepPin[j], toggle[j]);
+       stepDistance[j] += .001;
+    }else if(stepDistance[j] > IRDistance[j]+.005 && IRDistance[j] < 2.0){
+      digitalWrite(enPin[j], LOW);
+      digitalWrite(dirPin[j], LOW);
+      toggle[j] = (!toggle[j]) & 0x01;
+      digitalWrite(stepPin[j], toggle[j]);
+      stepDistance[j] -= .001;
+    }
+    else {
+      digitalWrite(enPin[j], HIGH);
+    }
   }
   
   //DC Motor Implementation
-    switch(trimaryValue) {
+  len = sizeof(DCWrite)/sizeof(boolean);
+  for(j=0; j<len; j++)
+  {
+    switch(DCValue[j]) {
       case 0:
         //turn left
-        digitalWrite(DCMotorPinA,LOW);
-        digitalWrite(DCMotorPinB,HIGH);
+        digitalWrite(DCMotorPinA[j],LOW);
+        digitalWrite(DCMotorPinB[j],HIGH);
         break;
       case 1:
-        digitalWrite(DCMotorPinA,LOW);
-        digitalWrite(DCMotorPinB,LOW);
+        digitalWrite(DCMotorPinA[j],LOW);
+        digitalWrite(DCMotorPinB[j],LOW);
         break;
       case 2:
-        digitalWrite(DCMotorPinA,HIGH);
-        digitalWrite(DCMotorPinB,LOW);
+        digitalWrite(DCMotorPinA[j],HIGH);
+        digitalWrite(DCMotorPinB[j],LOW);
       
     }
-    
-    //DC Motor2 Implementation
-    switch(Value5) {
-      case 0:
-        //turn left
-        digitalWrite(DCMotorPinA2,LOW);
-        digitalWrite(DCMotorPinB2,HIGH);
-        break;
-      case 1:
-        digitalWrite(DCMotorPinA2,LOW);
-        digitalWrite(DCMotorPinB2,LOW);
-        break;
-      case 2:
-        digitalWrite(DCMotorPinA2,HIGH);
-        digitalWrite(DCMotorPinB2,LOW);
-      
-    }
-    
-    //Motor 3
-  if(stepDistance3 < IRDistance3-.005 && IRDistance3 < 2.0){
-     digitalWrite(enPin3, LOW);
-     digitalWrite(dirPin3, HIGH);
-     toggle2 = (!toggle3) & 0x01;
-     digitalWrite(stepPin3, toggle3);
-     stepDistance3 += .001;
-  }else if(stepDistance3 > IRDistance3+.005 && IRDistance3 < 2.0){
-    digitalWrite(enPin3, LOW);
-    digitalWrite(dirPin3, LOW);
-    toggle2 = (!toggle3) & 0x01;
-    digitalWrite(stepPin3, toggle3);
-    stepDistance3 -= .001;
   }
-  else {
-    digitalWrite(enPin3, HIGH);
-    digitalWrite(dirPin3, LOW);
-  }
-  
-  
-   digitalWrite(elePin, ele);
+
+
+  // Write Pin
+  digitalWrite(elePin, ele);
   
   delay(1); //For fast speed
   
@@ -217,49 +127,33 @@ void loop() {
 }
 
 
+boolean updateWrite()
+{
+    //Stepper Case
+    len = sizeof(Write)/sizeof(boolean);
+    for(j=0; j<len; j++)
+    {
+      if(Write[j])
+      { //update value return true
+        Value[j] = serialValue;
+        Write[j] = false;
+        return true;
+      }
+    }
+    
+    //DC Motor Case
+    len = sizeof(DCWrite)/sizeof(boolean);
+    for(j=0; j<len; j++)
+    {
+      if(DCWrite[j])
+      { //update value return true
+        DCValue[j] = serialValue;
+        DCWrite[j] = false;
+        return true;
+      }
+    }
+  
+    return false; //No writing required  
+}
 
-//void PinA(){
-//   encoderAPrev = encoderAValue;
-//   encoderAValue = digitalRead(encoderAPin);
-//  if(encoderAPrev){
-//    if(encoderBPrev){
-//      //counterclockwise
-//      DCMotorAngle -= 4;
-//    } else{
-//      //clockwise
-//      DCMotorAngle += 4;
-//    }  
-//  }else{
-//    if(encoderBPrev){
-//      //clockwise
-//      DCMotorAngle += 4;
-//    } else{
-//      //counterclockwise
-//      DCMotorAngle -= 4;
-//    }
-//  } 
-//}
-//
-//void PinB(){
-//   encoderBPrev = encoderBValue;
-//   encoderBValue = digitalRead(encoderBPin);
-//  if(encoderBPrev){
-//    if(encoderAPrev){
-//      //clockwise
-//      DCMotorAngle += 4;
-//    } else{
-//      //counterclockwise
-//      DCMotorAngle -= 4;
-//    }  
-//  }else{
-//    if(encoderAPrev){
-//      //counterclockwise
-//      DCMotorAngle -= 4;
-//    } else{
-//      //clockwise
-//      DCMotorAngle += 4;
-//    }
-//  } 
-//}
-//
 

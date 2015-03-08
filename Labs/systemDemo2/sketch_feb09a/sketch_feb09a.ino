@@ -24,10 +24,6 @@ const int limitsw = 13;
 const int elePin = 2;
 int ele = 0;
 
-
-
-
-
 unsigned char serialValue = 0;
 float primaryValue = 0; //for GUI
 boolean primaryWrite = false;

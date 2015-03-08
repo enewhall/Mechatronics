@@ -1,9 +1,196 @@
-Method 1:
+Method for autonomy:
 
 Give state for each step of the overall command
 Have a boolean that says when the system finished moving and transition state.
 Parallitize each motor command individually
 
-pros:
-	best execution speed
+3 steppers
+2 dc
+1 servo
+
+
+additional
+
+1 stepper
+1 dc
+
+
+
+code removed for simplicity
+
+////Second Motor need to access pin values
+//float IRDistance2 = 0.0;
+//int stepPin2 = 4; 
+//int dirPin2 = 10;
+//int enPin2 = 12;
+//int toggle2 = 0;
+//float stepDistance2 = 0.0;
+//
+////Third Stepper Motor needed
+//float IRDistance3 = 0.0;
+//int stepPin3 = ?; 
+//int dirPin3 = ?;
+//int enPin3 = ?;
+//int toggle3 = 0;
+//float stepDistance3 = 0.0;
+-----------------------------------
+////For our Second DC motor
+//float potAngle2 = 0.0;
+//int DCMotorPinA2 = ?;
+//int DCMotorPinB2 = ?;
+--------------------------------
+
+//float secondaryValue = 0;
+//boolean secondaryWrite = false;
+//
+//unsigned char trimaryValue = 1;
+//boolean trimaryWrite = false;
+//
+//unsigned char Value4 = 0;
+//boolean Write4 = false;
+//
+//unsigned char Value5 = 1;
+//boolean Write5 = false;
+-------------------------------
+
+pinMode(stepPin2,OUTPUT);
+   pinMode(dirPin2,OUTPUT);
+   pinMode(enPin2,OUTPUT);
+---------------------------------
+//    if(primaryWrite)
+//    {
+//      primaryValue = serialValue;
+//      primaryWrite = false;
+//    }
+//    else if(secondaryWrite)
+//    {
+//      secondaryValue = serialValue;
+//      secondaryWrite = false;
+//    }
+//    else if(trimaryWrite)
+//    {
+//      trimaryValue = serialValue;
+//      trimaryWrite = false;
+//    }
+//    else if(Write4)
+//    {
+//      Value4 = serialValue;
+//      Write4 = false;
+//    }
+//    else if(Write5)
+//    {
+//      Value5 = serialValue;
+//      Write5 = false;
+//    }
+//    else if(serialValue == 90)
+//    {
+//      trimaryWrite = true;
+//    }
+//    else if(serialValue == 30)
+//    {
+//      primaryWrite = true; //primaryValue = next serial reading
+//    }
+//    else if(serialValue == 80)
+//    {
+//      secondaryWrite = true;
+//    }
+//    else if(serialValue == 50)
+//    {
+//      ele = (!ele) & 0x01;
+//    }
+//    else if(serialValue == 91)
+//    {
+//      Write4 = true;
+//    }
+//    else if(serialValue == 92)
+//    {
+//      Write5 = true;
+//    }
+   
+    //DC Motor2 Implementation
+    switch(Value5) {
+      case 0:
+        //turn left
+        digitalWrite(DCMotorPinA2,LOW);
+        digitalWrite(DCMotorPinB2,HIGH);
+        break;
+      case 1:
+        digitalWrite(DCMotorPinA2,LOW);
+        digitalWrite(DCMotorPinB2,LOW);
+        break;
+      case 2:
+        digitalWrite(DCMotorPinA2,HIGH);
+        digitalWrite(DCMotorPinB2,LOW);
+      
+    }
+    
+    //Motor 3
+  if(stepDistance3 < IRDistance3-.005 && IRDistance3 < 2.0){
+     digitalWrite(enPin3, LOW);
+     digitalWrite(dirPin3, HIGH);
+     toggle2 = (!toggle3) & 0x01;
+     digitalWrite(stepPin3, toggle3);
+     stepDistance3 += .001;
+  }else if(stepDistance3 > IRDistance3+.005 && IRDistance3 < 2.0){
+    digitalWrite(enPin3, LOW);
+    digitalWrite(dirPin3, LOW);
+    toggle2 = (!toggle3) & 0x01;
+    digitalWrite(stepPin3, toggle3);
+    stepDistance3 -= .001;
+  }
+  else {
+    digitalWrite(enPin3, HIGH);
+    digitalWrite(dirPin3, LOW);
+  }
+  
+  -----------------------------
+
+
+//void PinA(){
+//   encoderAPrev = encoderAValue;
+//   encoderAValue = digitalRead(encoderAPin);
+//  if(encoderAPrev){
+//    if(encoderBPrev){
+//      //counterclockwise
+//      DCMotorAngle -= 4;
+//    } else{
+//      //clockwise
+//      DCMotorAngle += 4;
+//    }  
+//  }else{
+//    if(encoderBPrev){
+//      //clockwise
+//      DCMotorAngle += 4;
+//    } else{
+//      //counterclockwise
+//      DCMotorAngle -= 4;
+//    }
+//  } 
+//}
+//
+//void PinB(){
+//   encoderBPrev = encoderBValue;
+//   encoderBValue = digitalRead(encoderBPin);
+//  if(encoderBPrev){
+//    if(encoderAPrev){
+//      //clockwise
+//      DCMotorAngle += 4;
+//    } else{
+//      //counterclockwise
+//      DCMotorAngle -= 4;
+//    }  
+//  }else{
+//    if(encoderAPrev){
+//      //counterclockwise
+//      DCMotorAngle -= 4;
+//    } else{
+//      //clockwise
+//      DCMotorAngle += 4;
+//    }
+//  } 
+//}
+//
+
+ 
+
 	
