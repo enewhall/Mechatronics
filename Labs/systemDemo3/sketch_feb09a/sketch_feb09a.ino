@@ -13,11 +13,23 @@ int enPin2 = 12;
 int toggle2 = 0;
 float stepDistance2 = 0.0;
 
+//Third Stepper Motor needed
+float IRDistance3 = 0.0;
+int stepPin3 = ?; 
+int dirPin3 = ?;
+int enPin3 = ?;
+int toggle3 = 0;
+float stepDistance3 = 0.0;
+
 //For our DC motor
 float potAngle = 0.0;
-//int DCMotorAngle = 0;
 int DCMotorPinA = 7;
 int DCMotorPinB = 8;
+
+//For our Second DC motor
+float potAngle2 = 0.0;
+int DCMotorPinA2 = ?;
+int DCMotorPinB2 = ?;
 
 //etc
 const int limitsw = 13;
@@ -37,6 +49,12 @@ boolean secondaryWrite = false;
 
 unsigned char trimaryValue = 1;
 boolean trimaryWrite = false;
+
+unsigned char Value4 = 0;
+boolean Write4 = false;
+
+unsigned char Value5 = 1;
+boolean Write5 = false;
 
 void setup() {
    Serial.begin(9600); 
@@ -98,7 +116,7 @@ void loop() {
   //Stepper Motor controlled by IR sensor
   IRDistance = (primaryValue*2.5)/(255*2.5); //approx distance in cm
   IRDistance2 = (secondaryValue*2.5)/(255*2.5);
-  
+  IRDistance3 = (Value4*2.5)/(255*2.5);
   //Motor 1
   if(stepDistance < IRDistance-.005 && IRDistance < 2.0){
      digitalWrite(enPin, LOW);
@@ -136,9 +154,7 @@ void loop() {
     digitalWrite(dirPin2, LOW);
   }
   
-  //DC Motor Implementation(TO DO)
- // if(digitalRead(limitsw) == LOW)
-  //{
+  //DC Motor Implementation
     switch(trimaryValue) {
       case 0:
         //turn left
@@ -154,26 +170,44 @@ void loop() {
         digitalWrite(DCMotorPinB,LOW);
       
     }
-  //}
-//  else
-//  {
-//        digitalWrite(DCMotorPinA,LOW);
-//        digitalWrite(DCMotorPinB,LOW);
-//  }
+    
+    //DC Motor2 Implementation
+    switch(Value5) {
+      case 0:
+        //turn left
+        digitalWrite(DCMotorPinA2,LOW);
+        digitalWrite(DCMotorPinB2,HIGH);
+        break;
+      case 1:
+        digitalWrite(DCMotorPinA2,LOW);
+        digitalWrite(DCMotorPinB2,LOW);
+        break;
+      case 2:
+        digitalWrite(DCMotorPinA2,HIGH);
+        digitalWrite(DCMotorPinB2,LOW);
+      
+    }
+    
+    //Motor 3
+  if(stepDistance3 < IRDistance3-.005 && IRDistance3 < 2.0){
+     digitalWrite(enPin3, LOW);
+     digitalWrite(dirPin3, HIGH);
+     toggle2 = (!toggle3) & 0x01;
+     digitalWrite(stepPin3, toggle3);
+     stepDistance3 += .001;
+  }else if(stepDistance3 > IRDistance3+.005 && IRDistance3 < 2.0){
+    digitalWrite(enPin3, LOW);
+    digitalWrite(dirPin3, LOW);
+    toggle2 = (!toggle3) & 0x01;
+    digitalWrite(stepPin3, toggle3);
+    stepDistance3 -= .001;
+  }
+  else {
+    digitalWrite(enPin3, HIGH);
+    digitalWrite(dirPin3, LOW);
+  }
   
-//  if(potAngle < DCMotorAngle - 8.0){
-//    digitalWrite(DCMotorPinA,LOW);
-//    digitalWrite(DCMotorPinB,HIGH);
-//  }else if(potAngle > DCMotorAngle + 8.0){
-//    digitalWrite(DCMotorPinA,HIGH);
-//    digitalWrite(DCMotorPinB,LOW);
-//  }else{
-//    digitalWrite(DCMotorPinA,LOW);
-//    digitalWrite(DCMotorPinB,LOW);
-//  }
   
-
-   //electro magnetism
    digitalWrite(elePin, ele);
   
   delay(1); //For fast speed

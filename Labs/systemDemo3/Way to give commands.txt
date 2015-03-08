@@ -1,0 +1,9 @@
+Method 1:
+
+Give state for each step of the overall command
+Have a boolean that says when the system finished moving and transition state.
+Parallitize each motor command individually
+
+pros:
+	best execution speed
+	
