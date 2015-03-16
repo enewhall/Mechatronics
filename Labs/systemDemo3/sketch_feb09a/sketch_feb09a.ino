@@ -55,15 +55,15 @@ void loop() {
   {
     serialValue = Serial.read();
     Wrote = updateWrite();
-    if( (Wrote == false) && ( 100 > (serialValue) >= 90) )
+    if( (Wrote == 0) && ( 100 > serialValue) &&  (serialValue >= 90) )
     {
       j = serialValue - 90; //get current index
       Write[j] = true;
     }
-    else if( (Wrote == false) && ( (serialValue) >= 100) )
+    else if( (Wrote == false) && ( 110 > serialValue) &&  (serialValue >= 100) )
     {
       j = serialValue - 100; //get current index
-      Write[j] = true;
+      DCWrite[j] = true;
     }
     else if( (Wrote == false) && ( (serialValue) == 50))
     {
@@ -140,7 +140,6 @@ boolean updateWrite()
         return true;
       }
     }
-    
     //DC Motor Case
     len = sizeof(DCWrite)/sizeof(boolean);
     for(j=0; j<len; j++)
@@ -151,7 +150,7 @@ boolean updateWrite()
         DCWrite[j] = false;
         return true;
       }
-    }
+    } 
   
     return false; //No writing required  
 }

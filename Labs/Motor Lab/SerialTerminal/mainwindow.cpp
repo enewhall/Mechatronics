@@ -214,7 +214,7 @@ void MainWindow::on_pushButton_2_clicked()
         ui->horizontalSlider_2->setEnabled(false);
         ui->horizontalSlider_3->setEnabled(false);
         state = false;
-        A[0] = 100;
+        A[0] = 80;
     }
     else
     {
@@ -223,7 +223,7 @@ void MainWindow::on_pushButton_2_clicked()
         ui->horizontalSlider_2->setEnabled(true);
         ui->horizontalSlider_3->setEnabled(true);
         state = true;
-        A[0] = 101;
+        A[0] = 81;
     }
 
     writeData(A);
@@ -239,7 +239,7 @@ void MainWindow::on_horizontalSlider_sliderReleased()
 {
     //update primary variable
     QByteArray A = QByteArray("ab");
-    A[0] = 30;
+    A[0] = 90;
     A[1] = ui->horizontalSlider->value();
     writeData(A);
     //ui->lineEdit->setText(QString::number(A[1]));
@@ -258,7 +258,7 @@ void MainWindow::on_horizontalSlider_2_sliderReleased()
 {
     //update secondary variable
     QByteArray A = QByteArray("ab");
-    A[0] = 80;
+    A[0] = 91;
     A[1] = ui->horizontalSlider_2->value();
     writeData(A);
     //ui->lineEdit->setText(QString::number(A[1]));
@@ -308,7 +308,7 @@ void MainWindow::on_horizontalSlider_3_sliderReleased()
 {
     //update third variable
     QByteArray A = QByteArray("ab");
-    A[0] = 90;
+    A[0] = 100;
     A[1] = ui->horizontalSlider_3->value();
     writeData(A);
 }
@@ -316,7 +316,7 @@ void MainWindow::on_horizontalSlider_3_sliderReleased()
 void MainWindow::on_horizontalSlider_3_valueChanged(int value)
 {
     QByteArray A = QByteArray("ab");
-    A[0] = 90;
-    A[1] = ui->horizontalSlider_3->value();
+    A[0] = 100;
+    A[1] = value;
     writeData(A);
 }
