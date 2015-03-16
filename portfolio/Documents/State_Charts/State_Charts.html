@@ -16,8 +16,248 @@ Michael O'Connor (mkoconno) <br>
 <hr style="width: 100%; height: 2px;">
 <h2>State Charts</h2>
 <br>
+<h3>1. Camera and Part Seperator</h3>
+<p>Controls:
+<ul>
+<li>vibration_motor</li>
+<li>conveyer_belt</li>
+<li>flipper_magnet</li>
+<li>flipper_servo</li>
+</ul></p>
+<img style="width: 661x; height: 206x;" alt="S1.png" src="S1.png"><br clear="left">
 <br>
+<table style="text-align: left; width: 525px; height: 172px;" border="1" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold; background-color: rgb(204, 204, 204);">Transition<br></td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204);"><span style="font-weight: bold;">Condition</span><br></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T1.1<br> </td>
+      <td style="vertical-align: top;">image_orientation == 3 || image_orientation == 4 </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T1.2</td>
+      <td style="vertical-align: top;">timing</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T1.3<br> </td>
+      <td style="vertical-align: top;">image_orientation == 1 || image_orientation == 2 </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T1.4</td>
+      <td style="vertical-align: top;">timing</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T1.5</td>
+      <td style="vertical-align: top;">timing</td>
+    </tr>
+  </tbody>
+</table>
 <br>
+<table style="text-align: left; width: 750px;" border="1" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold; background-color: rgb(204, 204, 204);">State<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold; background-color: rgb(204, 204, 204);">Description<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold; background-color: rgb(204, 204, 204);">Actions<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">S1.1 ACQUIRE_PART<br> </td>
+      <td style="vertical-align: top;">Move the conveyer belt until the next part can be seen</td>
+      <td style="vertical-align: top;">
+	vibration_motor = on<br>
+	conveyer_belt = on<br>
+	flipper_magnet = on<br>
+	flipper_servo = off<br>
+      </td>
+    </tr>
+   <tr>
+      <td style="vertical-align: top;">S1.2 NO_FLIP<br> </td>
+      <td style="vertical-align: top;">Get the part to pick up location</td>
+      <td style="vertical-align: top;">
+	vibration_motor = off<br>
+	conveyer_belt = off<br>
+	flipper_magnet = off<br>
+	flipper_servo = foward<br>
+      </td>
+    </tr>
+   <tr>
+      <td style="vertical-align: top;">S1.3 FLIP<br> </td>
+      <td style="vertical-align: top;">Flip the part to pick up location</td>
+      <td style="vertical-align: top;">
+	vibration_motor = off<br>
+	conveyer_belt = off<br>
+	flipper_magnet = on<br>
+	flipper_servo = foward<br>
+      </td>
+    </tr>
+   <tr>
+      <td style="vertical-align: top;">S1.4 RETURN_TO_NEUTRAL<br> </td>
+      <td style="vertical-align: top;">Move servo back to initial position</td>
+      <td style="vertical-align: top;">
+	vibration_motor = off<br>
+	conveyer_belt = off<br>
+	flipper_magnet = off<br>
+	flipper_servo = reverse<br>
+      </td>
+    </tr>
+      
+   </tbody>
+</table>
+
+
+
+
 <br>
+<h3>2. Part Placer</h3>
+<p>Controls:
+<ul>
+<li>placer_rail</li>
+<li>dc_rack</li>
+<li>placer_magnet</li>
+<li>placer_servo</li>
+<li>tray_rail</li>
+
+</ul></p>
+<img style="width: 661x; height: 206x;" alt="S2.png" src="S2.png"><br clear="left">
+<br>
+<table style="text-align: left; width: 525px; height: 172px;" border="1" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold; background-color: rgb(204, 204, 204);">Transition<br></td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204);"><span style="font-weight: bold;">Condition</span><br></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T2.1<br> </td>
+      <td style="vertical-align: top;">placer_loc == PICK_UP_LOC && image_orientation != 0</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T2.2</td>
+      <td style="vertical-align: top;">timing</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T2.3<br> </td>
+      <td style="vertical-align: top;">(image_orientation == 1 || image_orientation == 3) && placer_limit_switch == true</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T2.4</td>
+      <td style="vertical-align: top;">(image_orientation == 2 || image_orientation == 4) && placer_limit_switch == true</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T2.5</td>
+      <td style="vertical-align: top;">placer_loc == DROP_OFF_LOC </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T2.6</td>
+      <td style="vertical-align: top;">timing && tray_loc == TRAY_DROP_OFF</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T2.7</td>
+      <td style="vertical-align: top;">timing</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">T2.8</td>
+      <td style="vertical-align: top;">placer_limit_switch == true</td>
+    </tr>
+
+  </tbody>
+</table>
+<br>
+<table style="text-align: left; width: 850px;" border="1" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold; background-color: rgb(204, 204, 204);">State<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold; background-color: rgb(204, 204, 204);">Description<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold; background-color: rgb(204, 204, 204);">Actions<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">S2.1 GO_TO_PICK_UP<br> </td>
+      <td style="vertical-align: top;">move rail to pick up location by camera and wait for part</td>
+      <td style="vertical-align: top;">
+	placer_rail = move to pick up<br>
+	dc_rack = off<br>
+	placer_magnet = off<br>
+	placer_servo = off<br>
+	tray_rail = move to working pos<br>
+      </td>
+    </tr>
+   <tr>
+      <td style="vertical-align: top;">S2.2 EXTEND<br> </td>
+      <td style="vertical-align: top;">lower arm to grab part</td>
+      <td style="vertical-align: top;">
+	placer_rail = move to pick up<br>
+	dc_rack = lower<br>
+	placer_magnet = off<br>
+	placer_servo = off<br>
+	tray_rail = move to working pos<br>
+      </td>
+    </tr>
+   <tr>
+      <td style="vertical-align: top;">S2.3 RETRACT<br> </td>
+      <td style="vertical-align: top;">raise arm holding part</td>
+      <td style="vertical-align: top;">
+	placer_rail = move to pick up<br>
+	dc_rack = raise<br>
+	placer_magnet = on<br>
+	placer_servo = off<br>
+	tray_rail = move to working pos<br>
+      </td>
+    </tr>
+   <tr>
+      <td style="vertical-align: top;">S2.4 TWIST<br> </td>
+      <td style="vertical-align: top;">rotate arm 180 degrees to correct orientation</td>
+      <td style="vertical-align: top;">
+	placer_rail = move to pick up<br>
+	dc_rack = off<br>
+	placer_magnet = on<br>
+	placer_servo = on<br>
+	tray_rail = move to working pos<br>
+      </td>
+    </tr>
+   <tr>
+      <td style="vertical-align: top;">S2.5 GO_TO_DROP_OFF<br> </td>
+      <td style="vertical-align: top;">move tray and part placer to correct location</td>
+      <td style="vertical-align: top;">
+	placer_rail = move to drop off<br>
+	dc_rack = off<br>
+	placer_magnet = on<br>
+	placer_servo = off<br>
+	tray_rail = move to tray drop<br>
+      </td>
+    </tr>
+   <tr>
+      <td style="vertical-align: top;">S2.6 DROP_PART<br> </td>
+      <td style="vertical-align: top;">place part on tray</td>
+      <td style="vertical-align: top;">
+	placer_rail = move to drop off<br>
+	dc_rack = lower<br>
+	placer_magnet = on<br>
+	placer_servo = off<br>
+	tray_rail = move to tray drop<br>	
+      </td>
+    </tr>
+ <tr>
+      <td style="vertical-align: top;">S2.8 RESET<br> </td>
+      <td style="vertical-align: top;">place part on tray</td>
+      <td style="vertical-align: top;">
+	placer_rail = move to drop off<br>
+	dc_rack = raise<br>
+	placer_magnet = off<br>
+	placer_servo = off<br>
+	tray_rail = move to tray drop<br>	
+      </td>
+    </tr>      
+   </tbody>
+</table>
+
+
+
 </body>
 </html>
