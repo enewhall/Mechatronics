@@ -5,12 +5,14 @@ const int dirPin[] = {5, 10};
 const int enPin[] = {9, 12};
 int toggle[] = {0, 0};
 float stepDistance[] = {0.0, 0.0};
+boolean stepDone[] = {false, false}; //indicate if a stepper motor finished moving
 
 //For our DC motors
 int DCMotorPinA[] = {7};
 int DCMotorPinB[] = {8};
 
 //etc
+unsigned char psw = 0;
 const int limitsw = 13;
 const int elePin = 2;
 int ele = 0;
@@ -24,6 +26,20 @@ unsigned char DCValue[] = {1};
 boolean Write[] = {false, false};
 boolean DCWrite[] = {false};
 boolean Wrote = false; //Check if system wrote value
+
+//For calibration
+boolean calibrated = false; //must calibrate all pieces
+unsigned char cState = 0;
+boolean cDone = true; //indicates if all motors have moved to the proper place
+
+//Part Placer State setup(timing is questionable)
+unsigned char ppState = 0; //GO_TO_PICKUP
+unsigned char image_orientation = 0; //Invalid value to prevent state from transitioning too early
+boolean get_orientation = true; //must ensure the orientation is saved throughout the ppStates
+const float pickup_loc = 50;
+const float drop_loc = 0;
+
+
 
 void setup() {
    Serial.begin(9600); 
@@ -54,22 +70,146 @@ void loop() {
   if(Serial.available()) //Read value and decide what to do with it
   {
     serialValue = Serial.read();
-    Wrote = updateWrite();
-    if( (Wrote == 0) && ( 100 > serialValue) &&  (serialValue >= 90) )
+
+//Code for GUI: Do not Delete.    
+    
+//  Wrote = updateWrite();
+//      if( (Wrote == 0) && ( 100 > serialValue) &&  (serialValue >= 90) )
+//      {
+//        j = serialValue - 90; //get current index
+//        Write[j] = true;
+//      }
+//      else if( (Wrote == false) && ( 110 > serialValue) &&  (serialValue >= 100) )
+//      {
+//        j = serialValue - 100; //get current index
+//        DCWrite[j] = true;
+//      }
+//      else if( (Wrote == false) && ( (serialValue) == 50))
+//      {
+//        ele = (!ele) & 0x01;
+//      }
+
+//Code for raspberry communication.(can only have one ON at a time)
+    if(get_orientation)
     {
-      j = serialValue - 90; //get current index
-      Write[j] = true;
-    }
-    else if( (Wrote == false) && ( 110 > serialValue) &&  (serialValue >= 100) )
-    {
-      j = serialValue - 100; //get current index
-      DCWrite[j] = true;
-    }
-    else if( (Wrote == false) && ( (serialValue) == 50))
-    {
-      ele = (!ele) & 0x01;
+      image_orientation = serialValue - 30; //converts char number to number
+      get_orientation = false;
     }
   } //attributed sensor readings
+  
+  //Reading any other essential inputs
+  psw = digitalRead(limitsw);
+  
+  
+  //Implementation of calibration
+  
+  if(calibrated == false)
+  {
+    //perform calibration
+    switch(cState)
+    {
+      case 0: //pull DC up
+        DCValue[0] = 0; //Must verify this!!!!
+        if(psw == 1) //Must Verify this!!!
+        {
+          DCValue[0] = 1; //Stop the DC
+          cState = 1; //transition to next step
+          //set new coordinates
+          len = sizeof(stepPin)/sizeof(int);
+          for(j=0; j<len; j++)
+          {  
+            Value[j] = 255;
+          }
+        }
+        break;
+        
+      case 1: //Stepper goes to 255
+        len = sizeof(stepPin)/sizeof(int);
+        cDone = true;
+        for(j=0; j<len; j++)
+        {  
+          cDone = cDone && stepDone[j];
+        }
+        if(cDone) //all components are finished moving
+        {
+          cState = 2;
+          len = sizeof(stepPin)/sizeof(int);
+          for(j=0; j<len; j++)
+          {  
+            Value[j] = 0;
+          }
+        }
+        break;
+        
+      case 2: //Stepper goes to 0
+        len = sizeof(stepPin)/sizeof(int);
+        cDone = true;
+        for(j=0; j<len; j++)
+        {  
+          cDone = cDone && stepDone[j];
+        }
+        calibrated = cDone; //we are done!
+        break;
+              
+        
+    }
+  }
+  else
+  {
+    //implement all states here
+    //using cDone as a temporary variable on boolean checks
+    
+    //implementation of ppState
+    switch(ppState)
+    {
+      case 0: //GO_TO_PICKUP
+        cDone = (Value[1] == pickup_loc);
+        Value[1] = pickup_loc;
+        if(cDone && stepDone[1] && (image_orientation != 0)) 
+        { //the stepDone array has been updated and signals that the stepper finished moving and we got an orientation
+          ppState = 1; //T2.1         
+        }
+        break;
+      
+      case 1: //EXTEND
+        //implement timing directions
+      
+      case 2: //RETRACT
+        ele = 1; //turn on magnet
+        DCValue[0] = 0; //Ensure this is DC up
+        if(psw == 1) //Must Verify this!!!
+        {
+          DCValue[0] = 1; //Stop the DC
+          if(image_orientation == 1 || image_orientation == 3)
+          {
+            ppState = 4; //Go to Drop off
+          }
+          else if(image_orientation == 2 || image_orientation == 4)
+          {
+            ppState = 3;//perform twist
+          }
+        }
+        break;
+        
+      case 3: //TWIST
+        //implement servo directions
+      case 4: //GO_TO_DROP_OFF
+      case 5: //DROP_PART
+      case 6: //RESET
+      break;
+      
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  //Update each motor properly
 
   //Stepper Motor controlled by IR sensor
   len = sizeof(stepPin)/sizeof(int);
@@ -83,15 +223,18 @@ void loop() {
        toggle[j] = (!toggle[j]) & 0x01;
        digitalWrite(stepPin[j], toggle[j]);
        stepDistance[j] += .001;
+       stepDone[j] = false;
     }else if(stepDistance[j] > IRDistance[j]+.005 && IRDistance[j] < 2.0){
       digitalWrite(enPin[j], LOW);
       digitalWrite(dirPin[j], LOW);
       toggle[j] = (!toggle[j]) & 0x01;
       digitalWrite(stepPin[j], toggle[j]);
       stepDistance[j] -= .001;
+      stepDone[j] = false;
     }
     else {
       digitalWrite(enPin[j], HIGH);
+      stepDone[j] = true;
     }
   }
   
@@ -127,32 +270,32 @@ void loop() {
 }
 
 
-boolean updateWrite()
-{
-    //Stepper Case
-    len = sizeof(Write)/sizeof(boolean);
-    for(j=0; j<len; j++)
-    {
-      if(Write[j])
-      { //update value return true
-        Value[j] = serialValue;
-        Write[j] = false;
-        return true;
-      }
-    }
-    //DC Motor Case
-    len = sizeof(DCWrite)/sizeof(boolean);
-    for(j=0; j<len; j++)
-    {
-      if(DCWrite[j])
-      { //update value return true
-        DCValue[j] = serialValue;
-        DCWrite[j] = false;
-        return true;
-      }
-    } 
-  
-    return false; //No writing required  
-}
+//boolean updateWrite()
+//{
+//    //Stepper Case
+//    len = sizeof(Write)/sizeof(boolean);
+//    for(j=0; j<len; j++)
+//    {
+//      if(Write[j])
+//      { //update value return true
+//        Value[j] = serialValue;
+//        Write[j] = false;
+//        return true;
+//      }
+//    }
+//    //DC Motor Case
+//    len = sizeof(DCWrite)/sizeof(boolean);
+//    for(j=0; j<len; j++)
+//    {
+//      if(DCWrite[j])
+//      { //update value return true
+//        DCValue[j] = serialValue;
+//        DCWrite[j] = false;
+//        return true;
+//      }
+//    } 
+//  
+//    return false; //No writing required  
+//}
 
 
