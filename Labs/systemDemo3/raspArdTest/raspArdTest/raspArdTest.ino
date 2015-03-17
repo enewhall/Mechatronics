@@ -13,8 +13,10 @@ void loop()
       case '0':
         digitalWrite(ledPin, LOW);
         break;
-      default:
+      case '1':
         digitalWrite(ledPin, HIGH);
     }
   }
+  Serial.println("Hello World");
+  delay(2000);
 }
