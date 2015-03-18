@@ -32,12 +32,17 @@ boolean calibrated = false; //must calibrate all pieces
 unsigned char cState = 0;
 boolean cDone = true; //indicates if all motors have moved to the proper place
 
-//Part Placer State setup(timing is questionable)
+//Part Placer State setup
 unsigned char ppState = 0; //GO_TO_PICKUP
 unsigned char image_orientation = 0; //Invalid value to prevent state from transitioning too early
 boolean get_orientation = true; //must ensure the orientation is saved throughout the ppStates
 const float pickup_loc = 50;
 const float drop_loc = 0;
+const float tray_drop = 0;
+
+//For time keeping
+unsigned long time; //in millisecond
+const unsigned long motordelay = 400; //The time for motor to reach bottom
 
 
 
@@ -99,8 +104,6 @@ void loop() {
   
   //Reading any other essential inputs
   psw = digitalRead(limitsw);
-  
-  
   //Implementation of calibration
   
   if(calibrated == false)
@@ -167,12 +170,20 @@ void loop() {
         Value[1] = pickup_loc;
         if(cDone && stepDone[1] && (image_orientation != 0)) 
         { //the stepDone array has been updated and signals that the stepper finished moving and we got an orientation
-          ppState = 1; //T2.1         
+          ppState = 1; //T2.1
+          time = millis(); //reset timer         
         }
         break;
       
       case 1: //EXTEND
         //implement timing directions
+        DCValue[0] = 2; //should go down
+        if(millis() - time > motordelay)
+        {
+          DCValue[0] = 1; //stop
+          ppState = 2;
+        }
+        break;
       
       case 2: //RETRACT
         ele = 1; //turn on magnet
@@ -192,11 +203,39 @@ void loop() {
         break;
         
       case 3: //TWIST
-        //implement servo directions
-      case 4: //GO_TO_DROP_OFF
-      case 5: //DROP_PART
-      case 6: //RESET
-      break;
+        //implement timing directions
+        DCValue[0] = 2; //should go down
+        if(millis() - time > motordelay)
+        {
+          DCValue[0] = 1; //stop
+          ppState = 4;
+        }
+        break;
+        
+      case 4: //GO_TO_DROP_OFF(This section needs to account tray position TODO)
+        cDone = (Value[1] == drop_loc);
+        Value[1] = drop_loc;
+        Value[0] = tray_drop; //ensure
+        if(cDone && stepDone[1] && stepDone[0] && (image_orientation != 0)) 
+        { //the stepDone array has been updated and signals that the stepper finished moving and we got an orientation
+          ppState = 5; //T2.6         
+        }
+        break;
+        
+        
+      case 5: //DROP_PART(copy of extend state
+        //implement timing
+        ppState = 6;
+        break;
+      case 6: //RESET(copy of retract)
+        ele = 0; //turn off magnet
+        DCValue[0] = 0; //Ensure this is DC up
+        if(psw == 1) //Must Verify this!!!
+        {
+          DCValue[0] = 1; //Stop the DC
+          ppState = 0;
+        }
+        break;
       
     }
   }
