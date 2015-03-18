@@ -1,5 +1,5 @@
-//variables for the three Stepper Motor
-float IRDistance[] = {0.0, 0.0};
+ //variables for the three Stepper Motor
+float IRDistance[] = {0.0, 0.0}; //scale version of Value[]
 const int stepPin[] = {6, 4}; 
 const int dirPin[] = {5, 10};
 const int enPin[] = {9, 12};
@@ -21,7 +21,7 @@ unsigned int j = 0; //our temporary variable for selecting proper index
 unsigned int len; //length of iterating arrays
 
 unsigned char serialValue = 0;
-float Value[] = {0, 0}; //for GUI
+float Value[] = {0, 0}; //stepper motor value
 unsigned char DCValue[] = {1};
 boolean Write[] = {false, false};
 boolean DCWrite[] = {false};
@@ -42,7 +42,7 @@ const float tray_drop = 0;
 
 //For time keeping
 unsigned long time; //in millisecond
-const unsigned long motordelay = 400; //The time for motor to reach bottom
+const unsigned long motordelay = 300; //The time for motor to reach bottom
 
 
 
@@ -244,10 +244,6 @@ void loop() {
   
   
   
-  
-  
-  
-  
   //Update each motor properly
 
   //Stepper Motor controlled by IR sensor
@@ -336,5 +332,3 @@ void loop() {
 //  
 //    return false; //No writing required  
 //}
-
-
