@@ -1,4 +1,4 @@
- //variables for the three Stepper Motor
+ //variables for the Stepper Motors
 float IRDistance[] = {0.0, 0.0}; //scale version of Value[]
 const int stepPin[] = {6, 4}; 
 const int dirPin[] = {5, 10};
@@ -8,8 +8,11 @@ float stepDistance[] = {0.0, 0.0};
 boolean stepDone[] = {false, false}; //indicate if a stepper motor finished moving
 
 //For our DC motors
-int DCMotorPinA[] = {7};
-int DCMotorPinB[] = {8};
+const int DCMotorPinA[] = {7};
+const int DCMotorPinB[] = {8};
+
+//For our Servo motors
+const int servoPin[] = {13};
 
 //etc
 unsigned char psw = 0;
@@ -25,6 +28,8 @@ float Value[] = {0, 0}; //stepper motor value
 unsigned char DCValue[] = {1};
 boolean Write[] = {false, false};
 boolean DCWrite[] = {false};
+unsigned char servoValue[] = {0};
+boolean servoWrite[] = {false};
 boolean Wrote = false; //Check if system wrote value
 
 //For calibration
@@ -59,16 +64,22 @@ void setup() {
      pinMode(enPin[j],OUTPUT);
    }
    
-   pinMode(limitsw, INPUT);
    pinMode(elePin, OUTPUT);
    
    
-   len = sizeof(DCMotorPinA);
+   len = sizeof(DCMotorPinA)/sizeof(int);
    for(j=0; j<len; j++)
    {
      pinMode(DCMotorPinA[j], OUTPUT);
      pinMode(DCMotorPinB[j], OUTPUT);
    }
+   
+   len = sizeof(servoPin)/sizeof(char);
+   for(j=0; j<len; j++)
+   {
+     pinMode(servoPin[j], OUTPUT);
+   }
+   
 }
 
 void loop() { 
@@ -88,6 +99,11 @@ void loop() {
       {
         j = serialValue - 100; //get current index
         DCWrite[j] = true;
+      }
+      else if( (Wrote == false) && ( 120 > serialValue) &&  (serialValue >= 110) )
+      {
+        j = serialValue - 110;
+        servoWrite[j] = true;
       }
       else if( (Wrote == false) && ( (serialValue) == 50))
       {
@@ -295,9 +311,11 @@ void loop() {
   }
 
   //Servo Motor implementation
-      
-      primaryValue = sensorValue; // copy
-      analogWrite(servoPin,primaryValue);
+  len = sizeof(servoPin)/sizeof(char);
+   for(j=0; j<len; j++)
+   {
+     analogWrite(servoPin[j],servoValue[j]);
+   }
   
   
   // Write Pin
@@ -334,6 +352,18 @@ boolean updateWrite()
         return true;
       }
     } 
+    
+    //Servo Motor Case
+   len = sizeof(servoPin)/sizeof(char);
+   for(j=0; j<len; j++)
+   {
+     if(servoWrite[j])
+     {
+       servoValue[j] = serialValue;
+       servoWrite[j] = false;
+       return true;
+     }
+   }
   
     return false; //No writing required  
 }
