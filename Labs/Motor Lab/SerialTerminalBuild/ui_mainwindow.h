@@ -238,7 +238,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionDisconnect2->setToolTip(QApplication::translate("MainWindow", "Disconnect serial port 2", 0));
 #endif // QT_NO_TOOLTIP
-        pushButton->setText(QApplication::translate("MainWindow", "Send", 0));
+        pushButton->setText(QApplication::translate("MainWindow", "Test", 0));
 #ifndef QT_NO_STATUSTIP
         label->setStatusTip(QApplication::translate("MainWindow", "Input for primary", 0));
 #endif // QT_NO_STATUSTIP

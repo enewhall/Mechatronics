@@ -193,8 +193,12 @@ void MainWindow::initActionsConnections()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QByteArray mess;
-    mess.insert(0,ui->lineEdit->text());
+    //test the movement of two stepper motor
+    QByteArray mess = QByteArray("abcd");
+    mess[0] = 90;
+    mess[1] = 50;
+    mess[2] = 91;
+    mess[3] = 50;
     writeData(mess);
 }
 

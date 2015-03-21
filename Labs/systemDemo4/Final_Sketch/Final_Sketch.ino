@@ -294,7 +294,12 @@ void loop() {
     }
   }
 
-
+  //Servo Motor implementation
+      
+      primaryValue = sensorValue; // copy
+      analogWrite(servoPin,primaryValue);
+  
+  
   // Write Pin
   digitalWrite(elePin, ele);
   
