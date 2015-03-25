@@ -21,6 +21,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSlider>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
@@ -49,11 +50,12 @@ public:
     QSlider *horizontalSlider;
     QLabel *label;
     QPushButton *pushButton_2;
-    QSlider *horizontalSlider_2;
-    QLabel *label_2;
     QPushButton *pushButton_3;
     QSlider *horizontalSlider_3;
     QLabel *label_3;
+    QSlider *horizontalSlider_4;
+    QLabel *label_4;
+    QSpinBox *spinBox;
     QMenuBar *menuBar;
     QMenu *menuCalls;
     QMenu *menuTools;
@@ -135,28 +137,32 @@ public:
         pushButton_2 = new QPushButton(centralWidget);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
         pushButton_2->setGeometry(QRect(410, 100, 111, 23));
-        horizontalSlider_2 = new QSlider(centralWidget);
-        horizontalSlider_2->setObjectName(QStringLiteral("horizontalSlider_2"));
-        horizontalSlider_2->setEnabled(false);
-        horizontalSlider_2->setGeometry(QRect(570, 60, 160, 22));
-        horizontalSlider_2->setMaximum(210);
-        horizontalSlider_2->setOrientation(Qt::Horizontal);
-        label_2 = new QLabel(centralWidget);
-        label_2->setObjectName(QStringLiteral("label_2"));
-        label_2->setGeometry(QRect(580, 30, 121, 16));
         pushButton_3 = new QPushButton(centralWidget);
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
         pushButton_3->setGeometry(QRect(570, 100, 171, 23));
         horizontalSlider_3 = new QSlider(centralWidget);
         horizontalSlider_3->setObjectName(QStringLiteral("horizontalSlider_3"));
         horizontalSlider_3->setEnabled(false);
-        horizontalSlider_3->setGeometry(QRect(100, 130, 160, 22));
+        horizontalSlider_3->setGeometry(QRect(10, 130, 160, 22));
         horizontalSlider_3->setMaximum(2);
         horizontalSlider_3->setValue(1);
         horizontalSlider_3->setOrientation(Qt::Horizontal);
         label_3 = new QLabel(centralWidget);
         label_3->setObjectName(QStringLiteral("label_3"));
-        label_3->setGeometry(QRect(120, 100, 121, 16));
+        label_3->setGeometry(QRect(40, 100, 121, 16));
+        horizontalSlider_4 = new QSlider(centralWidget);
+        horizontalSlider_4->setObjectName(QStringLiteral("horizontalSlider_4"));
+        horizontalSlider_4->setEnabled(false);
+        horizontalSlider_4->setGeometry(QRect(200, 130, 160, 22));
+        horizontalSlider_4->setMaximum(255);
+        horizontalSlider_4->setOrientation(Qt::Horizontal);
+        label_4 = new QLabel(centralWidget);
+        label_4->setObjectName(QStringLiteral("label_4"));
+        label_4->setGeometry(QRect(230, 100, 101, 16));
+        spinBox = new QSpinBox(centralWidget);
+        spinBox->setObjectName(QStringLiteral("spinBox"));
+        spinBox->setGeometry(QRect(220, 30, 42, 22));
+        spinBox->setMaximum(9);
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -239,14 +245,18 @@ public:
         actionDisconnect2->setToolTip(QApplication::translate("MainWindow", "Disconnect serial port 2", 0));
 #endif // QT_NO_TOOLTIP
         pushButton->setText(QApplication::translate("MainWindow", "Test", 0));
+        lineEdit->setText(QString());
 #ifndef QT_NO_STATUSTIP
         label->setStatusTip(QApplication::translate("MainWindow", "Input for primary", 0));
 #endif // QT_NO_STATUSTIP
-        label->setText(QApplication::translate("MainWindow", "STEP1: Slider Number", 0));
+        label->setText(QApplication::translate("MainWindow", "Stepper Motor Slider", 0));
         pushButton_2->setText(QApplication::translate("MainWindow", "Use Slider Input", 0));
-        label_2->setText(QApplication::translate("MainWindow", "STEP2: Slide Number", 0));
         pushButton_3->setText(QApplication::translate("MainWindow", "Electromagnet ON/OFF", 0));
         label_3->setText(QApplication::translate("MainWindow", "DC MOTOR SLIDER", 0));
+        label_4->setText(QApplication::translate("MainWindow", "Servo Motor Slider", 0));
+#ifndef QT_NO_STATUSTIP
+        spinBox->setStatusTip(QApplication::translate("MainWindow", "The xth motor of that type", 0));
+#endif // QT_NO_STATUSTIP
         menuCalls->setTitle(QApplication::translate("MainWindow", "Calls", 0));
         menuTools->setTitle(QApplication::translate("MainWindow", "Tools", 0));
         menuHelp->setTitle(QApplication::translate("MainWindow", "Help", 0));

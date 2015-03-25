@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[28];
-    char stringdata[548];
+    char stringdata[549];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -47,16 +47,16 @@ QT_MOC_LITERAL(14, 160, 21), // "on_pushButton_clicked"
 QT_MOC_LITERAL(15, 182, 31), // "on_horizontalSlider_sliderMoved"
 QT_MOC_LITERAL(16, 214, 8), // "position"
 QT_MOC_LITERAL(17, 223, 23), // "on_pushButton_2_clicked"
-QT_MOC_LITERAL(18, 247, 33), // "on_horizontalSlider_2_sliderM..."
-QT_MOC_LITERAL(19, 281, 34), // "on_horizontalSlider_sliderRel..."
-QT_MOC_LITERAL(20, 316, 23), // "on_pushButton_3_clicked"
-QT_MOC_LITERAL(21, 340, 36), // "on_horizontalSlider_2_sliderR..."
-QT_MOC_LITERAL(22, 377, 27), // "on_actionConnect2_triggered"
-QT_MOC_LITERAL(23, 405, 30), // "on_actionDisconnect2_triggered"
-QT_MOC_LITERAL(24, 436, 33), // "on_horizontalSlider_3_sliderM..."
-QT_MOC_LITERAL(25, 470, 36), // "on_horizontalSlider_3_sliderR..."
-QT_MOC_LITERAL(26, 507, 34), // "on_horizontalSlider_3_valueCh..."
-QT_MOC_LITERAL(27, 542, 5) // "value"
+QT_MOC_LITERAL(18, 247, 34), // "on_horizontalSlider_sliderRel..."
+QT_MOC_LITERAL(19, 282, 23), // "on_pushButton_3_clicked"
+QT_MOC_LITERAL(20, 306, 27), // "on_actionConnect2_triggered"
+QT_MOC_LITERAL(21, 334, 30), // "on_actionDisconnect2_triggered"
+QT_MOC_LITERAL(22, 365, 33), // "on_horizontalSlider_3_sliderM..."
+QT_MOC_LITERAL(23, 399, 36), // "on_horizontalSlider_3_sliderR..."
+QT_MOC_LITERAL(24, 436, 34), // "on_horizontalSlider_3_valueCh..."
+QT_MOC_LITERAL(25, 471, 5), // "value"
+QT_MOC_LITERAL(26, 477, 36), // "on_horizontalSlider_4_sliderR..."
+QT_MOC_LITERAL(27, 514, 34) // "on_horizontalSlider_4_valueCh..."
 
     },
     "MainWindow\0openSerialPort\0\0closeSerialPort\0"
@@ -66,16 +66,15 @@ QT_MOC_LITERAL(27, 542, 5) // "value"
     "handleErrorTwo\0on_pushButton_clicked\0"
     "on_horizontalSlider_sliderMoved\0"
     "position\0on_pushButton_2_clicked\0"
-    "on_horizontalSlider_2_sliderMoved\0"
     "on_horizontalSlider_sliderReleased\0"
     "on_pushButton_3_clicked\0"
-    "on_horizontalSlider_2_sliderReleased\0"
     "on_actionConnect2_triggered\0"
     "on_actionDisconnect2_triggered\0"
     "on_horizontalSlider_3_sliderMoved\0"
     "on_horizontalSlider_3_sliderReleased\0"
     "on_horizontalSlider_3_valueChanged\0"
-    "value"
+    "value\0on_horizontalSlider_4_sliderReleased\0"
+    "on_horizontalSlider_4_valueChanged"
 };
 #undef QT_MOC_LITERAL
 
@@ -105,15 +104,15 @@ static const uint qt_meta_data_MainWindow[] = {
       14,    0,  136,    2, 0x08 /* Private */,
       15,    1,  137,    2, 0x08 /* Private */,
       17,    0,  140,    2, 0x08 /* Private */,
-      18,    1,  141,    2, 0x08 /* Private */,
-      19,    0,  144,    2, 0x08 /* Private */,
-      20,    0,  145,    2, 0x08 /* Private */,
-      21,    0,  146,    2, 0x08 /* Private */,
-      22,    0,  147,    2, 0x08 /* Private */,
+      18,    0,  141,    2, 0x08 /* Private */,
+      19,    0,  142,    2, 0x08 /* Private */,
+      20,    0,  143,    2, 0x08 /* Private */,
+      21,    0,  144,    2, 0x08 /* Private */,
+      22,    1,  145,    2, 0x08 /* Private */,
       23,    0,  148,    2, 0x08 /* Private */,
       24,    1,  149,    2, 0x08 /* Private */,
-      25,    0,  152,    2, 0x08 /* Private */,
-      26,    1,  153,    2, 0x08 /* Private */,
+      26,    0,  152,    2, 0x08 /* Private */,
+      27,    1,  153,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -128,15 +127,15 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int,   16,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void, QMetaType::Int,   16,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,   25,
     QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   16,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   27,
+    QMetaType::Void, QMetaType::Int,   25,
 
        0        // eod
 };
@@ -158,15 +157,15 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 9: _t->on_pushButton_clicked(); break;
         case 10: _t->on_horizontalSlider_sliderMoved((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 11: _t->on_pushButton_2_clicked(); break;
-        case 12: _t->on_horizontalSlider_2_sliderMoved((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 13: _t->on_horizontalSlider_sliderReleased(); break;
-        case 14: _t->on_pushButton_3_clicked(); break;
-        case 15: _t->on_horizontalSlider_2_sliderReleased(); break;
-        case 16: _t->on_actionConnect2_triggered(); break;
-        case 17: _t->on_actionDisconnect2_triggered(); break;
-        case 18: _t->on_horizontalSlider_3_sliderMoved((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 19: _t->on_horizontalSlider_3_sliderReleased(); break;
-        case 20: _t->on_horizontalSlider_3_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 12: _t->on_horizontalSlider_sliderReleased(); break;
+        case 13: _t->on_pushButton_3_clicked(); break;
+        case 14: _t->on_actionConnect2_triggered(); break;
+        case 15: _t->on_actionDisconnect2_triggered(); break;
+        case 16: _t->on_horizontalSlider_3_sliderMoved((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 17: _t->on_horizontalSlider_3_sliderReleased(); break;
+        case 18: _t->on_horizontalSlider_3_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 19: _t->on_horizontalSlider_4_sliderReleased(); break;
+        case 20: _t->on_horizontalSlider_4_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     }

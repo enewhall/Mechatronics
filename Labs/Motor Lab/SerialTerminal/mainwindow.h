@@ -79,13 +79,9 @@ private slots:
 
     void on_pushButton_2_clicked();
 
-    void on_horizontalSlider_2_sliderMoved(int position);
-
     void on_horizontalSlider_sliderReleased();
 
     void on_pushButton_3_clicked();
-
-    void on_horizontalSlider_2_sliderReleased();
 
     void on_actionConnect2_triggered();
 
@@ -96,6 +92,10 @@ private slots:
     void on_horizontalSlider_3_sliderReleased();
 
     void on_horizontalSlider_3_valueChanged(int value);
+
+    void on_horizontalSlider_4_sliderReleased();
+
+    void on_horizontalSlider_4_valueChanged(int value);
 
 private:
     void initActionsConnections();

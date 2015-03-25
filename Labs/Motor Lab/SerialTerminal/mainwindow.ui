@@ -54,6 +54,9 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
    <widget class="QSlider" name="horizontalSlider">
     <property name="enabled">
@@ -87,7 +90,7 @@
      <string>Input for primary</string>
     </property>
     <property name="text">
-     <string>STEP1: Slider Number</string>
+     <string>Stepper Motor Slider</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
@@ -101,38 +104,6 @@
     </property>
     <property name="text">
      <string>Use Slider Input</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="horizontalSlider_2">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>60</y>
-      <width>160</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>210</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>30</y>
-      <width>121</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>STEP2: Slide Number</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_3">
@@ -154,7 +125,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>10</x>
       <y>130</y>
       <width>160</width>
       <height>22</height>
@@ -173,7 +144,7 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>40</x>
       <y>100</y>
       <width>121</width>
       <height>16</height>
@@ -181,6 +152,54 @@
     </property>
     <property name="text">
      <string>DC MOTOR SLIDER</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="horizontalSlider_4">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>130</y>
+      <width>160</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>255</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>100</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Servo Motor Slider</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>30</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="statusTip">
+     <string>The xth motor of that type</string>
+    </property>
+    <property name="maximum">
+     <number>9</number>
     </property>
    </widget>
   </widget>
