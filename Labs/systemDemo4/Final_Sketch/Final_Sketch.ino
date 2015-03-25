@@ -1,3 +1,8 @@
+//Final Sketch.ino
+//Issue: must comment out all code for an individual motor type if there is no motor of that type.
+//For Example: if there are no servo pin, we must comment out all code involving servos.
+
+
  //variables for the Stepper Motors
 float IRDistance[] = {0.0, 0.0}; //scale version of Value[]
 const int stepPin[] = {6, 4}; 
@@ -87,174 +92,189 @@ void loop() {
   {
     serialValue = Serial.read();
 
-//Code for GUI: Do not Delete.    
-    
-  Wrote = updateWrite();
-      if( (Wrote == 0) && ( 100 > serialValue) &&  (serialValue >= 90) )
-      {
-        j = serialValue - 90; //get current index
-        Write[j] = true;
-      }
-      else if( (Wrote == false) && ( 110 > serialValue) &&  (serialValue >= 100) )
-      {
-        j = serialValue - 100; //get current index
-        DCWrite[j] = true;
-      }
-      else if( (Wrote == false) && ( 120 > serialValue) &&  (serialValue >= 110) )
-      {
-        j = serialValue - 110;
-        servoWrite[j] = true;
-      }
-      else if( (Wrote == false) && ( (serialValue) == 50))
-      {
-        ele = (!ele) & 0x01;
-      }
-
-////Code for raspberry communication.(can only have one ON at a time)
-//    if(get_orientation)
-//    {
-//      image_orientation = serialValue - 30; //converts char number to number
-//      get_orientation = false;
-//    }
+////Code for GUI: Do not Delete.    
+//    
+//  Wrote = updateWrite();
+//      if( (Wrote == 0) && ( 100 > serialValue) &&  (serialValue >= 90) )
+//      {
+//        j = serialValue - 90; //get current index
+//        Write[j] = true;
+//      }
+//      else if( (Wrote == false) && ( 110 > serialValue) &&  (serialValue >= 100) )
+//      {
+//        j = serialValue - 100; //get current index
+//        DCWrite[j] = true;
+//      }
+//      else if( (Wrote == false) && ( 120 > serialValue) &&  (serialValue >= 110) )
+//      {
+//        j = serialValue - 110;
+//        servoWrite[j] = true;
+//      }
+//      else if( (Wrote == false) && ( (serialValue) == 50))
+//      {
+//        ele = (!ele) & 0x01;
+//      }
+//
+//Code for computer vision communication.(can only have one ON at a time)
+    if(get_orientation)
+    {
+      image_orientation = serialValue - 30; //converts char number to number
+      get_orientation = false;
+    }
   } //attributed sensor readings
   
   //Reading any other essential inputs
   psw = digitalRead(limitsw);
   //Implementation of calibration
   
-//  if(calibrated == false)
-//  {
-//    //perform calibration
-//    switch(cState)
-//    {
-//      case 0: //pull DC up
-//        DCValue[0] = 0; //Must verify this!!!!
-//        if(psw == 1) //Must Verify this!!!
-//        {
-//          DCValue[0] = 1; //Stop the DC
-//          cState = 1; //transition to next step
-//          //set new coordinates
-//          len = sizeof(stepPin)/sizeof(int);
-//          for(j=0; j<len; j++)
-//          {  
-//            Value[j] = 255;
-//          }
-//        }
-//        break;
-//        
-//      case 1: //Stepper goes to 255
-//        len = sizeof(stepPin)/sizeof(int);
-//        cDone = true;
-//        for(j=0; j<len; j++)
-//        {  
-//          cDone = cDone && stepDone[j];
-//        }
-//        if(cDone) //all components are finished moving
-//        {
-//          cState = 2;
-//          len = sizeof(stepPin)/sizeof(int);
-//          for(j=0; j<len; j++)
-//          {  
-//            Value[j] = 0;
-//          }
-//        }
-//        break;
-//        
-//      case 2: //Stepper goes to 0
-//        len = sizeof(stepPin)/sizeof(int);
-//        cDone = true;
-//        for(j=0; j<len; j++)
-//        {  
-//          cDone = cDone && stepDone[j];
-//        }
-//        calibrated = cDone; //we are done!
-//        break;
-//              
-//        
-//    }
-//  }
-//  else
-//  {
-//    //implement all states here
-//    //using cDone as a temporary variable on boolean checks
-//    
-//    //implementation of ppState
-//    switch(ppState)
-//    {
-//      case 0: //GO_TO_PICKUP
-//        cDone = (Value[1] == pickup_loc);
-//        Value[1] = pickup_loc;
-//        if(cDone && stepDone[1] && (image_orientation != 0)) 
-//        { //the stepDone array has been updated and signals that the stepper finished moving and we got an orientation
-//          ppState = 1; //T2.1
-//          time = millis(); //reset timer         
-//        }
-//        break;
-//      
-//      case 1: //EXTEND
-//        //implement timing directions
-//        DCValue[0] = 2; //should go down
-//        if(millis() - time > motordelay)
-//        {
-//          DCValue[0] = 1; //stop
-//          ppState = 2;
-//        }
-//        break;
-//      
-//      case 2: //RETRACT
-//        ele = 1; //turn on magnet
-//        DCValue[0] = 0; //Ensure this is DC up
-//        if(psw == 1) //Must Verify this!!!
-//        {
-//          DCValue[0] = 1; //Stop the DC
-//          if(image_orientation == 1 || image_orientation == 3)
-//          {
-//            ppState = 4; //Go to Drop off
-//          }
-//          else if(image_orientation == 2 || image_orientation == 4)
-//          {
-//            ppState = 3;//perform twist
-//          }
-//        }
-//        break;
-//        
-//      case 3: //TWIST
-//        //implement timing directions
-//        DCValue[0] = 2; //should go down
-//        if(millis() - time > motordelay)
-//        {
-//          DCValue[0] = 1; //stop
-//          ppState = 4;
-//        }
-//        break;
-//        
-//      case 4: //GO_TO_DROP_OFF(This section needs to account tray position TODO)
-//        cDone = (Value[1] == drop_loc);
-//        Value[1] = drop_loc;
-//        Value[0] = tray_drop; //ensure
-//        if(cDone && stepDone[1] && stepDone[0] && (image_orientation != 0)) 
-//        { //the stepDone array has been updated and signals that the stepper finished moving and we got an orientation
-//          ppState = 5; //T2.6         
-//        }
-//        break;
-//        
-//        
-//      case 5: //DROP_PART(copy of extend state
-//        //implement timing
-//        ppState = 6;
-//        break;
-//      case 6: //RESET(copy of retract)
-//        ele = 0; //turn off magnet
-//        DCValue[0] = 0; //Ensure this is DC up
-//        if(psw == 1) //Must Verify this!!!
-//        {
-//          DCValue[0] = 1; //Stop the DC
-//          ppState = 0;
-//        }
-//        break;
-//      
-//    }
-//  }
+  if(calibrated == false)
+  {
+    //perform calibration
+    switch(cState)
+    {
+      case 0: //pull DC up
+        DCValue[0] = 0; //Must verify this!!!!
+        if(psw == 1) //Must Verify this!!!
+        {
+          DCValue[0] = 1; //Stop the DC
+          cState = 1; //transition to next step
+          //set new coordinates
+          len = sizeof(stepPin)/sizeof(int);
+          for(j=0; j<len; j++)
+          {  
+            Value[j] = 255;
+          }
+        }
+        break;
+        
+      case 1: //Stepper goes to 255
+        len = sizeof(stepPin)/sizeof(int);
+        cDone = true;
+        for(j=0; j<len; j++)
+        {  
+          cDone = cDone && stepDone[j];
+        }
+        if(cDone) //all components are finished moving
+        {
+          cState = 2;
+          len = sizeof(stepPin)/sizeof(int);
+          for(j=0; j<len; j++)
+          {  
+            Value[j] = 0;
+          }
+        }
+        break;
+        
+      case 2: //Stepper goes to 0
+        len = sizeof(stepPin)/sizeof(int);
+        cDone = true;
+        for(j=0; j<len; j++)
+        {  
+          cDone = cDone && stepDone[j];
+        }
+        calibrated = cDone; //we are done!
+        break;
+              
+        
+    }
+  }
+  else
+  {
+    //implement all states here
+    //using cDone as a temporary variable on boolean checks
+    
+    //implementation of ppState
+    switch(ppState)
+    {
+      case 0: //GO_TO_PICKUP
+        cDone = (Value[1] == pickup_loc);
+        Value[1] = pickup_loc; 
+        if(cDone && stepDone[1] && (image_orientation != 0)) 
+        { //the stepDone array has been updated and signals that the stepper finished moving and we got an orientation
+          ppState = 1; //T2.1
+          time = millis(); //reset timer         
+        }
+        break;
+      
+      case 1: //EXTEND
+        //implement timing directions
+        DCValue[0] = 2; //should go down
+        if(millis() - time > motordelay)
+        {
+          DCValue[0] = 1; //stop
+          ppState = 2;
+        }
+        break;
+      
+      case 2: //RETRACT
+        ele = 1; //turn on magnet
+        DCValue[0] = 0; //Ensure this is DC up
+        if(psw == 1) //Must Verify this!!!
+        {
+          DCValue[0] = 1; //Stop the DC
+          if(image_orientation == 1 || image_orientation == 3)
+          {
+            ppState = 4; //Go to Drop off
+          }
+          else if(image_orientation == 2 || image_orientation == 4)
+          {
+            ppState = 3;//perform twist
+          }
+        }
+        break;
+        
+      case 3: //TWIST
+        //implement timing directions
+        DCValue[0] = 2; //should go down
+        if(millis() - time > motordelay)
+        {
+          DCValue[0] = 1; //stop
+          ppState = 4;
+        }
+        break;
+        
+      case 4: //GO_TO_DROP_OFF(This section needs to account tray position TODO)
+        cDone = (Value[1] == drop_loc);
+        Value[1] = drop_loc;
+        Value[0] = tray_drop; //ensure
+        if(cDone && stepDone[1] && stepDone[0] && (image_orientation != 0)) 
+        { //the stepDone array has been updated and signals that the stepper finished moving and we got an orientation
+          ppState = 5; //T2.6
+          time = millis();         
+        }
+        break;
+        
+        
+      case 5: //DROP_PART(copy of extend state
+        //implement timing
+        ppState = 6;
+        DCValue[0] = 2; //should go down
+        if(millis() - time > motordelay)
+        {
+          DCValue[0] = 1; //stop
+          ppState = 2;
+        }
+        break;
+        
+      case 6: //RESET(copy of retract)
+        ele = 0; //turn off magnet
+        DCValue[0] = 0; //Ensure this is DC up
+        if(psw == 1) //Must Verify this!!!
+        {
+          DCValue[0] = 1; //Stop the DC
+          ppState = 0;
+          get_orientation = true;
+        }
+        break;
+      
+    }
+    
+    
+    //additional state control
+    
+    
+    
+  }
   
   
   
@@ -314,7 +334,9 @@ void loop() {
   len = sizeof(servoPin)/sizeof(char);
    for(j=0; j<len; j++)
    {
+     
      analogWrite(servoPin[j],servoValue[j]);
+     //ensure it finished moving
    }
   
   

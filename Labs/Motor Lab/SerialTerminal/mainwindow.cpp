@@ -215,8 +215,8 @@ void MainWindow::on_pushButton_2_clicked()
     {
         ui->pushButton_2->setText("Use Slider Input");
         ui->horizontalSlider->setEnabled(false);
-        ui->horizontalSlider_2->setEnabled(false);
         ui->horizontalSlider_3->setEnabled(false);
+        ui->horizontalSlider_4->setEnabled(false);
         state = false;
         A[0] = 80;
     }
@@ -224,8 +224,8 @@ void MainWindow::on_pushButton_2_clicked()
     {
         ui->pushButton_2->setText("Use Sensor Input");
         ui->horizontalSlider->setEnabled(true);
-        ui->horizontalSlider_2->setEnabled(true);
         ui->horizontalSlider_3->setEnabled(true);
+        ui->horizontalSlider_4->setEnabled(true);
         state = true;
         A[0] = 81;
     }
@@ -234,16 +234,11 @@ void MainWindow::on_pushButton_2_clicked()
     //ui->lineEdit->setText(QString::number(A[0]));
 }
 
-void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
-{
-    ui->label_2->setText(QString::number(position));
-}
-
 void MainWindow::on_horizontalSlider_sliderReleased()
 {
     //update primary variable
     QByteArray A = QByteArray("ab");
-    A[0] = 90;
+    A[0] = 90 + ui->spinBox->value();
     A[1] = ui->horizontalSlider->value();
     writeData(A);
     //ui->lineEdit->setText(QString::number(A[1]));
@@ -256,16 +251,6 @@ void MainWindow::on_pushButton_3_clicked()
     A[0] = 50;
     writeData(A);
 
-}
-
-void MainWindow::on_horizontalSlider_2_sliderReleased()
-{
-    //update secondary variable
-    QByteArray A = QByteArray("ab");
-    A[0] = 91;
-    A[1] = ui->horizontalSlider_2->value();
-    writeData(A);
-    //ui->lineEdit->setText(QString::number(A[1]));
 }
 
 void MainWindow::on_actionConnect2_triggered()
@@ -312,7 +297,7 @@ void MainWindow::on_horizontalSlider_3_sliderReleased()
 {
     //update third variable
     QByteArray A = QByteArray("ab");
-    A[0] = 100;
+    A[0] = 100+ui->spinBox->value();
     A[1] = ui->horizontalSlider_3->value();
     writeData(A);
 }
@@ -320,7 +305,25 @@ void MainWindow::on_horizontalSlider_3_sliderReleased()
 void MainWindow::on_horizontalSlider_3_valueChanged(int value)
 {
     QByteArray A = QByteArray("ab");
-    A[0] = 100;
+    A[0] = 100+ui->spinBox->value();
+    A[1] = value;
+    writeData(A);
+}
+
+void MainWindow::on_horizontalSlider_4_sliderReleased()
+{
+    //update third variable
+    QByteArray A = QByteArray("ab");
+    A[0] = 110+ui->spinBox->value();
+    A[1] = ui->horizontalSlider_3->value();
+    writeData(A);
+}
+
+
+void MainWindow::on_horizontalSlider_4_valueChanged(int value)
+{
+    QByteArray A = QByteArray("ab");
+    A[0] = 110+ui->spinBox->value();
     A[1] = value;
     writeData(A);
 }
