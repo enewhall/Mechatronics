@@ -16,6 +16,15 @@ boolean stepDone[] = {false, false}; //indicate if a stepper motor finished movi
 const int DCMotorPinA[] = {7};
 const int DCMotorPinB[] = {8};
 
+//Encoder test run
+const int encoderAPin = 2;
+const int encoderBPin = 3;
+int encoderAValue = 0;
+int encoderAPrev = 0;
+int encoderBValue = 0;
+int encoderBPrev = 0;
+int DCMotorAngle = 0;
+
 //For our Servo motors
 const int servoPin[] = {13};
 
@@ -84,6 +93,9 @@ void setup() {
    {
      pinMode(servoPin[j], OUTPUT);
    }
+   
+   attachInterrupt(0, PinA, CHANGE);
+   attachInterrupt(1, PinB, CHANGE);
    
 }
 
@@ -388,4 +400,49 @@ boolean updateWrite()
    }
   
     return false; //No writing required  
+}
+
+//interrupt handling
+void PinA(){
+   encoderAPrev = encoderAValue;
+   encoderAValue = digitalRead(encoderAPin);
+  if(encoderAPrev){
+    if(encoderBPrev){
+      //counterclockwise
+      DCMotorAngle -= 4;
+    } else{
+      //clockwise
+      DCMotorAngle += 4;
+    }  
+  }else{
+    if(encoderBPrev){
+      //clockwise
+      DCMotorAngle += 4;
+    } else{
+      //counterclockwise
+      DCMotorAngle -= 4;
+    }
+  } 
+}
+
+void PinB(){
+   encoderBPrev = encoderBValue;
+   encoderBValue = digitalRead(encoderBPin);
+  if(encoderBPrev){
+    if(encoderAPrev){
+      //clockwise
+      DCMotorAngle += 4;
+    } else{
+      //counterclockwise
+      DCMotorAngle -= 4;
+    }  
+  }else{
+    if(encoderAPrev){
+      //counterclockwise
+      DCMotorAngle -= 4;
+    } else{
+      //clockwise
+      DCMotorAngle += 4;
+    }
+  } 
 }
