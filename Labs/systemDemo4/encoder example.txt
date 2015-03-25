@@ -1,0 +1,72 @@
+
+int encoderAPin = 2;
+int encoderBPin = 3;
+int encoderAValue = 0;
+int encoderAPrev = 0;
+int encoderBValue = 0;
+int encoderBPrev = 0;
+
+int DCMotorAngle = 0;
+
+void setup() {
+   Serial.begin(9600);
+   
+   pinMode(encoderAPin,INPUT);
+   pinMode(encoderBPin,INPUT);
+   
+
+  attachInterrupt(0, PinA, CHANGE);
+  attachInterrupt(1, PinB, CHANGE);
+
+   
+}
+
+void loop() { 
+  Serial.println(DCMotorAngle); 
+  delay(1000);
+}
+
+
+void PinA(){
+   encoderAPrev = encoderAValue;
+   encoderAValue = digitalRead(encoderAPin);
+  if(encoderAPrev){
+    if(encoderBPrev){
+      //counterclockwise
+      DCMotorAngle -= 1;
+    } else{
+      //clockwise
+      DCMotorAngle += 1;
+    }  
+  }else{
+    if(encoderBPrev){
+      //clockwise
+      DCMotorAngle += 1;
+    } else{
+      //counterclockwise
+      DCMotorAngle -= 1;
+    }
+  } 
+}
+
+void PinB(){
+   encoderBPrev = encoderBValue;
+   encoderBValue = digitalRead(encoderBPin);
+  if(encoderBPrev){
+    if(encoderAPrev){
+      //clockwise
+      DCMotorAngle += 1;
+    } else{
+      //counterclockwise
+      DCMotorAngle -= 1;
+    }  
+  }else{
+    if(encoderAPrev){
+      //counterclockwise
+      DCMotorAngle -= 1;
+    } else{
+      //clockwise
+      DCMotorAngle += 1;
+    }
+  } 
+}
