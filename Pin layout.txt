@@ -1,0 +1,27 @@
+Servo Motor:
+
+Servo pin: 9,10
+
+
+Encoders:
+
+Encoder Pin A: 2, 21, 19
+Encoder Pin B: 3, 20, 18
+
+Stepper Motors:
+
+Step Pin:	25-29
+Enable Pin:	30-34
+Direction Pin:	35-39
+
+DC Motors with Encoders:
+
+Motor Pin A: 40, 41, 42
+Motor Pin B: 43, 44, 45
+
+DC Motors with no Encoders(hopefully none):
+
+Motor Pin A: 46-49
+Motor Pin B: 50-53
+
+
