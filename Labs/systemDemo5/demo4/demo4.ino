@@ -9,7 +9,7 @@ int step_pin = 9;
 
 int numSteps = 0;
 
-Stepper motor(6400,step_pin,0);
+Stepper motor = Stepper(6400,step_pin,0);
 
 void setup(){
   Serial.begin(9600);
@@ -17,13 +17,15 @@ void setup(){
   pinMode(step_pin,OUTPUT); 
   pinMode(dir_pin,OUTPUT);
   motor.setSpeed(5);
+  delay(2000);
 }
 
 void loop(){
   digitalWrite(enable_pin,LOW);
   digitalWrite(dir_pin,LOW);
   motor.step(608);
-  delay(1000);
+  digitalWrite(enable_pin, HIGH);
+  delay(5000);
     
 }
 

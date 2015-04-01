@@ -2,8 +2,12 @@ Servo Motor:
 
 Servo pin: 9,10
 
+DC Motors:
 
-Encoders:
+Motor Pin A: 46-48
+Motor Pin B: 50-52
+
+Encoders for DC Motors:
 
 Encoder Pin A: 2, 21, 19
 Encoder Pin B: 3, 20, 18
@@ -14,14 +18,8 @@ Step Pin:	25-29
 Enable Pin:	30-34
 Direction Pin:	35-39
 
-DC Motors with Encoders:
+pins for other part needed(like electromagnet and limit switches)
 
-Motor Pin A: 40, 41, 42
-Motor Pin B: 43, 44, 45
 
-DC Motors with no Encoders(hopefully none):
-
-Motor Pin A: 46-49
-Motor Pin B: 50-53
 
 
