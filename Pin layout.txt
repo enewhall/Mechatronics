@@ -4,19 +4,19 @@ Servo pin: 9,10
 
 DC Motors:
 
-Motor Pin A: 46-48
-Motor Pin B: 50-52
+Motor Pin A: 46(close) //Must fix
+Motor Pin B: 48 // Must fix
 
 Encoders for DC Motors:
 
 Encoder Pin A: 2, 21, 19
 Encoder Pin B: 3, 20, 18
 
-Stepper Motors:
+Stepper Motors(part Placer, tray, Flux Stepper):
 
-Step Pin:	25-29
-Enable Pin:	30-34
-Direction Pin:	35-39
+Step Pin:	47, 53, 41, 26
+Enable Pin:	45, 51, 39, 24
+Direction Pin:	43, 49, 37, 22
 
 pins for other part needed(like electromagnet and limit switches)
 
