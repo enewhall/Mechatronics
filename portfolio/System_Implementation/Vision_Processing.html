@@ -25,9 +25,36 @@ Michael O'Connor (mkoconno) <br>
 </ol>
 
 <h2>Vision Processing Implementation</h2>
-<br>
-<br>
+
+
+
+
+
+<p>The vision processing captures a side profile of the part to analyze and determine the <br>
+orientation of the part.  The code is writen python and uses the Open CV and Serial communications<br>
+libraries.  The first step in the process is to capture the image frame by frame.  The image is <br>
+then converted to grayscale.  Then a threshold is applied to convert the image to black and <br>
+white.  At this point the part can be see as all black against an all white back ground.</p>
+
+
+<img src="template1.png">
+
+
+
+<p>The part is then template matched against four different templates.  Each template represents<br>
+the part in one of the four different orientations.  If the correlation from template matching is <br>
+very low then it is assumed that there is no part.  Otherwise, the template with the largest <br>
+correlation is the part orientation.  The proccess runs at around 1 Hz.  Each iteration a seial<br>
+message is sent to the Arduino with the most recent information on part orrientation.</p>
+
+<a href="code/get_BW_image.pi">Code for Vision Processing</a><br><br>
+
+
+
+
 <a href="../System_Design/Vision_Processing.html">Vision Processing Design</a>
+
+
 <br><br>
 </body>
 </html>
