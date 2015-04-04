@@ -25,8 +25,16 @@ Michael O'Connor (mkoconno) <br>
 </ol>
 
 <h2>Tray Positioner Implementation</h2>
-<br>
-<br>
+<p>The tray system works with the part placer and flux and wire systems to allow for <br>
+movement in two axis of motion.  The tray system consists of only a single stepper motor<br>
+which drives a timing belt to move the tray.  The aluminium tray which the parts rest <br>
+on lies above an acrylic tray which is connected to the timing belt on each end.  The <br>
+Stepper motor is controlled by a stepper motor driver and the Arduino Stepper class which<br>
+allows for precise control in the movements of the tray.  Currently the tray is operating<br>
+at full steps, but if greater precision becomes need the step size can be decreased.
+
+</p>
+
 <a href="../System_Design/Tray_Positioner.html">Tray Positioner Design</a>
 <br><br>
 </body>
