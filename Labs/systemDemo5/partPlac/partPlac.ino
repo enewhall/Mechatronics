@@ -1,9 +1,11 @@
 #include <Stepper.h>
 #include <Servo.h>
+#include <Encoder.h>
+#define ENCODER_OPTIMIZE_INTERRUPTS
 
 //Servo control
 const int servoPin = 10;
-
+const int holdUp = 93;
 //Steppper
 const int enPin = 45;
 const int stepPin = 47;
@@ -26,21 +28,19 @@ const int wirefeederPin = 12;
 //Wire Cutter
 const int encoderAPin = 2;
 const int encoderBPin = 3;
-int encoderAValue = 0;
-int encoderAPrev = 0;
-int encoderBValue = 0;
-int encoderBPrev = 0;
-
-int DCMotorAngle = 0;
+Encoder myEnc = Encoder(2, 3);
+Encoder fluxEnc = Encoder(21, 20);
 const int DCMotorPinA = 46;
 const int DCMotorPinB = 48;
+const int fluxDCPinA = 30; //down
+const int fluxDCPinB = 28; //up
 
 
 
 //magnet
 const int magnetPin = 11;
 
-int s = 0;
+int s = 8;
 
 Stepper partStep = Stepper(400, stepPin, 0);
 
@@ -55,10 +55,10 @@ Servo partServo;
 void setup() {
   // put your setup code here, to run once:
   
-//  Serial.begin(9600);
-//  while (!Serial) { //Copy
-//    ; // wait for serial port to connect. Needed for Leonardo only
-//  }
+  Serial.begin(9600);
+  while (!Serial) { //Copy
+    ; // wait for serial port to connect. Needed for Leonardo only
+  }
   
   
   
@@ -83,6 +83,8 @@ void setup() {
   pinMode(wirefeederPin, OUTPUT);
   pinMode(DCMotorPinA, OUTPUT);
   pinMode(DCMotorPinB, OUTPUT); 
+  pinMode(fluxDCPinA, OUTPUT);
+  pinMode(fluxDCPinB, OUTPUT);
   partStep.setSpeed(100);
   trayStep.setSpeed(200);
   revStep.setSpeed(5);
@@ -92,10 +94,11 @@ void setup() {
   digitalWrite(enPin2, HIGH);
   digitalWrite(enPin3, HIGH);
   digitalWrite(enPin4, HIGH);
-  partServo.write(90);
-  
-  attachInterrupt(0, PinA, CHANGE);
-  attachInterrupt(1, PinB, CHANGE);
+  partServo.write(150); //calibration
+  delay(200);
+  partServo.write(holdUp); //Hold speed
+  //attachInterrupt(0, PinA, CHANGE);
+  //attachInterrupt(1, PinB, CHANGE);
   
 }
 
@@ -116,7 +119,7 @@ void loop() {
      digitalWrite(magnetPin, HIGH);
      partServo.write(45);
      delay(300);
-     partServo.write(90);
+     partServo.write(holdUp);
      s = 2;
      break;
      
@@ -124,7 +127,7 @@ void loop() {
      delay(50);
      partServo.write(135);
      delay(300);
-     partServo.write(90);
+     partServo.write(holdUp);
      s = 3;
      break;
      
@@ -139,7 +142,7 @@ void loop() {
    case 4:
      partServo.write(45);
      delay(300);
-     partServo.write(90);
+     partServo.write(holdUp);
      digitalWrite(magnetPin, LOW);
      s = 5;
      break;
@@ -148,7 +151,7 @@ void loop() {
      delay(50);
      partServo.write(135);
      delay(300);
-     partServo.write(90);
+     partServo.write(holdUp);
      s = 6;
      break;
      
@@ -172,7 +175,8 @@ void loop() {
    case 8:
      digitalWrite(DCMotorPinA, HIGH);
      digitalWrite(DCMotorPinB, LOW);
-     if(DCMotorAngle >= 1650)
+     Serial.println(myEnc.read());
+     if(myEnc.read() >= 500)
      {
         digitalWrite(DCMotorPinA, LOW);
         digitalWrite(DCMotorPinB, LOW);   
@@ -183,11 +187,11 @@ void loop() {
    case 9:
      digitalWrite(DCMotorPinA, LOW);
      digitalWrite(DCMotorPinB, HIGH);
-     if(DCMotorAngle <= 500)
+     if(myEnc.read() <= 29)
      {
         digitalWrite(DCMotorPinA, LOW);
         digitalWrite(DCMotorPinB, LOW);   
-        s = 10;
+        s = 11;
      } 
      break;
      
@@ -201,11 +205,27 @@ void loop() {
      
      
    case 11:
-     digitalWrite(enPin3,LOW);
-     digitalWrite(dirPin3,LOW);
-     revStep.step(608);
-     digitalWrite(enPin3, HIGH);
-     delay(200);
+   //Serial.println(fluxEnc.read());
+//     digitalWrite(enPin3,LOW);
+//     digitalWrite(dirPin3,LOW);
+//     revStep.step(608);
+//     digitalWrite(enPin3, HIGH);
+//     delay(200);
+     break;
+     
+   case 12:
+     digitalWrite(fluxDCPinA, HIGH);
+     digitalWrite(fluxDCPinB, LOW);
+     delay(90);   
+     s = 11;
+     digitalWrite(fluxDCPinA, LOW);
+     digitalWrite(fluxDCPinB, LOW);
+     delay(100);
+     digitalWrite(fluxDCPinA, LOW);
+     digitalWrite(fluxDCPinB, HIGH);
+     delay(20);
+     digitalWrite(fluxDCPinA, LOW);
+     digitalWrite(fluxDCPinB, LOW);
      break;
      
      
@@ -218,49 +238,60 @@ void loop() {
 }
 
 
-
-void PinA(){
-   encoderAPrev = encoderAValue;
-   encoderAValue = digitalRead(encoderAPin);
-  if(encoderAPrev){
-    if(encoderBPrev){
-      //counterclockwise
-      DCMotorAngle -= 1;
-    } else{
-      //clockwise
-      DCMotorAngle += 1;
-    }  
-  }else{
-    if(encoderBPrev){
-      //clockwise
-      DCMotorAngle += 1;
-    } else{
-      //counterclockwise
-      DCMotorAngle -= 1;
-    }
-  }
-   
-}
-
-void PinB(){
-   encoderBPrev = encoderBValue;
-   encoderBValue = digitalRead(encoderBPin);
-  if(encoderBPrev){
-    if(encoderAPrev){
-      //clockwise
-      DCMotorAngle += 1;
-    } else{
-      //counterclockwise
-      DCMotorAngle -= 1;
-    }  
-  }else{
-    if(encoderAPrev){
-      //counterclockwise
-      DCMotorAngle -= 1;
-    } else{
-      //clockwise
-      DCMotorAngle += 1;
-    }
-  }
-}
+//
+//void PinA(){
+//  // look for a low-to-high on channel A
+//  if (digitalRead(encoderAPin) == HIGH) { 
+//
+//    // check channel B to see which way encoder is turning
+//    if (digitalRead(encoderBPin) == LOW) {  
+//      DCMotorAngle = DCMotorAngle + 1;         // CW
+//    } 
+//    else {
+//      DCMotorAngle = DCMotorAngle - 1;         // CCW
+//    }
+//  }
+//
+//  else   // must be a high-to-low edge on channel A                                       
+//  { 
+//    // check channel B to see which way encoder is turning  
+//    if (digitalRead(encoderBPin) == HIGH) {   
+//      DCMotorAngle = DCMotorAngle + 1;          // CW
+//    } 
+//    else {
+//      DCMotorAngle = DCMotorAngle - 1;          // CCW
+//    }
+//  }
+//  //Serial.println (DCMotorAngle, DEC);          
+//  // use for debugging - remember to comment out 
+//  
+//   
+//}
+//
+//void PinB(){
+//  // look for a low-to-high on channel B
+//  if (digitalRead(encoderBPin) == HIGH) { 
+//
+//    // check channel A to see which way encoder is turning
+//    if (digitalRead(encoderAPin) == HIGH) {  
+//      DCMotorAngle = DCMotorAngle + 1;         // CW
+//    } 
+//    else {
+//      DCMotorAngle = DCMotorAngle - 1;         // CCW
+//    }
+//  }
+//
+//  else   // must be a high-to-low edge on channel B                                       
+//  { 
+//    // check channel B to see which way encoder is turning  
+//    if (digitalRead(encoderAPin) == LOW) {   
+//      DCMotorAngle = DCMotorAngle + 1;          // CW
+//    } 
+//    else {
+//      DCMotorAngle = DCMotorAngle - 1;          // CCW
+//    }
+//  }
+//  //Serial.println (DCMotorAngle, DEC);          
+//  // use for debugging - remember to comment out 
+//}
 

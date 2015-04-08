@@ -1,5 +1,5 @@
 #include <CustomStepper.h>
-
+//It worked :)
 //Full constructor, just the first 4 parameters are necessary, they are the pins connected to the motor,
 //the others are optional, and default to the following below
 //the 5th paramater is the steps sequence, where the 1st element of the array is the number of steps
@@ -8,9 +8,14 @@
 //the 7th parameter is the RPM
 //the 8th parameter is the rotation orientation
 int s = 0;
-int enable_pin = 2;
-int dir_pin = 4;
-int step_pin = 9;
+
+const int enPin = 45;
+const int enPin2 = 51;
+const int enPin3 = 24;
+
+int enable_pin = 39;
+int dir_pin = 37;
+int step_pin = 41;
 
 int numSteps = 0;
 
@@ -28,6 +33,17 @@ void setup()
   pinMode(enable_pin,OUTPUT);
   pinMode(step_pin,OUTPUT); 
   pinMode(dir_pin,OUTPUT);
+  pinMode(enPin, OUTPUT);
+  pinMode(enPin2, OUTPUT);
+  pinMode(enPin3, OUTPUT);
+  
+  digitalWrite(enPin, HIGH);
+  digitalWrite(enPin2, HIGH);
+  digitalWrite(enPin3, HIGH);
+  digitalWrite(enable_pin, HIGH);
+  stepper.setDirection(CW);
+  
+  
   
 }
 
@@ -36,18 +52,22 @@ void loop()
   switch(s)
   {
     case 0:
-      stepper.setDirection(CW);
-      stepper.rotate(608);
+      digitalWrite(enable_pin, LOW);
+      digitalWrite(dir_pin, LOW);
+      stepper.rotateDegrees(360/21*4);
+      //digitalWrite(enable_pin, HIGH);
       s = 1;
       break;
     case 1:
       if(stepper.isDone())
       {
         s = 0;
+        digitalWrite(enable_pin, HIGH);
         delay(1000);
         break;
       }
     
   }
+  Serial.println("v");
   stepper.run();
 }
