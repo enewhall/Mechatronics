@@ -9,7 +9,7 @@ Encoder myEnc = Encoder(2, 3);
 
 const int flipper_mag_pin = 4;
 const int flipperServoPin = 5;
-const int spinner_pin = 6;
+const int placer_mag_pin = 7;
 const int partPlacerServoPin = 10;
 
 const int wirefeederPin = 12;
@@ -70,13 +70,13 @@ void setup() {
   while (!Serial) { //Copy
     ; // wait for serial port to connect. Needed for Leonardo only
   }
+  pinMode(placer_mag_pin,OUTPUT);
   
   pinMode(hopper_pin_rev,OUTPUT);
   pinMode(hopper_pin_fow,OUTPUT);
   
   pinMode(flipper_mag_pin,OUTPUT);
   
-  pinMode(spinner_pin,OUTPUT);
   
   pinMode(encoderAPin,INPUT);
   pinMode(encoderBPin,INPUT);
@@ -122,19 +122,72 @@ void setup() {
 }
 
 void loop() {
-    
+  int serialValue = 0;
   
   switch(s){
      case 1:
-       //get part to camera
+       // Get part to camera
        digitalWrite(hopper_pin_rev,HIGH);
        digitalWrite(hopper_pin_fow,LOW);
-       delay(5000);
+       delay(500);
        digitalWrite(hopper_pin_rev,LOW);
        digitalWrite(hopper_pin_fow,HIGH);
        delay(300);
  
-       
+       serialValue = 0;
+       if(Serial.available()) 
+       {
+          serialValue = Serial.read() - 48;
+          Serial.print(serialValue);
+       }
+      
+       if(serialValue != 0){
+         delay(500);
+         s = 2;
+       }
+       break;
+    case 2:
+      // Flip the part
+      digitalWrite(hopper_pin_rev,LOW);
+      digitalWrite(hopper_pin_fow,LOW);
+      
+      digitalWrite(flipper_mag_pin,HIGH);
+      delay(100);
+      flipperServo.write(flipPos);
+      delay(1500);
+      digitalWrite(flipper_mag_pin,LOW);
+      flipperServo.write(restingPos);
+      delay(100);
+      s = 3;
+      
+      break;
+    case 3:
+      // Move placer to get part
+      digitalWrite(dirPin, HIGH);
+      digitalWrite(enPin, LOW);
+      partStep.step(5280);
+      digitalWrite(enPin, HIGH);      
+      digitalWrite(placer_mag_pin,HIGH);
+      partPlacerServo.write(cameraHeight);
+      delay(1500);
+      partPlacerServo.write(restingHeight);
+      delay(1000);
+      s=4;      
+      break;
+    case 4:
+      //move to tray
+      digitalWrite(dirPin, LOW);
+      digitalWrite(enPin, LOW);
+      partStep.step(4500);
+      digitalWrite(enPin, HIGH);      
+      
+      partPlacerServo.write(trayHeight);
+      delay(1500);
+      digitalWrite(placer_mag_pin,LOW);
+      partPlacerServo.write(restingHeight);
+      delay(1000);
+      
+      s=5;
       break;
       
   }
@@ -145,5 +198,4 @@ void loop() {
 
 
 }
-
 
