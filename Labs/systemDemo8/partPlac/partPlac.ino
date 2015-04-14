@@ -49,7 +49,7 @@ const int trayHeight = 59;
 const int restingHeight = 0;
 // Constants for flipper servo positions
 const int slidePos = 18;
-const int restingPos = 15;
+const int restingPos = 18;
 const int flipPos = 180;
 
 Stepper partStep = Stepper(400, stepPin, 0);
