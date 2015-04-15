@@ -61,7 +61,7 @@ Servo partPlacerServo;
 Servo flipperServo;
 
 //STATE VARIABLE
-int s = 1;
+int s = 2;
 
 
 void setup() {
@@ -190,6 +190,80 @@ void loop() {
       s=5;
       break;
       
+      
+   case 5:
+     digitalWrite(dirPin2, LOW);
+     digitalWrite(enPin2, LOW);
+     trayStep.step(2250);
+     digitalWrite(enPin2, HIGH);
+     s = 6;
+     break;
+     
+   
+     
+   case 6:
+     digitalWrite(wirefeederPin, HIGH);
+     delay(350);
+     digitalWrite(wirefeederPin, LOW);
+     s = 7;
+     break;
+     
+   case 7:
+     digitalWrite(DCCutterPinCut, HIGH);
+     digitalWrite(DCCutterPinRelease, LOW);
+     Serial.println(myEnc.read());
+     if(myEnc.read() >= 2100)
+     {
+        digitalWrite(DCCutterPinCut, LOW);
+        digitalWrite(DCCutterPinRelease, LOW);   
+        s = 8;
+     } 
+     break;
+     
+   case 8:
+     digitalWrite(DCCutterPinCut, LOW);
+     digitalWrite(DCCutterPinRelease, HIGH);
+     if(myEnc.read() <= 29)
+     {
+        digitalWrite(DCCutterPinCut, LOW);
+        digitalWrite(DCCutterPinRelease, LOW);   
+        s = 9;
+     } 
+     break;
+     
+   case 9:
+     digitalWrite(dirPin4, HIGH);
+     digitalWrite(enPin4, LOW);
+     fluxStep.step(1250);
+     digitalWrite(enPin4, HIGH);
+     s = 10;
+     break;  
+     
+     
+   case 10:
+   //Serial.println(fluxEnc.read());
+     digitalWrite(enPin3,LOW);
+     digitalWrite(dirPin3,LOW);
+     revStep.step(608);
+     digitalWrite(enPin3, HIGH);
+     delay(200);
+     break;
+     
+   case 12:
+     digitalWrite(fluxDCPinDown, HIGH);
+     digitalWrite(fluxDCPinUp, LOW);
+     delay(90);   
+     s = 11;
+     digitalWrite(fluxDCPinDown, LOW);
+     digitalWrite(fluxDCPinUp, LOW);
+     delay(100);
+     digitalWrite(fluxDCPinDown, LOW);
+     digitalWrite(fluxDCPinUp, HIGH);
+     delay(20);
+     digitalWrite(fluxDCPinDown, LOW);
+     digitalWrite(fluxDCPinUp, LOW);
+     break;
+      
   }
   
   
@@ -198,4 +272,5 @@ void loop() {
 
 
 }
+
 
