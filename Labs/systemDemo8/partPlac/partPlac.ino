@@ -20,8 +20,8 @@ const int dirPin4 = 22;
 const int enPin4 = 24;
 const int stepPin4 = 26;
 
-const int fluxDCPinUp = 28; 
-const int fluxDCPinDown = 30; 
+const int fluxDCPinUp = 30; 
+const int fluxDCPinDown = 28; 
 
 const int enPin3 = 39;
 const int stepPin3 = 41;
@@ -61,7 +61,7 @@ Servo partPlacerServo;
 Servo flipperServo;
 
 //STATE VARIABLE
-int s = 2;
+int s = 1;
 
 
 void setup() {
@@ -194,7 +194,7 @@ void loop() {
    case 5:
      digitalWrite(dirPin2, LOW);
      digitalWrite(enPin2, LOW);
-     trayStep.step(2250);
+     trayStep.step(2450);
      digitalWrite(enPin2, HIGH);
      s = 6;
      break;
@@ -203,7 +203,7 @@ void loop() {
      
    case 6:
      digitalWrite(wirefeederPin, HIGH);
-     delay(350);
+     delay(300);
      digitalWrite(wirefeederPin, LOW);
      s = 7;
      break;
@@ -234,14 +234,42 @@ void loop() {
    case 9:
      digitalWrite(dirPin4, HIGH);
      digitalWrite(enPin4, LOW);
-     fluxStep.step(1250);
+     fluxStep.step(1400);
      digitalWrite(enPin4, HIGH);
      s = 10;
      break;  
-     
-     
+   
    case 10:
-   //Serial.println(fluxEnc.read());
+     
+     digitalWrite(fluxDCPinDown, HIGH);
+     digitalWrite(fluxDCPinUp, LOW);
+     delay(220);   
+     digitalWrite(fluxDCPinDown, LOW);
+     digitalWrite(fluxDCPinUp, LOW);
+     delay(60);
+     digitalWrite(fluxDCPinDown, LOW);
+     digitalWrite(fluxDCPinUp, HIGH);
+     delay(150);
+     digitalWrite(fluxDCPinDown, LOW);
+     digitalWrite(fluxDCPinUp, LOW);
+     delay(300);
+     s = 11;
+     break;  
+   case 11:
+     digitalWrite(dirPin2, HIGH);
+     digitalWrite(enPin2, LOW);
+     trayStep.step(300);
+     digitalWrite(enPin2, HIGH);
+     
+     digitalWrite(dirPin4, LOW);
+     digitalWrite(enPin4, LOW);
+     fluxStep.step(200);
+     digitalWrite(enPin4, HIGH);
+     
+     
+     s=12;
+     break;
+   case 12:
      digitalWrite(enPin3,LOW);
      digitalWrite(dirPin3,LOW);
      revStep.step(608);
@@ -249,23 +277,9 @@ void loop() {
      delay(200);
      break;
      
-   case 12:
-     digitalWrite(fluxDCPinDown, HIGH);
-     digitalWrite(fluxDCPinUp, LOW);
-     delay(90);   
-     s = 11;
-     digitalWrite(fluxDCPinDown, LOW);
-     digitalWrite(fluxDCPinUp, LOW);
-     delay(100);
-     digitalWrite(fluxDCPinDown, LOW);
-     digitalWrite(fluxDCPinUp, HIGH);
-     delay(20);
-     digitalWrite(fluxDCPinDown, LOW);
-     digitalWrite(fluxDCPinUp, LOW);
-     break;
+   
       
   }
-  
   
  
 
