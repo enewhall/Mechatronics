@@ -142,12 +142,12 @@ void setup() {
   partPlacerServo.write(restingHeight);
   flipperServo.write(restingPos);
   //cameraServo.write(holdingPos);  
-   cameraServo.write(viewingPos);
+  cameraServo.write(viewingPos);
 }
 
 void loop() {
   
-  /*int serialValue = 0;
+  int serialValue = 0;
   
   switch(s){
      case 1:
@@ -159,6 +159,7 @@ void loop() {
        digitalWrite(hopper_pin_fow,HIGH);
        delay(300);
  
+       //We now give signal to execute the processing of current image
        serialValue = 0;
        if(Serial.available()) 
        {
@@ -167,9 +168,13 @@ void loop() {
        }
       
        if(serialValue != 0){
+         cameraServo.write(viewingPos);
          delay(500);
-         s = 2;
+         //s = 2;
        }
+       
+       //tell the vision processing to get current result
+       Serial.write('0');
        break;
     case 2:
       // Flip the part
@@ -303,8 +308,7 @@ void loop() {
      break;
      
    
-  }
-  */       
+  }      
  
 
 
