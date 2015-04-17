@@ -13,8 +13,10 @@ const int flipperServoPin = 5;
 const int placer_mag_pin = 7;
 const int partPlacerServoPin = 10;
 
+const int cameraServoPin = 11;
+
 const int wirefeederPin = 12;
-//Camera Holder servo pin 13
+
 Encoder fluxEnc = Encoder(21, 20);
 
 const int dirPin4 = 22;
@@ -59,6 +61,10 @@ const int restingHeight = 0;
 const int slidePos = 18;
 const int restingPos = 18;
 const int flipPos = 180;
+// Constant for camera Servo
+const int holdingPos = 80;
+const int viewingPos = 15;
+
 
 Stepper partStep = Stepper(400, stepPin, 0);
 Stepper trayStep = Stepper(200, stepPin2, 0);
@@ -67,6 +73,7 @@ Stepper fluxStep = Stepper(400, stepPin4, 0);
 
 Servo partPlacerServo;
 Servo flipperServo;
+Servo cameraServo;
 
 //STATE VARIABLE
 int s = 1;
@@ -110,6 +117,7 @@ void setup() {
  
   pinMode(partPlacerServoPin, OUTPUT);
   pinMode(flipperServoPin, OUTPUT);
+  pinMode(cameraServoPin,OUTPUT);
  
   pinMode(wirefeederPin, OUTPUT);
   pinMode(DCCutterPinCut, OUTPUT);
@@ -124,6 +132,7 @@ void setup() {
 
   partPlacerServo.attach(partPlacerServoPin);
   flipperServo.attach(flipperServoPin);
+  cameraServo.attach(cameraServoPin);
 
   digitalWrite(enPin, HIGH);
   digitalWrite(enPin2, HIGH);
@@ -132,7 +141,8 @@ void setup() {
   
   partPlacerServo.write(restingHeight);
   flipperServo.write(restingPos);
-  
+  //cameraServo.write(holdingPos);  
+   cameraServo.write(viewingPos);
 }
 
 void loop() {
