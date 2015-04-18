@@ -1,0 +1,434 @@
+#include <Stepper.h>
+#include <Servo.h>
+#include <Encoder.h>
+#include <CustomStepper.h>
+#define ENCODER_OPTIMIZE_INTERRUPTS
+
+const int encoderAPin = 2;
+const int encoderBPin = 3;
+Encoder myEnc = Encoder(2, 3);
+
+const int flipper_mag_pin = 4;
+const int flipperServoPin = 5;
+const int partPlacerServoPin =  6;
+const int placer_mag_pin = 7;
+const int partServoPin = 10;
+
+const int cameraServoPin = 11;
+
+const int wirefeederPin = 12;
+
+Encoder fluxEnc = Encoder(21, 20);
+
+const int dirPin4 = 22;
+const int enPin4 = 24;
+const int stepPin4 = 26;
+
+const int fluxDCPinUp = 30; 
+const int fluxDCPinDown = 28; 
+
+const int LED0 = 42; 
+const int LED1 = 36;
+const int LED2 = 38;
+const int LED3 = 40; 
+const int LED4 = 34;
+
+
+const int enPin3 = 39;
+const int stepPin3 = 41;
+const int dirPin3 = 37;
+
+const int dirPin = 43;
+const int enPin = 45;
+
+const int DCCutterPinCut = 46;
+const int DCCutterPinRelease = 48;
+
+const int stepPin = 47;
+
+const int dirPin2 = 49;
+
+const int hopper_pin_fow = 50;
+const int hopper_pin_rev = 52;
+
+const int enPin2 = 51;
+const int stepPin2 = 53;
+
+// Constants for part servo servo positions
+const int cameraHeight = 130;
+const int trayHeight = 59;
+const int restingHeight = 0;
+// Constants for flipper servo positions
+const int slidePos = 18;
+const int restingPos = 18;
+const int flipPos = 180;
+// Constant for camera Servo
+const int holdingPos = 80;
+const int viewingPos = 15;
+
+
+//Stepper partStep = Stepper(400, stepPin, 0);
+//Stepper trayStep = Stepper(200, stepPin2, 0);
+Stepper revStep = Stepper(6400, stepPin3, 0);
+Stepper fluxStep = Stepper(400, stepPin4, 0);
+
+Servo partPlacerServo;
+Servo partServo; //reorientator
+Servo flipperServo;
+Servo cameraServo;
+
+//already added in the original
+char partPos = 2;
+
+
+//add this for partplacer part
+char currentPartPos = 0;
+unsigned long partPlacerTimer = 0;
+CustomStepper partStep(stepPin, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 400, 100, CW);
+CustomStepper trayStep(stepPin2, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 200, 100, CW);
+unsigned char partStepperXCounter = 0;
+unsigned char partStepperYCounter = 0;
+
+
+//STATE VARIABLE
+int partState = 0;
+
+
+void setup() {
+ 
+  Serial.begin(9600);
+  while (!Serial) { //Copy
+    ; // wait for serial port to connect. Needed for Leonardo only
+  }
+  pinMode(LED0,OUTPUT);
+  pinMode(LED1,OUTPUT);
+  pinMode(LED2,OUTPUT);
+  pinMode(LED3,OUTPUT);
+  pinMode(LED4,OUTPUT);
+
+  pinMode(placer_mag_pin,OUTPUT);
+  
+  pinMode(hopper_pin_rev,OUTPUT);
+  pinMode(hopper_pin_fow,OUTPUT);
+  
+  pinMode(flipper_mag_pin,OUTPUT);
+  
+  
+  pinMode(encoderAPin,INPUT);
+  pinMode(encoderBPin,INPUT);
+  
+  pinMode(enPin, OUTPUT);
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
+  pinMode(enPin2, OUTPUT);
+  pinMode(stepPin2, OUTPUT);
+  pinMode(dirPin2, OUTPUT);
+  pinMode(enPin3, OUTPUT);
+  pinMode(stepPin3, OUTPUT);
+  pinMode(dirPin3, OUTPUT);
+  pinMode(enPin4, OUTPUT);
+  pinMode(stepPin4, OUTPUT);
+  pinMode(dirPin4, OUTPUT);
+ 
+  pinMode(partPlacerServoPin, OUTPUT);
+  pinMode(flipperServoPin, OUTPUT);
+  pinMode(cameraServoPin,OUTPUT);
+ 
+  pinMode(wirefeederPin, OUTPUT);
+  pinMode(DCCutterPinCut, OUTPUT);
+  pinMode(DCCutterPinRelease, OUTPUT); 
+  pinMode(fluxDCPinUp, OUTPUT);
+  pinMode(fluxDCPinDown, OUTPUT);
+  
+  partStep.setSPR(400);
+  partStep.setRPM(800);
+  partStep.setDirection(CW);
+  trayStep.setRPM(200);
+  trayStep.setDirection(CW);
+  revStep.setSpeed(5);
+  fluxStep.setSpeed(100);
+
+  partPlacerServo.attach(partPlacerServoPin);
+  flipperServo.attach(flipperServoPin);
+  cameraServo.attach(cameraServoPin);
+  partServo.attach(partServoPin);
+
+  digitalWrite(enPin, HIGH);
+  digitalWrite(enPin2, HIGH);
+  digitalWrite(enPin3, HIGH);
+  digitalWrite(enPin4, HIGH);
+  
+  partPlacerServo.write(restingHeight);
+  partServo.write(0);
+  flipperServo.write(restingPos);
+  //cameraServo.write(holdingPos);  
+  cameraServo.write(viewingPos);
+}
+
+void loop() {
+  
+  int serialValue = 0;
+  
+  switch(partState){
+    
+    case 0:
+      //wait until signal received
+      if(partPos)
+      {
+        currentPartPos = partPos;
+        partState = 1;
+        partPlacerTimer = millis();
+        
+      }
+      break;
+    
+    case 1: //wait a while for part to settle
+      if(millis() - partPlacerTimer > 500)
+      {
+        partState = 2;
+        partPlacerTimer = millis();
+        
+      }
+      break;
+    
+    case 2:
+      digitalWrite(placer_mag_pin,HIGH);
+      partPlacerServo.write(cameraHeight);
+      if(millis() - partPlacerTimer > 800)
+      {
+        partState = 3;
+        partPlacerTimer = millis();
+      }
+      break;
+    
+    case 3:
+      partPlacerServo.write(restingHeight);
+      if(millis() - partPlacerTimer > 800)
+      {
+        //partPos = 0;
+        partState = 4;
+      }
+      break;
+      
+    case 4:
+      //move to tray
+      digitalWrite(dirPin, LOW);
+      digitalWrite(enPin, LOW);
+      partStep.rotateDegrees((1500 + 200*partStepperXCounter)*4);
+      partState = 5;
+      break;
+      
+    case 5:
+      partServo.write(170);
+      if(partStep.isDone())
+      {
+        digitalWrite(enPin, HIGH);
+        //check if rotation is needed or not
+        if(currentPartPos == 2) //rotation is needed
+        {
+          partState = 6;
+        }
+        else
+        {
+          partState = 7;
+        }  
+        partPlacerTimer = millis();
+      }
+      break;
+      
+    case 6:
+      //rotate piece
+      partState = 7;
+      break;
+    
+    case 7:
+      //put piece down
+      partPlacerServo.write(trayHeight);
+      if(millis() - partPlacerTimer > 800)
+      {
+        partState = 8;
+        digitalWrite(placer_mag_pin,LOW);
+        partPlacerTimer = millis();
+      }
+      break;
+    
+    case 8:
+      partPlacerServo.write(restingHeight);
+      if(millis() - partPlacerTimer > 800)
+      {
+        partState = 9;
+        partPlacerTimer = millis();
+      }
+      break;
+      
+    case 9: //return back
+      digitalWrite(dirPin, HIGH);
+      digitalWrite(enPin, LOW);
+      partStep.rotateDegrees((1500 + 200*partStepperXCounter)*4);
+      partState = 10;
+      break;
+      
+    case 10:
+      partServo.write(0);
+      if(partStep.isDone())
+      {
+        digitalWrite(enPin, HIGH);
+        //we did it. now we do it again
+        partState = 0;
+        partStepperXCounter++;
+        if(partStepperXCounter == 5) //did the fifth one already
+        {
+          partStepperYCounter++;
+          partStepperXCounter = 0;
+          if(partStepperYCounter == 4) //did all four of them
+          {
+            //we are done
+            partState = 100; 
+          }
+          else
+          {
+            partState = 11;
+            
+          }
+        }
+      }
+      break;
+      
+    case 11:
+      //Move the tray a little bit down
+      //move to tray
+      digitalWrite(dirPin2, LOW);
+      digitalWrite(enPin2, LOW);
+      trayStep.rotateDegrees((200)*4);
+      partState = 12;
+      break;
+      
+    case 12:
+      if(trayStep.isDone())
+      {
+        digitalWrite(enPin2, HIGH);
+        //check if rotation is needed or not
+        partState = 0;
+      }
+      break;      
+    
+     
+   
+  }      
+  //Ensure the code runs when needed
+  if(partState == 5 || partState == 10)
+    partStep.run();
+  if(partState == 12)
+    trayStep.run();
+
+}
+
+/*case 3:
+      // Move placer to get part
+      digitalWrite(dirPin, HIGH);
+      digitalWrite(enPin, LOW);
+      partStep.step(5280);
+      digitalWrite(enPin, HIGH);            
+      break;
+    case 4:
+      //move to tray
+      digitalWrite(dirPin, LOW);
+      digitalWrite(enPin, LOW);
+      partStep.step(4500);
+      digitalWrite(enPin, HIGH);      
+      
+      partPlacerServo.write(trayHeight);
+      delay(1500);
+      digitalWrite(placer_mag_pin,LOW);
+      partPlacerServo.write(restingHeight);
+      delay(1000);
+      
+      s=5;
+      break;
+      
+      
+   case 5:
+     digitalWrite(dirPin2, LOW);
+     digitalWrite(enPin2, LOW);
+     trayStep.step(2450);
+     digitalWrite(enPin2, HIGH);
+     s = 6;
+     break;
+     
+   
+     
+   case 6:
+     digitalWrite(wirefeederPin, HIGH);
+     delay(300);
+     digitalWrite(wirefeederPin, LOW);
+     s = 7;
+     break;
+     
+   case 7:
+     digitalWrite(DCCutterPinCut, HIGH);
+     digitalWrite(DCCutterPinRelease, LOW);
+     Serial.println(myEnc.read());
+     if(myEnc.read() >= 2100)
+     {
+        digitalWrite(DCCutterPinCut, LOW);
+        digitalWrite(DCCutterPinRelease, LOW);   
+        s = 8;
+     } 
+     break;
+     
+   case 8:
+     digitalWrite(DCCutterPinCut, LOW);
+     digitalWrite(DCCutterPinRelease, HIGH);
+     if(myEnc.read() <= 29)
+     {
+        digitalWrite(DCCutterPinCut, LOW);
+        digitalWrite(DCCutterPinRelease, LOW);   
+        s = 9;
+     } 
+     break;
+     
+   case 9:
+     digitalWrite(dirPin4, HIGH);
+     digitalWrite(enPin4, LOW);
+     fluxStep.step(1400);
+     digitalWrite(enPin4, HIGH);
+     s = 10;
+     break;  
+   
+   case 10:
+     
+     digitalWrite(fluxDCPinDown, HIGH);
+     digitalWrite(fluxDCPinUp, LOW);
+     delay(220);   
+     digitalWrite(fluxDCPinDown, LOW);
+     digitalWrite(fluxDCPinUp, LOW);
+     delay(60);
+     digitalWrite(fluxDCPinDown, LOW);
+     digitalWrite(fluxDCPinUp, HIGH);
+     delay(150);
+     digitalWrite(fluxDCPinDown, LOW);
+     digitalWrite(fluxDCPinUp, LOW);
+     delay(300);
+     s = 11;
+     break;  
+   case 11:
+     digitalWrite(dirPin2, HIGH);
+     digitalWrite(enPin2, LOW);
+     trayStep.step(300);
+     digitalWrite(enPin2, HIGH);
+     
+     digitalWrite(dirPin4, LOW);
+     digitalWrite(enPin4, LOW);
+     fluxStep.step(200);
+     digitalWrite(enPin4, HIGH);
+     
+     
+     s=12;
+     break;
+   case 12:
+     digitalWrite(enPin3,LOW);
+     digitalWrite(dirPin3,LOW);
+     revStep.step(608);
+     digitalWrite(enPin3, HIGH);
+     delay(200);
+     break;*/
