@@ -58,7 +58,7 @@ const int cameraHeight = 130;
 const int trayHeight = 59;
 const int restingHeight = 0;
 // Constants for flipper servo positions
-const int slidePos = 18;
+const int slidingPos = 35;
 const int restingPos = 18;
 const int flipPos = 180;
 // Constant for camera Servo
@@ -75,9 +75,11 @@ Servo partPlacerServo;
 Servo flipperServo;
 Servo cameraServo;
 
-//STATE VARIABLE
-int s = 1;
+//STATE VARIABLES
+int cameraState = 1;
+unsigned long cameraTime = 0;
 
+char partPos = 0;
 
 void setup() {
  
@@ -141,173 +143,104 @@ void setup() {
   
   partPlacerServo.write(restingHeight);
   flipperServo.write(restingPos);
-  //cameraServo.write(holdingPos);  
-  cameraServo.write(viewingPos);
+  cameraServo.write(holdingPos);  
+  
+  cameraTime = millis();
 }
 
 void loop() {
   
   int serialValue = 0;
-  
-  switch(s){
-     case 1:
-       // Get part to camera
-       digitalWrite(hopper_pin_rev,HIGH);
-       digitalWrite(hopper_pin_fow,LOW);
-       delay(500);
-       digitalWrite(hopper_pin_rev,LOW);
-       digitalWrite(hopper_pin_fow,HIGH);
-       delay(300);
- 
-       //We now give signal to execute the processing of current image
-       serialValue = 0;
-       if(Serial.available()) 
-       {
-          serialValue = Serial.read() - 48;
-          Serial.print(serialValue);
-       }
-      
-       if(serialValue != 0){
-         cameraServo.write(viewingPos);
-         delay(500);
-         //s = 2;
-       }
-       
-       //tell the vision processing to get current result
-       Serial.write('0');
-       break;
-    case 2:
-      // Flip the part
-      digitalWrite(hopper_pin_rev,LOW);
+   if(Serial.available()) {
+      serialValue = Serial.read() - 48;
+   }
+
+  switch(cameraState){
+    case 1:
+      //SPIN BACK
       digitalWrite(hopper_pin_fow,LOW);
-      
-      digitalWrite(flipper_mag_pin,HIGH);
-      delay(100);
-      flipperServo.write(flipPos);
-      delay(1500);
-      digitalWrite(flipper_mag_pin,LOW);
+      digitalWrite(hopper_pin_rev,HIGH);
       flipperServo.write(restingPos);
-      delay(100);
-      s = 3;
+      cameraServo.write(holdingPos);  
+      digitalWrite(flipper_mag_pin,LOW);
       
+      if(serialValue != 0){
+        cameraState = 5;
+        cameraTime = millis();
+      }else if(partPos == 0 && millis() - cameraTime > 5000){
+        cameraState = 2;
+        cameraTime = millis();
+      }
+      break;
+    case 2:
+      //SPIN FOWARD
+      digitalWrite(hopper_pin_fow,HIGH);
+      digitalWrite(hopper_pin_rev,LOW);
+      flipperServo.write(restingPos);
+      cameraServo.write(holdingPos);  
+      digitalWrite(flipper_mag_pin,LOW);
+      
+      if(millis() - cameraTime > 300){
+        cameraState = 1;
+        cameraTime = millis();
+      }
       break;
     case 3:
-      // Move placer to get part
-      digitalWrite(dirPin, HIGH);
-      digitalWrite(enPin, LOW);
-      partStep.step(5280);
-      digitalWrite(enPin, HIGH);      
-      digitalWrite(placer_mag_pin,HIGH);
-      partPlacerServo.write(cameraHeight);
-      delay(1500);
-      partPlacerServo.write(restingHeight);
-      delay(1000);
-      s=4;      
+      //FLIP PART
+      digitalWrite(hopper_pin_fow,LOW);
+      digitalWrite(hopper_pin_rev,HIGH);
+      flipperServo.write(flipPos);
+      cameraServo.write(holdingPos);
+      digitalWrite(flipper_mag_pin,HIGH);  
+      
+      if(millis() - cameraTime > 1000){
+        cameraState = 2;
+        cameraTime = millis();
+      }
       break;
     case 4:
-      //move to tray
-      digitalWrite(dirPin, LOW);
-      digitalWrite(enPin, LOW);
-      partStep.step(4500);
-      digitalWrite(enPin, HIGH);      
+      //SLIDE PART
+      digitalWrite(hopper_pin_fow,LOW);
+      digitalWrite(hopper_pin_rev,HIGH);
+      flipperServo.write(slidingPos);
+      cameraServo.write(viewingPos);  
+      digitalWrite(flipper_mag_pin,LOW);
       
-      partPlacerServo.write(trayHeight);
-      delay(1500);
-      digitalWrite(placer_mag_pin,LOW);
-      partPlacerServo.write(restingHeight);
-      delay(1000);
-      
-      s=5;
+      if(millis() - cameraTime > 1000){
+        cameraState = 2;
+        cameraTime = millis();
+      }
       break;
+    case 5:
+      //VIEWING PART
+      digitalWrite(hopper_pin_fow,LOW);
+      digitalWrite(hopper_pin_rev,LOW);
+      flipperServo.write(restingPos);
+      cameraServo.write(viewingPos);
+      digitalWrite(flipper_mag_pin,HIGH);  
       
+      if(millis() - cameraTime > 2500){
+        if(serialValue == 1 ){
+          cameraState = 4;
+          partPos = 1;
+          cameraTime = millis();
+        }else if(serialValue == 2){
+          cameraState = 4;
+          partPos = 2;
+          cameraTime = millis();
+        }else if(serialValue == 3){
+          cameraState = 3;
+          partPos = 1;
+          cameraTime = millis();
+        }else if(serialValue == 3){
+          cameraState = 3;
+          partPos = 2;
+          cameraTime = millis();
+        }
+          
+      }
       
-   case 5:
-     digitalWrite(dirPin2, LOW);
-     digitalWrite(enPin2, LOW);
-     trayStep.step(2450);
-     digitalWrite(enPin2, HIGH);
-     s = 6;
-     break;
-     
-   
-     
-   case 6:
-     digitalWrite(wirefeederPin, HIGH);
-     delay(300);
-     digitalWrite(wirefeederPin, LOW);
-     s = 7;
-     break;
-     
-   case 7:
-     digitalWrite(DCCutterPinCut, HIGH);
-     digitalWrite(DCCutterPinRelease, LOW);
-     Serial.println(myEnc.read());
-     if(myEnc.read() >= 2100)
-     {
-        digitalWrite(DCCutterPinCut, LOW);
-        digitalWrite(DCCutterPinRelease, LOW);   
-        s = 8;
-     } 
-     break;
-     
-   case 8:
-     digitalWrite(DCCutterPinCut, LOW);
-     digitalWrite(DCCutterPinRelease, HIGH);
-     if(myEnc.read() <= 29)
-     {
-        digitalWrite(DCCutterPinCut, LOW);
-        digitalWrite(DCCutterPinRelease, LOW);   
-        s = 9;
-     } 
-     break;
-     
-   case 9:
-     digitalWrite(dirPin4, HIGH);
-     digitalWrite(enPin4, LOW);
-     fluxStep.step(1400);
-     digitalWrite(enPin4, HIGH);
-     s = 10;
-     break;  
-   
-   case 10:
-     
-     digitalWrite(fluxDCPinDown, HIGH);
-     digitalWrite(fluxDCPinUp, LOW);
-     delay(220);   
-     digitalWrite(fluxDCPinDown, LOW);
-     digitalWrite(fluxDCPinUp, LOW);
-     delay(60);
-     digitalWrite(fluxDCPinDown, LOW);
-     digitalWrite(fluxDCPinUp, HIGH);
-     delay(150);
-     digitalWrite(fluxDCPinDown, LOW);
-     digitalWrite(fluxDCPinUp, LOW);
-     delay(300);
-     s = 11;
-     break;  
-   case 11:
-     digitalWrite(dirPin2, HIGH);
-     digitalWrite(enPin2, LOW);
-     trayStep.step(300);
-     digitalWrite(enPin2, HIGH);
-     
-     digitalWrite(dirPin4, LOW);
-     digitalWrite(enPin4, LOW);
-     fluxStep.step(200);
-     digitalWrite(enPin4, HIGH);
-     
-     
-     s=12;
-     break;
-   case 12:
-     digitalWrite(enPin3,LOW);
-     digitalWrite(dirPin3,LOW);
-     revStep.step(608);
-     digitalWrite(enPin3, HIGH);
-     delay(200);
-     break;
-     
-   
+      break;
   }      
  
 
