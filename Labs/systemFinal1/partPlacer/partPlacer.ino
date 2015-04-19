@@ -70,7 +70,7 @@ const int viewingPos = 15;
 //Stepper partStep = Stepper(400, stepPin, 0);
 //Stepper trayStep = Stepper(200, stepPin2, 0);
 //Stepper revStep = Stepper(6400, stepPin3, 0);
-Stepper fluxStep = Stepper(400, stepPin4, 0);
+//Stepper fluxStep = Stepper(400, stepPin4, 0);
 
 Servo partPlacerServo;
 Servo partServo; //reorientator
@@ -95,9 +95,16 @@ int partState = 0;
 
 //For the revolver preloading
 int revRelState = 0;
-int revRelCount = 0;
-unsigned long revRelTimer = 0;
+int fluxDispState = 100;
+unsigned char revRelCount = 0;
+unsigned long revFluxTimer = 0;
+bool partPlacerDone = false;
 CustomStepper revStep(stepPin3, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 6400, 5, CW);
+CustomStepper fluxStep(stepPin4, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 400, 100, CW);//400, stepPin4, 0);
+const int trayTubeCorrection = 100;
+const int fluxTubeCorrection = 100;
+const int fluxStartingPos = 100;
+
 
 
 void setup() {
@@ -154,7 +161,9 @@ void setup() {
   revStep.setRPM(10);
   revStep.setDirection(CW);
   //
-  fluxStep.setSpeed(100);
+  fluxStep.setRPM(100);
+  fluxStep.setDirection(CW);
+  //
 
   partPlacerServo.attach(partPlacerServoPin);
   flipperServo.attach(flipperServoPin);
@@ -171,11 +180,13 @@ void setup() {
   flipperServo.write(restingPos);
   //cameraServo.write(holdingPos);  
   cameraServo.write(viewingPos);
+  //
   while(!Serial.available())
   {
     ;
   }
   Serial.read();
+  //
 }
 
 void loop() {
@@ -184,12 +195,12 @@ void loop() {
   switch(revRelState){
     case 0:
       digitalWrite(wirefeederPin, HIGH);
-      revRelTimer = millis();
+      revFluxTimer = millis();
       revRelState = 1;
       break;
       
     case 1:
-      if(millis() - revRelTimer > 300)
+      if(millis() - revFluxTimer > 300)
       {
         digitalWrite(wirefeederPin, LOW);
         revRelState = 2;
@@ -237,6 +248,7 @@ void loop() {
         if(revRelCount == 20) //inserted in all the 20 pieces
         {
           revRelState = 100;
+          fluxDispState = 0;
           //Give indication that the machine is ready
         }
         
@@ -247,10 +259,96 @@ void loop() {
       break;    
   }
   
-  if(revRelState == 5)
+  switch(fluxDispState)
   {
-    revStep.run();
+    case 0:
+      //get an indication that the partPlacer finished
+      if(partPlacerDone)
+      {
+        fluxDispState = 1;
+      }
+      break;
+      
+    case 1: //move flux to initial position
+      digitalWrite(dirPin4, HIGH);
+      digitalWrite(enPin4, LOW);
+      fluxStep.rotateDegrees((fluxStartingPos)*4); //need modification
+      fluxDispState = 2;
+      break;
+      
+    case 2:
+      if(fluxStep.isDone())
+      {
+        digitalWrite(enPin4, HIGH);
+        fluxDispState = 3;
+        digitalWrite(fluxDCPinDown, HIGH);
+        digitalWrite(fluxDCPinUp, LOW);
+        revFluxTimer = millis();
+      }
+      break;
+      
+    case 3: //pushing down time
+      if(millis() - revFluxTimer > 220)
+      {
+        fluxDispState = 4;
+        digitalWrite(fluxDCPinDown, LOW);
+        digitalWrite(fluxDCPinUp, LOW);
+        revFluxTimer = millis();
+      }
+      break;
+    
+    case 4: //hold time
+      if(millis() - revFluxTimer > 60)
+      {
+        fluxDispState = 5;
+        digitalWrite(fluxDCPinDown, LOW);
+        digitalWrite(fluxDCPinUp, HIGH);
+        revFluxTimer = millis();
+      }
+      break;
+    
+    case 5: //pushing up time
+      if(millis() - revFluxTimer > 150)
+      {
+        fluxDispState = 6;
+        digitalWrite(fluxDCPinDown, LOW);
+        digitalWrite(fluxDCPinUp, LOW);
+        
+      }
+      break;
+    
+    case 6: //move tray to align the tube shot with the flux
+      digitalWrite(dirPin2, HIGH);
+      digitalWrite(enPin2, LOW);
+      trayStep.rotateDegrees((trayTubeCorrection)*4); //need modification
+      fluxDispState = 7;
+      break;
+      
+    case 7: //adjust the tray and flux for the proper modifications
+      if(trayStep.isDone())
+      {
+        digitalWrite(enPin2, HIGH);
+        fluxDispState = 8;
+        digitalWrite(dirPin4, LOW);
+        digitalWrite(enPin4, LOW);
+        fluxStep.rotateDegrees((fluxTubeCorrection)*4); //need modification
+      }
+      
+    case 8:
+      if(fluxStep.isDone())
+      {
+        digitalWrite(enPin4, HIGH);
+        //We must now undo the changes
+        
+      }
+                    
   }
+  
+  if(fluxDispState == 2)
+    fluxStep.run();
+  
+  if(revRelState == 5)
+    revStep.run();
 }
 
 /*case 3:
