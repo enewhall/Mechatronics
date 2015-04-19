@@ -69,7 +69,7 @@ const int viewingPos = 15;
 
 //Stepper partStep = Stepper(400, stepPin, 0);
 //Stepper trayStep = Stepper(200, stepPin2, 0);
-Stepper revStep = Stepper(6400, stepPin3, 0);
+//Stepper revStep = Stepper(6400, stepPin3, 0);
 Stepper fluxStep = Stepper(400, stepPin4, 0);
 
 Servo partPlacerServo;
@@ -92,6 +92,12 @@ unsigned char partStepperYCounter = 0;
 
 //STATE VARIABLE
 int partState = 0;
+
+//For the revolver preloading
+int revRelState = 0;
+int revRelCount = 0;
+unsigned long revRelTimer = 0;
+CustomStepper revStep(stepPin3, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 6400, 5, CW);
 
 
 void setup() {
@@ -140,12 +146,14 @@ void setup() {
   pinMode(fluxDCPinUp, OUTPUT);
   pinMode(fluxDCPinDown, OUTPUT);
   
-  partStep.setSPR(400);
   partStep.setRPM(800);
   partStep.setDirection(CW);
   trayStep.setRPM(200);
   trayStep.setDirection(CW);
-  revStep.setSpeed(5);
+  //
+  revStep.setRPM(10);
+  revStep.setDirection(CW);
+  //
   fluxStep.setSpeed(100);
 
   partPlacerServo.attach(partPlacerServoPin);
@@ -163,164 +171,86 @@ void setup() {
   flipperServo.write(restingPos);
   //cameraServo.write(holdingPos);  
   cameraServo.write(viewingPos);
+  while(!Serial.available())
+  {
+    ;
+  }
+  Serial.read();
 }
 
 void loop() {
   
-  int serialValue = 0;
-  
-  switch(partState){
     
+  switch(revRelState){
     case 0:
-      //wait until signal received
-      if(partPos)
-      {
-        currentPartPos = partPos;
-        partState = 1;
-        partPlacerTimer = millis();
-        
-      }
+      digitalWrite(wirefeederPin, HIGH);
+      revRelTimer = millis();
+      revRelState = 1;
       break;
-    
-    case 1: //wait a while for part to settle
-      if(millis() - partPlacerTimer > 500)
+      
+    case 1:
+      if(millis() - revRelTimer > 300)
       {
-        partState = 2;
-        partPlacerTimer = millis();
-        
-      }
-      break;
-    
-    case 2:
-      digitalWrite(placer_mag_pin,HIGH);
-      partPlacerServo.write(cameraHeight);
-      if(millis() - partPlacerTimer > 800)
-      {
-        partState = 3;
-        partPlacerTimer = millis();
-      }
-      break;
-    
-    case 3:
-      partPlacerServo.write(restingHeight);
-      if(millis() - partPlacerTimer > 800)
-      {
-        //partPos = 0;
-        partState = 4;
+        digitalWrite(wirefeederPin, LOW);
+        revRelState = 2;
+        Serial.println("enetering 2");
       }
       break;
       
-    case 4:
-      //move to tray
-      digitalWrite(dirPin, LOW);
-      digitalWrite(enPin, LOW);
-      partStep.rotateDegrees((1500 + 200*partStepperXCounter)*4);
-      partState = 5;
+    case 2:
+      digitalWrite(DCCutterPinCut, HIGH);
+      digitalWrite(DCCutterPinRelease, LOW);
+      if(myEnc.read() >= 2100)
+      {
+         digitalWrite(DCCutterPinCut, LOW);
+         digitalWrite(DCCutterPinRelease, LOW);   
+         revRelState = 3;
+         Serial.println("2 entering 3");
+      } 
+      break;
+      
+    case 3:
+      digitalWrite(DCCutterPinCut, LOW);
+      digitalWrite(DCCutterPinRelease, HIGH);
+      if(myEnc.read() <= 29)
+      {
+         Serial.println("finishing 3");
+         digitalWrite(DCCutterPinCut, LOW);
+         digitalWrite(DCCutterPinRelease, LOW);   
+         revRelState = 4;
+      } 
+      break;
+      
+    case 4: //rotate the revolver
+      digitalWrite(enPin3, LOW);
+      digitalWrite(dirPin3, LOW);
+      revStep.rotateDegrees(360/21*4);
+      revRelState = 5;
       break;
       
     case 5:
-      partServo.write(170);
-      if(partStep.isDone())
+      if(revStep.isDone())
       {
-        digitalWrite(enPin, HIGH);
-        //check if rotation is needed or not
-        if(currentPartPos == 2) //rotation is needed
+        digitalWrite(enPin3, HIGH);
+        revRelState = 0;
+        revRelCount++;
+        if(revRelCount == 20) //inserted in all the 20 pieces
         {
-          partState = 6;
+          revRelState = 100;
+          //Give indication that the machine is ready
         }
-        else
-        {
-          partState = 7;
-        }  
-        partPlacerTimer = millis();
+        
+        
+        
+        
       }
-      break;
-      
-    case 6:
-      //rotate piece
-      partState = 7;
-      break;
-    
-    case 7:
-      //put piece down
-      partPlacerServo.write(trayHeight);
-      if(millis() - partPlacerTimer > 800)
-      {
-        partState = 8;
-        digitalWrite(placer_mag_pin,LOW);
-        partPlacerTimer = millis();
-      }
-      break;
-    
-    case 8:
-      partPlacerServo.write(restingHeight);
-      if(millis() - partPlacerTimer > 800)
-      {
-        partState = 9;
-        partPlacerTimer = millis();
-      }
-      break;
-      
-    case 9: //return back
-      digitalWrite(dirPin, HIGH);
-      digitalWrite(enPin, LOW);
-      partStep.rotateDegrees((1500 + 200*partStepperXCounter)*4);
-      partState = 10;
-      break;
-      
-    case 10:
-      partServo.write(0);
-      if(partStep.isDone())
-      {
-        digitalWrite(enPin, HIGH);
-        //we did it. now we do it again
-        partState = 0;
-        partStepperXCounter++;
-        if(partStepperXCounter == 5) //did the fifth one already
-        {
-          partStepperYCounter++;
-          partStepperXCounter = 0;
-          if(partStepperYCounter == 4) //did all four of them
-          {
-            //we are done
-            partState = 100; 
-          }
-          else
-          {
-            partState = 11;
-            
-          }
-        }
-      }
-      break;
-      
-    case 11:
-      //Move the tray a little bit down
-      //move to tray
-      digitalWrite(dirPin2, LOW);
-      digitalWrite(enPin2, LOW);
-      trayStep.rotateDegrees((200)*4);
-      partState = 12;
-      break;
-      
-    case 12:
-      if(trayStep.isDone())
-      {
-        digitalWrite(enPin2, HIGH);
-        //check if rotation is needed or not
-        partState = 0;
-      }
-      break;      
-    
-     
-   
-  }      
-  //Ensure the code runs when needed
-  if(partState == 5 || partState == 10)
-    partStep.run();
-  if(partState == 12)
-    trayStep.run();
-
+      break;    
+  }
+  
+  if(revRelState == 5)
+  {
+    revStep.run();
+  }
 }
 
 /*case 3:
