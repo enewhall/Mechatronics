@@ -178,8 +178,10 @@ void loop() {
   switch(cameraState){
     case 1:
       //SPIN BACK
-      digitalWrite(hopper_pin_fow,LOW);
-      digitalWrite(hopper_pin_rev,HIGH);
+      
+        digitalWrite(hopper_pin_fow,LOW);
+        digitalWrite(hopper_pin_rev,LOW);
+      
       flipperServo.write(restingPos);
       cameraServo.write(holdingPos);  
       digitalWrite(flipper_mag_pin,LOW);
@@ -200,7 +202,7 @@ void loop() {
       cameraServo.write(holdingPos);  
       digitalWrite(flipper_mag_pin,LOW);
       
-      if(millis() - cameraTime > 300){
+      if(millis() - cameraTime > 400){
         cameraState = 1;
         cameraTime = millis();
       }
