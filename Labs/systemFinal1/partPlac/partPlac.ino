@@ -362,30 +362,19 @@ void loop() {
         digitalWrite(dirPin, LOW);
         digitalWrite(enPin, LOW);
         partStep.rotateDegrees((1500 + 200*partStepperXCounter)*4);
+        if(currentPartPos == 2)//ideally rotate as it moves
+          partServo.write(170);
         partState = 5;
         break;
         
       case 5:
-        partServo.write(170);
         if(partStep.isDone())
         {
           digitalWrite(enPin, HIGH);
           //check if rotation is needed or not
-          if(currentPartPos == 2) //rotation is needed
-          {
-            partState = 6;
-          }
-          else
-          {
-            partState = 7;
-          }  
+          partState = 7;  
           partPlacerTimer = millis();
         }
-        break;
-        
-      case 6:
-        //rotate piece
-        partState = 7;
         break;
       
       case 7:
@@ -416,7 +405,7 @@ void loop() {
         break;
         
       case 10:
-        partServo.write(0);
+        partServo.write(0); //ensure the servo is unrotated
         if(partStep.isDone())
         {
           digitalWrite(enPin, HIGH);
@@ -430,7 +419,7 @@ void loop() {
             if(partStepperYCounter == 4) //did all four of them
             {
               //we are done
-              partState = 100; 
+              partState = 13; 
             }
             else
             {
@@ -458,14 +447,31 @@ void loop() {
           partState = 0;
         }
         break;      
-      
+
+      case 13:
+        //move the tray to the proper part in the code
+        //TODO
+        //digitalWrite(dirPin2, LOW);
+        //digitalWrite(enPin2, LOW);
+        //trayStep.rotateDegrees((200)*4); //need modification
+        //partState = 14;
+        break;
+  
+      case 14:
+        if(trayStep.isDone())
+        {
+          digitalWrite(enPin2, HIGH);
+          //check if rotation is needed or not
+          partState = 100;
+        }
+        break;      
        
      
     }      
     //Ensure the code runs when needed
     if(partState == 5 || partState == 10)
       partStep.run();
-    if(partState == 12)
+    if(partState == 12 || partState == 14)
       trayStep.run();
   }
 }

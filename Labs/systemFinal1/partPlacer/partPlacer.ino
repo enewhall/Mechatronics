@@ -88,6 +88,8 @@ CustomStepper partStep(stepPin, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110,
 CustomStepper trayStep(stepPin2, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 200, 100, CW);
 unsigned char partStepperXCounter = 0;
 unsigned char partStepperYCounter = 0;
+unsigned char fluxDispXCounter = 0;
+unsigned char fluxDispYCounter = 0;
 
 
 //STATE VARIABLE
@@ -101,8 +103,6 @@ unsigned long revFluxTimer = 0;
 bool partPlacerDone = false;
 CustomStepper revStep(stepPin3, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 6400, 5, CW);
 CustomStepper fluxStep(stepPin4, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 400, 100, CW);//400, stepPin4, 0);
-const int trayTubeCorrection = 100;
-const int fluxTubeCorrection = 100;
 const int fluxStartingPos = 100;
 
 
@@ -155,7 +155,7 @@ void setup() {
   
   partStep.setRPM(800);
   partStep.setDirection(CW);
-  trayStep.setRPM(200);
+  trayStep.setRPM(800);
   trayStep.setDirection(CW);
   //
   revStep.setRPM(10);
@@ -270,7 +270,7 @@ void loop() {
       break;
       
     case 1: //move flux to initial position
-      digitalWrite(dirPin4, HIGH);
+      digitalWrite(dirPin4, HIGH); //move in -X
       digitalWrite(enPin4, LOW);
       fluxStep.rotateDegrees((fluxStartingPos)*4); //need modification
       fluxDispState = 2;
@@ -316,36 +316,90 @@ void loop() {
         
       }
       break;
-    
-    case 6: //move tray to align the tube shot with the flux
-      digitalWrite(dirPin2, HIGH);
-      digitalWrite(enPin2, LOW);
-      trayStep.rotateDegrees((trayTubeCorrection)*4); //need modification
+      
+    case 6: //rotate the revolver
+      digitalWrite(enPin3, LOW);
+      digitalWrite(dirPin3, LOW);
+      revStep.rotateDegrees(360/21*4);
       fluxDispState = 7;
       break;
       
-    case 7: //adjust the tray and flux for the proper modifications
-      if(trayStep.isDone())
+    case 7:
+      if(revStep.isDone())
       {
-        digitalWrite(enPin2, HIGH);
+        digitalWrite(enPin3, HIGH);
         fluxDispState = 8;
-        digitalWrite(dirPin4, LOW);
-        digitalWrite(enPin4, LOW);
-        fluxStep.rotateDegrees((fluxTubeCorrection)*4); //need modification
+        revFluxTimer = millis();
       }
+      break;
+    
+    case 8: //No correction needed ideally. wait for tube
+      if(millis() - revFluxTimer > 300)
+      {
+        fluxDispState = 9; //move in the X direction
+        //increase counter and ensure we are done
+        fluxDispXCounter++;
+        if(fluxDispXCounter == 5) //we did all five of them
+        {
+          fluxDispYCounter++;
+          fluxDispState = 10; //move in the Y direction
+          if(fluxDispYCounter == 4) //all 20 pieces have been fluxed and wired
+          {
+            fluxDispState = 100;
+          }          
+          
+        }
+      }
+      break;
       
-    case 8:
+    case 9: //do flux movement in X direction and refresh to state 2
+      digitalWrite(dirPin4, LOW); //move in +X
+      digitalWrite(enPin4, LOW);
+      fluxStep.rotateDegrees((200)*4); //move forward in X
+      fluxDispState = 2; //restart the process
+      break;
+      
+    case 10: //move the flux back to original position
+      digitalWrite(dirPin4, HIGH); //move in -X
+      digitalWrite(enPin4, LOW);
+      fluxStep.rotateDegrees((800)*4); //move to original position
+      fluxDispState = 11; 
+      break;
+      
+    case 11:
       if(fluxStep.isDone())
       {
         digitalWrite(enPin4, HIGH);
-        //We must now undo the changes
-        
+        //Move the tray a little bit down
+        //move to tray
+        digitalWrite(dirPin2, LOW);
+        digitalWrite(enPin2, LOW);
+        trayStep.rotateDegrees((200)*4);
+        fluxDispState = 12;
       }
-                    
+      break;
+      
+    case 12:
+      if(trayStep.isDone())
+      {
+        //start up state 3
+        digitalWrite(enPin2, HIGH);
+        fluxDispState = 3;
+        digitalWrite(fluxDCPinDown, HIGH);
+        digitalWrite(fluxDCPinUp, LOW);
+        revFluxTimer = millis();                        
+      }
+      break;
+      
+      
+      
   }
   
-  if(fluxDispState == 2)
+  if(fluxDispState == 2 || fluxDispState == 11)
     fluxStep.run();
+    
+  if(fluxDispState == 12)
+    trayStep.run();
   
   if(revRelState == 5)
     revStep.run();
