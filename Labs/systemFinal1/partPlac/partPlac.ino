@@ -28,12 +28,12 @@ const char stepPin3 = 26;
 const char fluxDCPinUp = 30; 
 const char fluxDCPinDown = 28; 
 
-const char LED0 = 34; //34 
+const char LED0 = 42; 
 const char LED1 = 40;
 const char LED2 = 38;
 const char LED3 = 36; 
-const char LED4 = 42;
-char LEDValue = 0;
+const char LED4 = 34;
+
 
 const char enPin4 = 39;
 const char stepPin4 = 41;
@@ -80,7 +80,7 @@ Servo cameraServo;
 
 
 //STATE VARIABLES
-int cameraState = 1;
+int cameraState = 100;
 unsigned long cameraTime = 100;
 int partState = 0;
 unsigned long partPlacerTimer = 0;
@@ -96,14 +96,14 @@ unsigned char partStepperYCounter = 0;
 
 
 //For the revolver preloading
-int revRelState = 100; //4
+int revRelState = 0; //4
 int fluxDispState = 100; //starts when revRelState finishes
 unsigned char revRelCount = 0;
 unsigned long revFluxTimer = 0;
 bool partPlacerDone = false; //remember
 CustomStepper revStep(stepPin3, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 6400, 5, CW);
 CustomStepper fluxStep(stepPin4, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 400, 100, CW);//400, stepPin4, 0);
-const int fluxStartingPos = 2270;
+const int fluxStartingPos = 1135;
 
 unsigned char fluxDispXCounter = 0;
 unsigned char fluxDispYCounter = 0;
@@ -192,9 +192,8 @@ void loop() {
   
   if(Serial.available()) {
       serialValue = Serial.read() - 48;
-      LEDValue = serialValue;
   }
-  switch(LEDValue){ 
+  switch(serialValue){ 
      case 0:
        digitalWrite(LED0,LOW);
        digitalWrite(LED1,HIGH);
@@ -248,9 +247,9 @@ void loop() {
         //}
     
         flipperServo.write(restingPos);
-        cameraServo.write(holdingPos);
-        partPos = 1;  
+        cameraServo.write(holdingPos);  
         digitalWrite(flipper_mag_pin,LOW);
+        //partPos = 2;
         if(serialValue != 0 && serialValue != 5 && millis() - cameraTime > 1000){
           cameraState = 5;
           cameraTime = millis();
@@ -267,7 +266,7 @@ void loop() {
         cameraServo.write(holdingPos);  
         digitalWrite(flipper_mag_pin,LOW);
         
-        if(millis() - cameraTime > 100){
+        if(millis() - cameraTime > 400/3){
           cameraState = 1;
           cameraTime = millis();
         }
@@ -328,8 +327,6 @@ void loop() {
         }
         break;
     }      
-    
-    serialValue = 0; //only accept latest
    
      switch(partState){
       
@@ -450,7 +447,7 @@ void loop() {
         //move to tray
         digitalWrite(dirPin2, HIGH);
         digitalWrite(enPin2, LOW);
-        trayStep.rotateDegrees((400)*4);
+        trayStep.rotateDegrees((200)*4);
         partState = 12;
         break;
         
@@ -485,7 +482,7 @@ void loop() {
     switch(revRelState){
     case 0:
       digitalWrite(wirefeederPin, HIGH);
-      revRelState = 1;
+      revRelState = 4;
       break;
       
     case 1:
@@ -493,7 +490,7 @@ void loop() {
       {
         wireEnc.write(0);
         digitalWrite(wirefeederPin, LOW);
-        revRelState = 2;
+        revRelState = 5;
       }
       break;
       
@@ -530,7 +527,7 @@ void loop() {
       if(revStep.isDone())
       {
         digitalWrite(enPin3, HIGH);
-        revRelState = 4; //lkj;asd;f
+        revRelState = 0; //lkj;asd;f
         revRelCount++;
         delay(1000);
         if(revRelCount == 20) //inserted in all the 20 pieces
@@ -558,7 +555,7 @@ void loop() {
       break;
       
     case 1: //move flux to initial position
-      digitalWrite(dirPin4, LOW); //move in -X
+      digitalWrite(dirPin4, HIGH); //move in -X
       digitalWrite(enPin4, LOW);
       fluxStep.rotateDegrees((fluxStartingPos)*4); //need modification
       fluxDispState = 2;
@@ -568,18 +565,16 @@ void loop() {
       if(fluxStep.isDone())
       {
         digitalWrite(enPin4, HIGH);
-        fluxDispState = 3;
-        //Serial.println("Should push down");
-        digitalWrite(fluxDCPinDown, HIGH);
-        digitalWrite(fluxDCPinUp, LOW);
-        revFluxTimer = millis();
+        fluxDispState = 100;
+        //digitalWrite(fluxDCPinDown, HIGH);
+        //digitalWrite(fluxDCPinUp, LOW);
+        //revFluxTimer = millis();
       }
       break;
       
     case 3: //pushing down time
-      if(millis() - revFluxTimer > 100)
+      if(millis() - revFluxTimer > 220)
       {
-        //Serial.println("finish pushing");
         fluxDispState = 4;
         digitalWrite(fluxDCPinDown, LOW);
         digitalWrite(fluxDCPinUp, LOW);
@@ -588,7 +583,7 @@ void loop() {
       break;
     
     case 4: //hold time
-      if(millis() - revFluxTimer > 100)
+      if(millis() - revFluxTimer > 60)
       {
         fluxDispState = 5;
         digitalWrite(fluxDCPinDown, LOW);
@@ -596,9 +591,9 @@ void loop() {
         revFluxTimer = millis();
       }
       break;
-      
+    
     case 5: //pushing up time
-      if(millis() - revFluxTimer > 100)
+      if(millis() - revFluxTimer > 150)
       {
         fluxDispState = 6;
         digitalWrite(fluxDCPinDown, LOW);
@@ -643,14 +638,14 @@ void loop() {
       break;
       
     case 9: //do flux movement in X direction and refresh to state 2
-      digitalWrite(dirPin4, HIGH); //move in +X
+      digitalWrite(dirPin4, LOW); //move in +X
       digitalWrite(enPin4, LOW);
       fluxStep.rotateDegrees((200)*4); //move forward in X
       fluxDispState = 2; //restart the process
       break;
       
     case 10: //move the flux back to original position
-      digitalWrite(dirPin4, LOW); //move in -X
+      digitalWrite(dirPin4, HIGH); //move in -X
       digitalWrite(enPin4, LOW);
       fluxStep.rotateDegrees((800)*4); //move to original position
       fluxDispState = 11; 
