@@ -19,7 +19,7 @@ const char cameraServoPin = 11;
 
 const char wirefeederPin = 12;
 
-Encoder fluxEnc = Encoder(21, 20);
+Encoder wireEnc = Encoder(21, 20);
 
 const char dirPin3 = 22;
 const char enPin3 = 24;
@@ -80,9 +80,9 @@ Servo cameraServo;
 
 
 //STATE VARIABLES
-int cameraState = 1;
-unsigned long cameraTime = 0;
-int partState = 100;
+int cameraState = 100;
+unsigned long cameraTime = 100;
+int partState = 0;
 unsigned long partPlacerTimer = 0;
 
 char partPos = 0;
@@ -96,7 +96,7 @@ unsigned char partStepperYCounter = 0;
 
 
 //For the revolver preloading
-int revRelState = 100; //4
+int revRelState = 0; //4
 int fluxDispState = 100; //starts when revRelState finishes
 unsigned char revRelCount = 0;
 unsigned long revFluxTimer = 0;
@@ -159,7 +159,7 @@ void setup() {
   pinMode(fluxDCPinDown, OUTPUT);
   
   partStep.setRPM(800);
-  trayStep.setRPM(200);
+  trayStep.setRPM(800);
   revStep.setRPM(10);
   fluxStep.setRPM(800);
 
@@ -445,7 +445,7 @@ void loop() {
       case 11:
         //Move the tray a little bit down
         //move to tray
-        digitalWrite(dirPin2, LOW);
+        digitalWrite(dirPin2, HIGH);
         digitalWrite(enPin2, LOW);
         trayStep.rotateDegrees((200)*4);
         partState = 12;
@@ -482,16 +482,15 @@ void loop() {
     switch(revRelState){
     case 0:
       digitalWrite(wirefeederPin, HIGH);
-      revFluxTimer = millis();
-      revRelState = 1;
+      revRelState = 4;
       break;
       
     case 1:
-      if(millis() - revFluxTimer > 300)
+      if(wireEnc.read() > 40)
       {
+        wireEnc.write(0);
         digitalWrite(wirefeederPin, LOW);
-        revRelState = 2;
-        Serial.println("enetering 2");
+        revRelState = 5;
       }
       break;
       
@@ -503,7 +502,6 @@ void loop() {
          digitalWrite(DCCutterPinCut, LOW);
          digitalWrite(DCCutterPinRelease, LOW);   
          revRelState = 3;
-         Serial.println("2 entering 3");
       } 
       break;
       
@@ -512,7 +510,6 @@ void loop() {
       digitalWrite(DCCutterPinRelease, HIGH);
       if(myEnc.read() <= 29)
       {
-         Serial.println("finishing 3");
          digitalWrite(DCCutterPinCut, LOW);
          digitalWrite(DCCutterPinRelease, LOW);   
          revRelState = 4;
@@ -520,7 +517,6 @@ void loop() {
       break;
       
     case 4: //rotate the revolver
-      Serial.println("Running case 4 of rev");
       digitalWrite(enPin3, LOW );
       digitalWrite(dirPin3, LOW);
       revStep.rotateDegrees(360/21*4);
@@ -531,13 +527,13 @@ void loop() {
       if(revStep.isDone())
       {
         digitalWrite(enPin3, HIGH);
-        revRelState = 4; //lkj;asd;f
+        revRelState = 0; //lkj;asd;f
         revRelCount++;
         delay(1000);
         if(revRelCount == 20) //inserted in all the 20 pieces
         {
           revRelState = 100;
-          fluxDispState = 100;//afkflhsf
+          fluxDispState = 0;//afkflhsf
           //Give indication that the machine is ready
         }
         
