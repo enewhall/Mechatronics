@@ -21,9 +21,9 @@ const char wirefeederPin = 12;
 
 Encoder fluxEnc = Encoder(21, 20);
 
-const char dirPin4 = 22;
-const char enPin4 = 24;
-const char stepPin4 = 26;
+const char dirPin3 = 22;
+const char enPin3 = 24;
+const char stepPin3 = 26;
 
 const char fluxDCPinUp = 30; 
 const char fluxDCPinDown = 28; 
@@ -35,9 +35,9 @@ const char LED3 = 36;
 const char LED4 = 34;
 
 
-const char enPin3 = 39;
-const char stepPin3 = 41;
-const char dirPin3 = 37;
+const char enPin4 = 39;
+const char stepPin4 = 41;
+const char dirPin4 = 37;
 
 const char dirPin = 43;
 const char enPin = 45;
@@ -82,7 +82,7 @@ Servo cameraServo;
 //STATE VARIABLES
 int cameraState = 1;
 unsigned long cameraTime = 0;
-int partState = 0;
+int partState = 100;
 unsigned long partPlacerTimer = 0;
 
 char partPos = 0;
@@ -96,7 +96,7 @@ unsigned char partStepperYCounter = 0;
 
 
 //For the revolver preloading
-int revRelState = 0;
+int revRelState = 100; //4
 int fluxDispState = 100; //starts when revRelState finishes
 unsigned char revRelCount = 0;
 unsigned long revFluxTimer = 0;
@@ -246,18 +246,17 @@ void loop() {
           digitalWrite(hopper_pin_rev,LOW);
         //}
     
-      
         flipperServo.write(restingPos);
         cameraServo.write(holdingPos);  
         digitalWrite(flipper_mag_pin,LOW);
-        partPos = 2;
-        /*if(serialValue != 0 && millis() - cameraTime > 1000){
+        //partPos = 2;
+        if(serialValue != 0 && serialValue != 5 && millis() - cameraTime > 1000){
           cameraState = 5;
           cameraTime = millis();
         }else if(partPos == 0 && millis() - cameraTime > 5000){
           cameraState = 2;
           cameraTime = millis();
-        }*/
+        }
         break;
       case 2:
         //SPIN FOWARD
@@ -267,7 +266,7 @@ void loop() {
         cameraServo.write(holdingPos);  
         digitalWrite(flipper_mag_pin,LOW);
         
-        if(millis() - cameraTime > 400){
+        if(millis() - cameraTime > 400/3){
           cameraState = 1;
           cameraTime = millis();
         }
@@ -463,7 +462,8 @@ void loop() {
     
       case 13:
         //move the tray to the proper part in the code
-        digitalWrite(dirPin2, LOW);
+        Serial.println("This should run");
+        digitalWrite(dirPin2, HIGH);
         digitalWrite(enPin2, LOW);
         trayStep.rotateDegrees((1700)*4); //2300 - 600
         partState = 14;
@@ -520,7 +520,8 @@ void loop() {
       break;
       
     case 4: //rotate the revolver
-      digitalWrite(enPin3, LOW);
+      Serial.println("Running case 4 of rev");
+      digitalWrite(enPin3, LOW );
       digitalWrite(dirPin3, LOW);
       revStep.rotateDegrees(360/21*4);
       revRelState = 5;
@@ -530,12 +531,13 @@ void loop() {
       if(revStep.isDone())
       {
         digitalWrite(enPin3, HIGH);
-        revRelState = 0;
+        revRelState = 4; //lkj;asd;f
         revRelCount++;
+        delay(1000);
         if(revRelCount == 20) //inserted in all the 20 pieces
         {
           revRelState = 100;
-          fluxDispState = 0;
+          fluxDispState = 100;//afkflhsf
           //Give indication that the machine is ready
         }
         
@@ -567,10 +569,10 @@ void loop() {
       if(fluxStep.isDone())
       {
         digitalWrite(enPin4, HIGH);
-        fluxDispState = 3;
-        digitalWrite(fluxDCPinDown, HIGH);
-        digitalWrite(fluxDCPinUp, LOW);
-        revFluxTimer = millis();
+        fluxDispState = 100;
+        //digitalWrite(fluxDCPinDown, HIGH);
+        //digitalWrite(fluxDCPinUp, LOW);
+        //revFluxTimer = millis();
       }
       break;
       
