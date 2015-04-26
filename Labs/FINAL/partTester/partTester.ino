@@ -64,8 +64,8 @@ const int slidingPos = 25;
 const int restingPos = 18;
 const int flipPos = 180;
 // Constant for camera Servo
-const int holdingPos = 80;
-const int viewingPos = 15;
+const int holdingPos = 180;
+const int viewingPos = 120;
 
 
 //Stepper partStep = Stepper(400, stepPin, 0);
@@ -82,10 +82,10 @@ Servo cameraServo;
 //STATE VARIABLES
 int cameraState = 100;
 unsigned long cameraTime = 0;
-int partState = 100;
+int partState = 0;
 unsigned long partPlacerTimer = 0;
 
-char partPos = 2;
+char partPos = 0;
 
 //add this for partplacer part
 char currentPartPos = 0;
@@ -98,7 +98,7 @@ unsigned char partStepperYCounter = 0;
 //For the revolver preloading
 int revRelState = 100; //4
 int fluxDispState = 0; //starts when revRelState finishes
-unsigned char revRelCount = 0;
+unsigned char revRelCount = 100;
 unsigned long revFluxTimer = 0;
 bool partPlacerDone = true; //remember
 //CustomStepper revStep(stepPin3, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 6400, 5, CW);
@@ -183,7 +183,7 @@ void setup() {
   
   partPlacerServo.write(restingHeight);
   flipperServo.write(restingPos);
-  cameraServo.write(holdingPos);  
+  cameraServo.write(0);  
   partServo.write(0);
     
   cameraTime = millis();
@@ -299,6 +299,23 @@ void loop() {
 //     Serial.println("We did a rev step");
 //     dir = (dir + 1) % 2;
 //     delay(500);     
+
+      //test flipper servo
+      Serial.println(partState);
+      switch(partState)
+      {
+        case 0:
+          cameraServo.write(0);
+          delay(1000);
+          partState = 1;
+          break;
+          
+        case 1:
+          cameraServo.write(180);
+          delay(1000);
+          partState = 0;
+          break;
+      }
 
   }
 }

@@ -2,7 +2,8 @@
 //For the States
 
 #define STEPPERINIT(dirPin, enPin, stepPin, SPR, RPM) {CustomStepper(stepPin, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, SPR, RPM, CW), dirPin, enPin, stepPin}
-#define DCINIT(pinUp, pinDown) {Encoder(pinUp, pinDown), 0, pinUp, pinDown}
+#define DCINIT(pinUp, pinDown) {0, pinUp, pinDown}
+#define DCENCINIT(pinUp, pinDown, pinA, pinB) {Encoder(pinA, pinB), pinUp, pinDown}
 
 struct StepperStruct {
   CustomStepper Step;
@@ -12,8 +13,13 @@ struct StepperStruct {
 };
 
 struct DCStruct {
-  Encoder enc;
   unsigned long time_t;
+  byte pinUp;
+  byte pinDown;  
+};
+
+struct DCEncStruct {
+  Encoder enc;
   byte pinUp;
   byte pinDown;  
 };
@@ -61,7 +67,19 @@ void rotateDown(DCStruct * DC)
   DC->time_t = millis();
 }
 
-bool encoderTestGreater(DCStruct * DC, int steps)
+void rotateUp(DCEncStruct * DC)
+{
+  digitalWrite(DC->pinUp, HIGH);
+  digitalWrite(DC->pinDown, LOW);
+}
+
+void rotateDown(DCEncStruct * DC)
+{
+  digitalWrite(DC->pinUp, LOW);
+  digitalWrite(DC->pinDown, HIGH);
+}
+
+bool encoderGreater(DCEncStruct * DC, int steps)
 {
   if(DC->enc.read() > steps)
   {
@@ -72,7 +90,7 @@ bool encoderTestGreater(DCStruct * DC, int steps)
   return false;
 }
 
-bool encoderTestLess(DCStruct * DC, int steps)
+bool encoderLess(DCEncStruct * DC, int steps)
 {
   if(DC->enc.read() < steps)
   {
@@ -101,6 +119,12 @@ void DCSetup(DCStruct * DC)
   pinMode(DC->pinDown,OUTPUT);
 }
 
+void DCSetup(DCEncStruct * DC)
+{
+  pinMode(DC->pinUp,OUTPUT);
+  pinMode(DC->pinDown,OUTPUT);
+}
+
 //General Timer function
 bool TimerElapsed(unsigned long time_t, unsigned long elapse)
 {
@@ -109,7 +133,7 @@ bool TimerElapsed(unsigned long time_t, unsigned long elapse)
 }
 
 
-//initializing StepperStructs
+//initializing variables that should be accessed by all files
 
-DCStruct testDC = DCINIT(5,6);
+byte partPos = 0;
 

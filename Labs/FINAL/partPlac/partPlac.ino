@@ -56,7 +56,7 @@ const char enPin2 = 51;
 const char stepPin2 = 53;
 
 // Constants for part servo servo positions
-const int cameraHeight = 130;
+const int cameraHeight = 120;
 const int trayHeight = 59;
 const int restingHeight = 0;
 // Constants for flipper servo positions
@@ -89,7 +89,7 @@ unsigned char partStepperYCounter = 0;
 
 //For the revolver preloading
 int revRelState = 100; //4
-int fluxDispState = 0; //starts when revRelState finishes
+int fluxDispState = 100; //starts when revRelState finishes
 unsigned char revRelCount = 0;
 unsigned long revFluxTimer = 0;
 bool partPlacerDone = true; //remember
@@ -372,7 +372,7 @@ void loop() {
         
       case 4:
         //move to tray
-        //digitalWrite(enPin, LOW );
+        digitalWrite(enPin, LOW );
         digitalWrite(dirPin, LOW);
         partStep.rotateDegrees((1500 + 200*partStepperXCounter)*4);
         if(currentPartPos == 2)//ideally rotate as it moves
@@ -411,8 +411,8 @@ void loop() {
         break;
         
       case 9: //return back
-        //digitalWrite(dirPin, HIGH);
-        //digitalWrite(enPin, LOW);
+        digitalWrite(dirPin, HIGH);
+        digitalWrite(enPin, LOW);
         partStep.rotateDegrees((1550 + 200*partStepperXCounter)*4);
         partState = 10;
         break;

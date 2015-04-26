@@ -1,18 +1,18 @@
 //Servo and magnets
 const char partPlacerServoPin =  6;
 const char placer_mag_pin = 7;
-const char partServoPin = 10;
+const char partReorientatorServoPin = 10;
 
 
 // Constants for part servo servo positions
-const int cameraHeight = 130;
+const int cameraHeight = 120;
 const int trayHeight = 59;
 const int restingHeight = 0;
 
 Servo partPlacerServo;
 Servo partServo; //reorientator
 
-//const char dirPin = 35;
+//const char dirPin = 43;
 //const char enPin = 45;
 //const char stepPin = 47;
 
@@ -21,12 +21,12 @@ Servo partServo; //reorientator
 //const char stepPin2 = 53;
 
 
-StepperStruct partStep = STEPPERINIT(35,45,47,400,400);
+StepperStruct partStep = STEPPERINIT(43,45,47,400,800);
 StepperStruct trayStep = STEPPERINIT(49,51,53,200,800);
 
 int partState = 0;
 unsigned long partPlacerTimer = 0;
-byte partPos = 0;
+
 byte currentPartPos;
 unsigned char partStepperXCounter = 0;
 unsigned char partStepperYCounter = 0;
@@ -38,7 +38,7 @@ void placerSetup() {
   StepperSetup(&partStep);
   StepperSetup(&trayStep);
   partPlacerServo.attach(partPlacerServoPin);
-  partServo.attach(partServoPin);
+  partServo.attach(partReorientatorServoPin);
   //initial values
   digitalWrite(partStep.enPin, HIGH);
   digitalWrite(trayStep.enPin, HIGH);
@@ -162,7 +162,7 @@ void placerLoop() {
     case 11:
       //Move the tray a little bit down
       //move to tray
-      rotateDegrees(&trayStep, (400)*4, HIGH);
+      rotateDegrees(&trayStep, (400)*4, LOW);
       partState = 12;
       break;
       
@@ -176,7 +176,7 @@ void placerLoop() {
   
     case 13:
       //move the tray to the proper part in the code
-      rotateDegrees(&trayStep, (3400)*4, HIGH); //2*(2300 - 600)
+      rotateDegrees(&trayStep, (3400)*4, LOW); //2*(2300 - 600)
       partState = 14;
       break;
   
