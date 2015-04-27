@@ -16,21 +16,16 @@ Servo partServo; //reorientator
 //const char enPin = 45;
 //const char stepPin = 47;
 
-//const char dirPin2 = 49;
-//const char enPin2 = 51;
-//const char stepPin2 = 53;
+
 
 
 StepperStruct partStep = STEPPERINIT(43,45,47,400,800);
-StepperStruct trayStep = STEPPERINIT(49,51,53,200,800);
-
-int partState = 0;
 unsigned long partPlacerTimer = 0;
 
 byte currentPartPos;
 unsigned char partStepperXCounter = 0;
 unsigned char partStepperYCounter = 0;
-bool partPlacerDone = false;
+
 
 void placerSetup() {
   pinMode(placer_mag_pin,OUTPUT);

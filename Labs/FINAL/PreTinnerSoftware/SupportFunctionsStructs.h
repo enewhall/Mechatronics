@@ -3,7 +3,7 @@
 
 #define STEPPERINIT(dirPin, enPin, stepPin, SPR, RPM) {CustomStepper(stepPin, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, SPR, RPM, CW), dirPin, enPin, stepPin}
 #define DCINIT(pinUp, pinDown) {0, pinUp, pinDown}
-#define DCENCINIT(pinUp, pinDown, pinA, pinB) {Encoder(pinA, pinB), pinUp, pinDown}
+#define DCENCINIT(pinUp, pinDown, pinA, pinB) {Encoder(pinA, pinB), pinA, pinB, pinUp, pinDown}
 
 struct StepperStruct {
   CustomStepper Step;
@@ -20,6 +20,8 @@ struct DCStruct {
 
 struct DCEncStruct {
   Encoder enc;
+  byte pinA;
+  byte pinB;
   byte pinUp;
   byte pinDown;  
 };
@@ -101,7 +103,7 @@ bool encoderLess(DCEncStruct * DC, int steps)
   return false;
 }
 
-bool TimerElapsed(DCStruct * DC, unsigned long elapse)
+bool timerElapsed(DCStruct * DC, unsigned long elapse)
 {
   if(millis() - DC->time_t > elapse)
   {
@@ -111,6 +113,12 @@ bool TimerElapsed(DCStruct * DC, unsigned long elapse)
   }
   return false;
   
+}
+
+void DCStop(DCStruct * DC)
+{
+  digitalWrite(DC->pinUp, LOW);
+  digitalWrite(DC->pinDown, LOW);
 }
 
 void DCSetup(DCStruct * DC)
@@ -123,17 +131,13 @@ void DCSetup(DCEncStruct * DC)
 {
   pinMode(DC->pinUp,OUTPUT);
   pinMode(DC->pinDown,OUTPUT);
+  pinMode(DC->pinA, INPUT);
+  pinMode(DC->pinB, INPUT);
 }
 
 //General Timer function
-bool TimerElapsed(unsigned long time_t, unsigned long elapse)
+bool timerElapsed(unsigned long time_t, unsigned long elapse)
 {
   return (millis() - time_t) > elapse;
   
 }
-
-
-//initializing variables that should be accessed by all files
-
-byte partPos = 0;
-
