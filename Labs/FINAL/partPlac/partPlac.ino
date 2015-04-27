@@ -64,8 +64,8 @@ const int slidingPos = 25;
 const int restingPos = 18;
 const int flipPos = 180;
 // Constant for camera Servo
-const int holdingPos = 80;
-const int viewingPos = 15;
+const int holdingPos = 20;
+const int viewingPos = 90;
 
 Servo partPlacerServo;
 Servo partServo; //reorientator

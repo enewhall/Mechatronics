@@ -64,9 +64,8 @@ const int slidingPos = 25;
 const int restingPos = 18;
 const int flipPos = 180;
 // Constant for camera Servo
-const int holdingPos = 180;
-const int viewingPos = 120;
-
+const int holdingPos = 20;
+const int viewingPos = 90;
 
 //Stepper partStep = Stepper(400, stepPin, 0);
 Stepper trayStep = Stepper(200, stepPin2, 0);
