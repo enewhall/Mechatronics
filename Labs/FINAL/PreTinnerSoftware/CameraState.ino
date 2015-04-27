@@ -38,7 +38,7 @@ void cameraSetup() { //Also sets up serial communications
   cameraServo.write(holdingPos);  
   
   Serial.begin(9600);
-  while(!Serial.available() && Serial.read() == '5');
+  while(!Serial.available());
   cameraTime = millis();    
 }
 

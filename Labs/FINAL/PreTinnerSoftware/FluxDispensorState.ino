@@ -117,7 +117,7 @@ void fluxLoop() {
       {
         //Move the tray a little bit down
         //move to tray
-        rotateDegrees(&trayStep, (200)*4, LOW);
+        rotateDegrees(&trayStep, (400)*4, LOW);
         fluxDispState = 12;
       }
       break;

@@ -134,48 +134,52 @@ void placerLoop() {
         //ensure we create a 5 by 4 layout of the parts
         //We will be using the X and Y counter to count
         //how much of the layout has been completed
-        partState = 0;
-        partStepperXCounter++;
-        if(partStepperXCounter == 5) //did the fifth one already
+        partState = 11;
+      }
+      break;
+      
+    case 11: //update counter
+      partState = 0;
+      partStepperXCounter += 5;
+      if(partStepperXCounter == 5) //did the fifth one already
+      {
+        partStepperYCounter++;
+        partStepperXCounter = 0;
+        if(partStepperYCounter == 4) //did all four of them
         {
-          partStepperYCounter++;
-          partStepperXCounter = 0;
-          if(partStepperYCounter == 4) //did all four of them
-          {
-            //prepare the flux dispenser state
-            partState = 13; 
-          }
-          else
-          {
-            partState = 11;
-            
-          }
+          //prepare the flux dispenser state
+          partState = 14; 
+        }
+        else
+        {
+          partState = 12;
+          
         }
       }
       break;
       
-    case 11:
+    case 12:
       //Move the tray a little bit down
       //move to tray
       rotateDegrees(&trayStep, (400)*4, LOW);
-      partState = 12;
+      partState = 13;
       break;
       
-    case 12:
+    case 13:
       if(Done(&trayStep))
       {
         //Start placing the pieces again
-        partState = 0;
+        partState = 11; //Debug: originally the code
       }
       break;
   
-    case 13:
+    case 14:
       //move the tray to the proper part in the code
-      rotateDegrees(&trayStep, (3400)*4, LOW); //2*(2300 - 600)
-      partState = 14;
+      rotateDegrees(&trayStep, (1700)*4, LOW); //2*(2300 - 600)
+      partState = 15;
       break;
   
-    case 14: //flux is now ready to write upon
+    case 15: //flux is now ready to write upon
       if(Done(&trayStep)) 
       {
         partPlacerDone = true;
@@ -189,7 +193,7 @@ void placerLoop() {
   {
     partStep.Step.run();
   }
-  if(partState == 12 || partState == 14)
+  if(partState == 13 || partState == 15)
     trayStep.Step.run();
     
   

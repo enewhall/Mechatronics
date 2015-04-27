@@ -12,16 +12,17 @@ void setup()
   fluxSetup();
   cameraSetup();  
   //code useful for modification or debug
-  //partState = ;
+  //revRelState = 4;
+  partPlacerDone = true;
   //partPos = ;
   //partPlacerDone = ;
 }
 
 void loop()
 {
-  cameraLoop();
-  LEDLoop();
-  placerLoop();
+  //cameraLoop();
+  //LEDLoop();
+  //placerLoop();
   revLoop();
   fluxLoop();
 }

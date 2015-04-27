@@ -19,34 +19,35 @@ void revSetup() {
 void revLoop() {
   
   switch(revRelState){
-    case 0:
-      rotateUp(&wireEnc);
-      revRelState = 1;
+     case 0:
+      rotateUp(&cutEnc);
+      if(encoderGreater(&cutEnc, (1520 + 2*revRelCount) ))
+      {   
+         revRelState = 1;
+      } 
       break;
       
     case 1:
-      if(encoderGreater(&wireEnc, 40))
-      {
-        wireEnc.enc.write(0);
-        revRelState = 2;
-      }
-      break;
-      
-    case 2:
-      rotateUp(&cutEnc);
-      if(encoderGreater(&cutEnc, 1500))
-      {   
-         revRelState = 3;
-      } 
-      break;
-      
-    case 3:
       rotateDown(&cutEnc);
       if(encoderLess(&cutEnc, 29))
       {   
-         revRelState = 4;
+         revRelState = 2;
       } 
       break;
+      
+    case 2:
+      rotateUp(&wireEnc);
+      revRelState = 3;
+      break;
+      
+    case 3:
+      if(encoderGreater(&wireEnc, 40))
+      {
+        wireEnc.enc.write(0);
+        revRelState = 4;
+      }
+      break;
+      
       
     case 4: //rotate the revolver
       rotateDegrees(&revStep, 360/21*4, LOW);
@@ -56,14 +57,16 @@ void revLoop() {
     case 5:
       if(Done(&revStep)) //keep repeating until 20 wires are put in
       {
-        revRelState = 0;
+        revRelState = 0;//Debug remember to undo
         revRelCount++;
-        if(revRelCount == 20) //inserted in all the 20 pieces
+        if(revRelCount == 21) //inserted in all the 20 pieces
         {
           revRelState = 100;
           fluxDispState = 0;
           //Give indication that the machine is ready
         }        
+        //debug
+        //delay(1000);
       }
       break;    
     }
