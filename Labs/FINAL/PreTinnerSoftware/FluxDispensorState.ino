@@ -82,6 +82,7 @@ void fluxLoop() {
       {
         fluxDispState = 8;
       }
+      break;
       
     case 8: // do flux correction
       rotateDegrees(&fluxStep, fluxCor*4, LOW);
@@ -93,6 +94,7 @@ void fluxLoop() {
       {
         fluxDispState = 10;
       }
+      break;
       
     case 10: //rotate the revolver
       rotateDegrees(&revStep, 360/21*4, LOW);
@@ -120,6 +122,7 @@ void fluxLoop() {
       {
         fluxDispState = 14;
       }
+      break;
       
     case 14: // undo flux correction
       rotateDegrees(&fluxStep, fluxCor*4, HIGH);
@@ -142,8 +145,9 @@ void fluxLoop() {
             fluxDispState = 100;
           }          
           
-        }
+        }        
       }
+      break;
       
     case 16: //do flux movement in X direction and refresh to state 2
       rotateDegrees(&fluxStep, (200)*4, HIGH);

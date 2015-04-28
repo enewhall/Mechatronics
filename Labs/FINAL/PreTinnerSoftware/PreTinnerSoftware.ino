@@ -10,7 +10,7 @@ void setup()
   placerSetup();
   revSetup();
   fluxSetup();
-  cameraSetup();  
+  cameraSetup(); 
   //code useful for modification or debug
   //revRelState = 4;
   partPlacerDone = false;

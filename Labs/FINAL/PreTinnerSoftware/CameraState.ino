@@ -35,11 +35,10 @@ void cameraSetup() { //Also sets up serial communications
   cameraServo.attach(cameraServoPin);
       
   flipperServo.write(restingPos);
-  cameraServo.write(holdingPos);  
-  
+  cameraServo.write(holdingPos);
+  cameraTime = millis();  
   Serial.begin(9600);
-  while(!Serial.available());
-  cameraTime = millis();    
+  while(!Serial.available());     
 }
 
 
