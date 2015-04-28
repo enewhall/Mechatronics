@@ -8,9 +8,9 @@ DCStruct fluxDC = DCINIT(30, 28);
 //const char dirPin4 = 37;
 //CustomStepper fluxStep(stepPin4, 0, 0, 0, (byte[]){8, B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001}, 400, 100, CW);
 //fluxStep.setRPM(800);
-StepperStruct fluxStep = STEPPERINIT(37,39,41,400,800);
+StepperStruct fluxStep = STEPPERINIT(41,39,37,400,800);
 
-const int fluxStartingPos = 2270;
+const int fluxStartingPos = 450;
 
 unsigned char fluxDispXCounter = 0;
 unsigned char fluxDispYCounter = 0;
@@ -32,7 +32,7 @@ void fluxLoop() {
       break;
       
     case 1: //move flux to initial position
-      rotateDegrees(&fluxStep, (fluxStartingPos)*4, LOW);
+      rotateDegrees(&fluxStep, (fluxStartingPos)*4, HIGH);
       fluxDispState = 2;
       break;
       
@@ -65,8 +65,8 @@ void fluxLoop() {
     case 5: //pushing up timem
       if(timerElapsed(&fluxDC, 100))
       {
-        fluxDispState = 6;
-        
+        fluxDispState = 8;
+        revFluxTimer = millis();
       }
       break;
       
@@ -91,6 +91,7 @@ void fluxLoop() {
         fluxDispXCounter++;
         if(fluxDispXCounter == 5) //we did all five of them
         {
+          fluxDispXCounter = 0;
           fluxDispYCounter++;
           fluxDispState = 10; //move in the Y direction
           if(fluxDispYCounter == 4) //all 20 pieces have been fluxed and wired
@@ -107,23 +108,22 @@ void fluxLoop() {
       fluxDispState = 2; //restart the process
       break;
       
-    case 10: //move the flux back to original position
-      rotateDegrees(&fluxStep, (800)*4, LOW);
+    case 10: //move the tray a little bit up.
+      rotateDegrees(&trayStep, (400)*4, HIGH);
       fluxDispState = 11; 
       break;
       
     case 11:
-      if(Done(&fluxStep))
+      if(Done(&trayStep))
       {
-        //Move the tray a little bit down
-        //move to tray
-        rotateDegrees(&trayStep, (400)*4, LOW);
+        //Move the flux back to original position
+        rotateDegrees(&fluxStep, (800)*4, LOW);
         fluxDispState = 12;
       }
       break;
       
     case 12:
-      if(Done(&trayStep))
+      if(Done(&fluxStep))
       {
         //start up state 3
         fluxDispState = 3;
@@ -132,13 +132,13 @@ void fluxLoop() {
       break;
   }
   
-  if(fluxDispState == 2 || fluxDispState == 11)
+  if(fluxDispState == 2 || fluxDispState == 12)
     fluxStep.Step.run();
     
   if(fluxDispState == 7)
     revStep.Step.run();
   
-  if(fluxDispState == 12)
+  if(fluxDispState == 11)
     trayStep.Step.run();
   
   

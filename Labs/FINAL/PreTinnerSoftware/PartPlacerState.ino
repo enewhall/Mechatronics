@@ -5,7 +5,7 @@ const char partReorientatorServoPin = 10;
 
 
 // Constants for part servo servo positions
-const int cameraHeight = 120;
+const int cameraHeight = 125;
 const int trayHeight = 59;
 const int restingHeight = 0;
 
@@ -52,7 +52,11 @@ void placerLoop() {
       if(partPos)
       {
         currentPartPos = partPos;
-        partState = 1;
+        if(partStepperXCounter == 4 && partStepperYCounter == 3)
+          partState = 1;
+        else
+          partState = 11;
+        
         partPlacerTimer = millis();
         
       }
@@ -140,7 +144,7 @@ void placerLoop() {
       
     case 11: //update counter
       partState = 0;
-      partStepperXCounter += 5;
+      partStepperXCounter++;
       if(partStepperXCounter == 5) //did the fifth one already
       {
         partStepperYCounter++;
@@ -169,13 +173,13 @@ void placerLoop() {
       if(Done(&trayStep))
       {
         //Start placing the pieces again
-        partState = 11; //Debug: originally the code
+        partState = 0; //Debug: originally the code
       }
       break;
   
     case 14:
       //move the tray to the proper part in the code
-      rotateDegrees(&trayStep, (1700)*4, LOW); //2*(2300 - 600)
+      rotateDegrees(&trayStep, (2200)*4, LOW); //2*(2300 - 600)
       partState = 15;
       break;
   
