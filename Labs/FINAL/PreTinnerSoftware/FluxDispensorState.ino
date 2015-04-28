@@ -78,9 +78,9 @@ void fluxLoop() {
       break;
       
     case 7:
-      if(Done(&trayStep)
+      if(Done(&trayStep))
       {
-        fluxDispState = 8
+        fluxDispState = 8;
       }
       
     case 8: // do flux correction
@@ -89,9 +89,9 @@ void fluxLoop() {
       break;
       
     case 9:
-      if(Done(&fluxStep)
+      if(Done(&fluxStep))
       {
-        fluxDispState = 10
+        fluxDispState = 10;
       }
       
     case 10: //rotate the revolver
@@ -116,9 +116,9 @@ void fluxLoop() {
       break;
       
     case 13: //undo tray correction
-      if(Done(&trayStep)
+      if(Done(&trayStep))
       {
-        fluxDispState = 14
+        fluxDispState = 14;
       }
       
     case 14: // undo flux correction
@@ -127,7 +127,7 @@ void fluxLoop() {
       break;
       
     case 15:
-      if(Done(&fluxStep)
+      if(Done(&fluxStep))
       {
         fluxDispState = 16; //move in the X direction
         //increase counter and ensure we are done
@@ -173,13 +173,13 @@ void fluxLoop() {
       break;
   }
   
-  if(fluxDispState == 2 || fluxDispState == 12)
+  if(fluxDispState == 2 || fluxDispState == 9 || fluxDispState == 15 || fluxDispState == 19)
     fluxStep.Step.run();
     
-  if(fluxDispState == 7)
+  if(fluxDispState == 11)
     revStep.Step.run();
   
-  if(fluxDispState == 11)
+  if(fluxDispState == 7 || fluxDispState == 13 || fluxDispState == 18)
     trayStep.Step.run();
   
   
