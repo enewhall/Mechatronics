@@ -2,6 +2,9 @@
 //const char fluxDCPinDown = 28; 
 DCStruct fluxDC = DCINIT(30, 28);
 
+unsigned int fluxCor = 50;
+unsigned int trayCor = 200;
+
 
 //const char enPin4 = 39;
 //const char stepPin4 = 41;
@@ -10,7 +13,7 @@ DCStruct fluxDC = DCINIT(30, 28);
 //fluxStep.setRPM(800);
 StepperStruct fluxStep = STEPPERINIT(41,39,37,400,800);
 
-const int fluxStartingPos = 450;
+const int fluxStartingPos = 430;
 
 unsigned char fluxDispXCounter = 0;
 unsigned char fluxDispYCounter = 0;
@@ -65,35 +68,75 @@ void fluxLoop() {
     case 5: //pushing up timem
       if(timerElapsed(&fluxDC, 100))
       {
-        fluxDispState = 8;
-        revFluxTimer = millis();
+        fluxDispState = 6;
       }
       break;
       
-    case 6: //rotate the revolver
-      rotateDegrees(&revStep, 360/21*4, LOW);
+    case 6: // do tray correction
+      rotateDegrees(&trayStep, trayCor*4, LOW);
       fluxDispState = 7;
       break;
       
     case 7:
+      if(Done(&trayStep)
+      {
+        fluxDispState = 8
+      }
+      
+    case 8: // do flux correction
+      rotateDegrees(&fluxStep, fluxCor*4, LOW);
+      fluxDispState = 9;
+      break;
+      
+    case 9:
+      if(Done(&fluxStep)
+      {
+        fluxDispState = 10
+      }
+      
+    case 10: //rotate the revolver
+      rotateDegrees(&revStep, 360/21*4, LOW);
+      fluxDispState = 11;
+      break;
+      
+    case 11:
       if(Done(&revStep))
       {
-        fluxDispState = 8;
+        fluxDispState = 12;
         revFluxTimer = millis();
       }
-      break;
+      break;                
     
-    case 8: //No correction needed ideally. wait for tube
+    case 12: //wait for tube
       if(millis() - revFluxTimer > 300)
       {
-        fluxDispState = 9; //move in the X direction
+        rotateDegrees(&trayStep, trayCor*4, HIGH); //move back
+        fluxDispState = 13;
+      }
+      break;
+      
+    case 13: //undo tray correction
+      if(Done(&trayStep)
+      {
+        fluxDispState = 14
+      }
+      
+    case 14: // undo flux correction
+      rotateDegrees(&fluxStep, fluxCor*4, HIGH);
+      fluxDispState = 15;
+      break;
+      
+    case 15:
+      if(Done(&fluxStep)
+      {
+        fluxDispState = 16; //move in the X direction
         //increase counter and ensure we are done
         fluxDispXCounter++;
         if(fluxDispXCounter == 5) //we did all five of them
         {
           fluxDispXCounter = 0;
           fluxDispYCounter++;
-          fluxDispState = 10; //move in the Y direction
+          fluxDispState = 17; //move in the Y direction
           if(fluxDispYCounter == 4) //all 20 pieces have been fluxed and wired
           {
             fluxDispState = 100;
@@ -101,33 +144,31 @@ void fluxLoop() {
           
         }
       }
-      break;
       
-    case 9: //do flux movement in X direction and refresh to state 2
+    case 16: //do flux movement in X direction and refresh to state 2
       rotateDegrees(&fluxStep, (200)*4, HIGH);
       fluxDispState = 2; //restart the process
       break;
       
-    case 10: //move the tray a little bit up.
+    case 17: //move the tray a little bit up.
       rotateDegrees(&trayStep, (400)*4, HIGH);
-      fluxDispState = 11; 
+      fluxDispState = 18; 
       break;
       
-    case 11:
+    case 18:
       if(Done(&trayStep))
       {
         //Move the flux back to original position
-        rotateDegrees(&fluxStep, (800)*4, LOW);
-        fluxDispState = 12;
+        rotateDegrees(&fluxStep, (850 + fluxStartingPos)*4, LOW);
+        fluxDispState = 19;
       }
       break;
       
-    case 12:
+    case 19:
       if(Done(&fluxStep))
       {
-        //start up state 3
-        fluxDispState = 3;
-        rotateDown(&fluxDC);                        
+        //start up state 1
+        fluxDispState = 1;                        
       }
       break;
   }

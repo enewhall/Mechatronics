@@ -57,7 +57,7 @@ void revLoop() {
     case 5:
       if(Done(&revStep)) //keep repeating until 20 wires are put in
       {
-        revRelState = 0;//Debug remember to undo
+        revRelState = ;//Debug remember to undo
         revRelCount++;
         if(revRelCount == 21) //inserted in all the 20 pieces
         {
