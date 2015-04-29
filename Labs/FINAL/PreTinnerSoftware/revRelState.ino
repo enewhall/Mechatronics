@@ -7,9 +7,6 @@ DCEncStruct wireEnc = DCENCINIT(12,0,21,20);
 DCEncStruct cutEnc = DCENCINIT(46,48,2,3);
 
 
-
-unsigned char revRelCount = 0;
-
 void revSetup() {
   DCSetup(&wireEnc);
   DCSetup(&cutEnc);
@@ -61,6 +58,7 @@ void revLoop() {
         revRelCount++;
         if(revRelCount == 21) //inserted in all the 20 pieces
         {
+          revRelCount--; //have accurate count of revRel wires
           revRelState = 100;
           fluxDispState = 0;
           //Give indication that the machine is ready

@@ -4,6 +4,9 @@ bool partPlacerDone = false;
 unsigned long revFluxTimer = 0; //used for both flux and revRel
 char LEDValue = '5';
 
+bool Large = true; //tells if the piece is large or not.
+unsigned char revRelCount = 0;
+
 //States
 int cameraState = 1;
 int partState = 0;

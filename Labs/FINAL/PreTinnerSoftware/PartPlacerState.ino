@@ -52,10 +52,13 @@ void placerLoop() {
       if(partPos)
       {
         currentPartPos = partPos;
-        if(partStepperXCounter == 4 && partStepperYCounter == 3)
+        /*if(partStepperXCounter == 4 && partStepperYCounter == 3)
+          partState = 1;
+        else if(partStepperXCounter == 0 && partStepperYCounter == 0)
           partState = 1;
         else
-          partState = 11;
+          partState = 11;*/
+        partState = 1;
         
         partPlacerTimer = millis();
         
@@ -63,7 +66,7 @@ void placerLoop() {
       break;
     
     case 1: //wait a while for part to settle
-      if(millis() - partPlacerTimer > 1500)
+      if(millis() - partPlacerTimer > 1000)
       {
         partState = 2;
         partPlacerTimer = millis();

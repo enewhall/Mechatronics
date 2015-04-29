@@ -19,7 +19,7 @@ const int holdingPos = 20;
 const int viewingPos = 90;
 //STATE VARIABLES
 unsigned long cameraTime = 0;
-int serialValue = '6';
+unsigned char serialValue = '5';
 
 byte partPosTemp = 0;
 
@@ -36,9 +36,11 @@ void cameraSetup() { //Also sets up serial communications
       
   flipperServo.write(restingPos);
   cameraServo.write(holdingPos);
-  cameraTime = millis();  
+  cameraTime = millis();
+  rotateUp(&hopperDC);  
   Serial.begin(9600);
-  while(!Serial.available());     
+  while(!Serial.available());
+  serialValue = Serial.read();  
 }
 
 
@@ -50,8 +52,8 @@ void cameraLoop() {
   
   switch(cameraState){
       case 1:
-        //HOLD
-        DCStop(&hopperDC);
+        //HOLD by rotating up
+        rotateUp(&hopperDC);
         
         flipperServo.write(restingPos);
         cameraServo.write(holdingPos);
@@ -67,20 +69,20 @@ void cameraLoop() {
         }
         break;
       case 2:
-        //SPIN FOWARD
-        rotateUp(&hopperDC);
+        //SPIN FOWARD by depowering the magnet
+        DCStop(&hopperDC);
         flipperServo.write(restingPos);
         cameraServo.write(holdingPos);  
         digitalWrite(flipper_mag_pin,LOW);
         
-        if(millis() - cameraTime > 100){
+        if(millis() - cameraTime > 125){
           cameraState = 1;
           cameraTime = millis();
         }
         break;
       case 3:
         //FLIP PART
-        rotateDown(&hopperDC);
+        rotateUp(&hopperDC);
         flipperServo.write(flipPos);
         cameraServo.write(holdingPos);
         digitalWrite(flipper_mag_pin,HIGH);  
@@ -93,7 +95,7 @@ void cameraLoop() {
         break;
       case 4:
         //SLIDE PART
-        rotateDown(&hopperDC);
+        rotateUp(&hopperDC);
         flipperServo.write(slidingPos);
         cameraServo.write(viewingPos);  
         digitalWrite(flipper_mag_pin,LOW);
@@ -106,7 +108,7 @@ void cameraLoop() {
         break;
       case 5:
         //VIEWING PART
-        DCStop(&hopperDC);
+        rotateUp(&hopperDC);
         flipperServo.write(restingPos);
         cameraServo.write(viewingPos);
         digitalWrite(flipper_mag_pin,HIGH);  
@@ -134,5 +136,5 @@ void cameraLoop() {
         break;
     }      
     
-  serialValue = 0; //only accept latest
+  serialValue = '0'; //only accept latest
 }

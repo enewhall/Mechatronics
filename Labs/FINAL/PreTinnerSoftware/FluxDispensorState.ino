@@ -4,6 +4,7 @@ DCStruct fluxDC = DCINIT(30, 28);
 
 unsigned int fluxCor = 50;
 unsigned int trayCor = 200;
+bool reloaded = false;
 
 
 //const char enPin4 = 39;
@@ -13,7 +14,7 @@ unsigned int trayCor = 200;
 //fluxStep.setRPM(800);
 StepperStruct fluxStep = STEPPERINIT(41,39,37,400,800);
 
-const int fluxStartingPos = 430;
+const int fluxStartingPos = 440;
 
 unsigned char fluxDispXCounter = 0;
 unsigned char fluxDispYCounter = 0;
@@ -48,6 +49,10 @@ void fluxLoop() {
       }
       break;
       
+//    case 30:
+//      fluxDispState = 3;
+//      rotateDown(&fluxDC);
+//      
     case 3: //pushing down time
       if(timerElapsed(&fluxDC, 100))
       {
@@ -66,7 +71,7 @@ void fluxLoop() {
       break;
       
     case 5: //pushing up timem
-      if(timerElapsed(&fluxDC, 100))
+      if(timerElapsed(&fluxDC, 0))
       {
         fluxDispState = 6;
       }
@@ -104,15 +109,22 @@ void fluxLoop() {
     case 11:
       if(Done(&revStep))
       {
+        revRelCount--;
         fluxDispState = 12;
         revFluxTimer = millis();
+        if(Large && !reloaded)
+        {
+          revRelState = 10;
+          reloaded = true;
+        }
+        //this algorithm will not result in inserting one less wire by parity        
       }
       break;                
     
     case 12: //wait for tube
       if(millis() - revFluxTimer > 300)
       {
-        rotateDegrees(&trayStep, trayCor*4, HIGH); //move back
+        rotateDegrees(&trayStep, (trayCor - 5)*4, HIGH); //move back
         fluxDispState = 13;
       }
       break;
@@ -132,6 +144,11 @@ void fluxLoop() {
     case 15:
       if(Done(&fluxStep))
       {
+        //fluxDispState = 100;
+        //break;
+        
+        reloaded = false; //refresh reload
+        
         fluxDispState = 16; //move in the X direction
         //increase counter and ensure we are done
         fluxDispXCounter++;
@@ -171,8 +188,16 @@ void fluxLoop() {
     case 19:
       if(Done(&fluxStep))
       {
-        //start up state 1
-        fluxDispState = 1;                        
+        //start up state 0
+        fluxDispState = 0;
+
+        //By parity, all wires should run out on this state
+        if(revRelCount == 0) //we ran out
+        {
+          revRelState = 0; //Restart revRelState
+          fluxDispState = 100; //disable the fluxDispState
+          //The flux will continue when 20 new wires are loaded
+        }        
       }
       break;
   }
