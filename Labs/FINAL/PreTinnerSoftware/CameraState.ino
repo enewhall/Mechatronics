@@ -50,6 +50,8 @@ void cameraLoop() {
     LEDValue = serialValue;
   }
   
+
+  
   switch(cameraState){
       case 1:
         //HOLD by rotating up
@@ -60,7 +62,7 @@ void cameraLoop() {
         digitalWrite(flipper_mag_pin,LOW);
         
         
-        if(serialValue != '0' && serialValue != '5' && millis() - cameraTime > 1000){
+        if(serialValue != '0' && serialValue != '5' && partPos == 0 && millis() - cameraTime > 1000){
           cameraState = 5;
           cameraTime = millis();
         }else if(partPos == 0 && millis() - cameraTime > 5000){
@@ -75,7 +77,7 @@ void cameraLoop() {
         cameraServo.write(holdingPos);  
         digitalWrite(flipper_mag_pin,LOW);
         
-        if(millis() - cameraTime > 125){
+        if(millis() - cameraTime > 80){
           cameraState = 1;
           cameraTime = millis();
         }

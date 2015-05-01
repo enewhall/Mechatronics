@@ -10,7 +10,7 @@ unsigned char revRelCount = 0;
 //States
 int cameraState = 1;
 int partState = 0;
-int revRelState = 0;
+int revRelState = 100;
 int fluxDispState = 100; //starts when revRelState finishes
 
 

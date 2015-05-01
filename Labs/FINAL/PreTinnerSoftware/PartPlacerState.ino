@@ -52,9 +52,7 @@ void placerLoop() {
       if(partPos)
       {
         currentPartPos = partPos;
-        /*if(partStepperXCounter == 4 && partStepperYCounter == 3)
-          partState = 1;
-        else if(partStepperXCounter == 0 && partStepperYCounter == 0)
+        /*if(partStepperYCounter == 3)
           partState = 1;
         else
           partState = 11;*/
@@ -190,6 +188,7 @@ void placerLoop() {
       if(Done(&trayStep)) 
       {
         partPlacerDone = true;
+        revRelState = 0;
         partState = 100;
       }
       break;      

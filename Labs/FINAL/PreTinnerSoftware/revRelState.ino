@@ -18,7 +18,7 @@ void revLoop() {
   switch(revRelState){
      case 0:
       rotateUp(&cutEnc);
-      if(encoderGreater(&cutEnc, (1520 + 2*revRelCount) ))
+      if(encoderGreater(&cutEnc, (1520 + 6*revRelCount) ))
       {   
          revRelState = 1;
       } 

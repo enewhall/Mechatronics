@@ -14,10 +14,10 @@ bool reloaded = false;
 //fluxStep.setRPM(800);
 StepperStruct fluxStep = STEPPERINIT(41,39,37,400,800);
 
-const int fluxStartingPos = 440;
+const int fluxStartingPos = 410;
 
 unsigned char fluxDispXCounter = 0;
-unsigned char fluxDispYCounter = 0;
+unsigned char fluxDispYCounter = 2;
 
 void fluxSetup() {
   DCSetup(&fluxDC);
@@ -49,12 +49,12 @@ void fluxLoop() {
       }
       break;
       
-//    case 30:
-//      fluxDispState = 3;
-//      rotateDown(&fluxDC);
-//      
+    case 30:
+      fluxDispState = 3;
+      rotateDown(&fluxDC);
+      
     case 3: //pushing down time
-      if(timerElapsed(&fluxDC, 100))
+      if(timerElapsed(&fluxDC, 110))
       {
         //Serial.println("finish pushing");
         fluxDispState = 4;
@@ -63,7 +63,7 @@ void fluxLoop() {
       break;
     
     case 4: //hold time
-      if(millis() - revFluxTimer > 100)
+      if(millis() - revFluxTimer > 55)
       {
         fluxDispState = 5;
         rotateUp(&fluxDC);
@@ -71,9 +71,9 @@ void fluxLoop() {
       break;
       
     case 5: //pushing up timem
-      if(timerElapsed(&fluxDC, 0))
+      if(timerElapsed(&fluxDC, 65))
       {
-        fluxDispState = 6;
+        fluxDispState = 6; //skip tray correction
       }
       break;
       
@@ -111,24 +111,29 @@ void fluxLoop() {
       {
         revRelCount--;
         fluxDispState = 12;
-        revFluxTimer = millis();
-        if(Large && !reloaded)
-        {
-          revRelState = 10;
-          reloaded = true;
-        }
-        //this algorithm will not result in inserting one less wire by parity        
+        revFluxTimer = millis();        
       }
       break;                
     
     case 12: //wait for tube
-      if(millis() - revFluxTimer > 300)
+      if(millis() - revFluxTimer > 800)
       {
-        rotateDegrees(&trayStep, (trayCor - 5)*4, HIGH); //move back
-        fluxDispState = 13;
+        //
+        fluxDispState = 40; //skip tray correction
+        if( (Large == true) && (reloaded == false))
+        {
+          fluxDispState = 10;
+          reloaded = true;
+        }
+        //this algorithm will not result in inserting one less wire by parity
       }
       break;
       
+    case 40:
+      fluxDispState = 13;
+      rotateDegrees(&trayStep, (trayCor-10)*4, HIGH); //move back
+      break;
+    
     case 13: //undo tray correction
       if(Done(&trayStep))
       {
@@ -137,7 +142,7 @@ void fluxLoop() {
       break;
       
     case 14: // undo flux correction
-      rotateDegrees(&fluxStep, fluxCor*4, HIGH);
+      rotateDegrees(&fluxStep, (fluxCor-5)*4, HIGH);
       fluxDispState = 15;
       break;
       
@@ -167,7 +172,7 @@ void fluxLoop() {
       break;
       
     case 16: //do flux movement in X direction and refresh to state 2
-      rotateDegrees(&fluxStep, (200)*4, HIGH);
+      rotateDegrees(&fluxStep, (240)*4, HIGH);
       fluxDispState = 2; //restart the process
       break;
       
