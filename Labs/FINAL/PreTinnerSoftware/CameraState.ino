@@ -51,92 +51,95 @@ void cameraLoop() {
   }
   
 
-  
-  switch(cameraState){
-      case 1:
-        //HOLD by rotating up
-        rotateUp(&hopperDC);
-        
-        flipperServo.write(restingPos);
-        cameraServo.write(holdingPos);
-        digitalWrite(flipper_mag_pin,LOW);
-        
-        
-        if(serialValue != '0' && serialValue != '5' && partPos == 0 && millis() - cameraTime > 1000){
-          cameraState = 5;
-          cameraTime = millis();
-        }else if(partPos == 0 && millis() - cameraTime > 5000){
-          cameraState = 2;
-          cameraTime = millis();
-        }
-        break;
-      case 2:
-        //SPIN FOWARD by depowering the magnet
-        DCStop(&hopperDC);
-        flipperServo.write(restingPos);
-        cameraServo.write(holdingPos);  
-        digitalWrite(flipper_mag_pin,LOW);
-        
-        if(millis() - cameraTime > 80){
-          cameraState = 1;
-          cameraTime = millis();
-        }
-        break;
-      case 3:
-        //FLIP PART
-        rotateUp(&hopperDC);
-        flipperServo.write(flipPos);
-        cameraServo.write(holdingPos);
-        digitalWrite(flipper_mag_pin,HIGH);  
-        
-        if(millis() - cameraTime > 1000){
-          cameraState = 2;
-          partPos = partPosTemp;
-          cameraTime = millis();
-        }
-        break;
-      case 4:
-        //SLIDE PART
-        rotateUp(&hopperDC);
-        flipperServo.write(slidingPos);
-        cameraServo.write(viewingPos);  
-        digitalWrite(flipper_mag_pin,LOW);
-        
-        if(millis() - cameraTime > 1000){
-          cameraState = 2;
-          partPos = partPosTemp;
-          cameraTime = millis();
-        }
-        break;
-      case 5:
-        //VIEWING PART
-        rotateUp(&hopperDC);
-        flipperServo.write(restingPos);
-        cameraServo.write(viewingPos);
-        digitalWrite(flipper_mag_pin,HIGH);  
-        
-        if(millis() - cameraTime > 2500){
-          if(serialValue == '1' ){
-            cameraState = 4;
-            partPosTemp = 1;
+  if(partState != 100){
+    switch(cameraState){
+        case 1:
+          //HOLD by rotating up
+          rotateUp(&hopperDC);
+          
+          flipperServo.write(restingPos);
+          cameraServo.write(holdingPos);
+          digitalWrite(flipper_mag_pin,LOW);
+          
+          
+          if(serialValue != '0' && serialValue != '5' && partPos == 0 && millis() - cameraTime > 1000){
+            cameraState = 5;
             cameraTime = millis();
-          }else if(serialValue == '2'){
-            cameraState = 4;
-            partPosTemp = 2;
-            cameraTime = millis();
-          }else if(serialValue == '3'){
-            cameraState = 3;
-            partPosTemp = 1;
-            cameraTime = millis();
-          }else if(serialValue == '4'){
-            cameraState = 3;
-            partPosTemp = 2;
+          }else if(partPos == 0 && millis() - cameraTime > 5000){
+            cameraState = 2;
             cameraTime = millis();
           }
-                  
-        }
-        break;
-    }      
+          break;
+        case 2:
+          //SPIN FOWARD by depowering the magnet
+          DCStop(&hopperDC);
+          flipperServo.write(restingPos);
+          cameraServo.write(holdingPos);  
+          digitalWrite(flipper_mag_pin,LOW);
+          
+          if(millis() - cameraTime > 80){
+            cameraState = 1;
+            cameraTime = millis();
+          }
+          break;
+        case 3:
+          //FLIP PART
+          rotateUp(&hopperDC);
+          flipperServo.write(flipPos);
+          cameraServo.write(holdingPos);
+          digitalWrite(flipper_mag_pin,HIGH);  
+          
+          if(millis() - cameraTime > 1000){
+            cameraState = 2;
+            partPos = partPosTemp;
+            cameraTime = millis();
+          }
+          break;
+        case 4:
+          //SLIDE PART
+          rotateUp(&hopperDC);
+          flipperServo.write(slidingPos);
+          cameraServo.write(viewingPos);  
+          digitalWrite(flipper_mag_pin,LOW);
+          
+          if(millis() - cameraTime > 1000){
+            cameraState = 2;
+            partPos = partPosTemp;
+            cameraTime = millis();
+          }
+          break;
+        case 5:
+          //VIEWING PART
+          rotateUp(&hopperDC);
+          flipperServo.write(restingPos);
+          cameraServo.write(viewingPos);
+          digitalWrite(flipper_mag_pin,HIGH);  
+          
+          if(millis() - cameraTime > 2500){
+            if(serialValue == '1' ){
+              cameraState = 4;
+              partPosTemp = 1;
+              cameraTime = millis();
+            }else if(serialValue == '2'){
+              cameraState = 4;
+              partPosTemp = 2;
+              cameraTime = millis();
+            }else if(serialValue == '3'){
+              cameraState = 3;
+              partPosTemp = 1;
+              cameraTime = millis();
+            }else if(serialValue == '4'){
+              cameraState = 3;
+              partPosTemp = 2;
+              cameraTime = millis();
+            }
+                    
+          }
+          break;
+      }      
+    }else{
+      DCStop(&hopperDC);        
+    }
     
   serialValue = '0'; //only accept latest
 }

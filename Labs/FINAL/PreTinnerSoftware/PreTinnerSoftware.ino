@@ -22,11 +22,11 @@ void setup()
 
 void loop()
 {
-  //cameraLoop();
-  //LEDLoop();
+  cameraLoop();
+  LEDLoop();
   
-  //placerLoop();
-  //revLoop();
+  placerLoop();
+  revLoop();
   fluxLoop();
 }
 
