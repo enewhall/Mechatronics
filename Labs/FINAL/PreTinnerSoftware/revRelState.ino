@@ -58,7 +58,7 @@ void revLoop() {
         revRelCount++;
         if(revRelCount == 21) //inserted in all the 20 pieces
         {
-          revRelCount--; //have accurate count of revRel wires
+          revRelCount = 20; //have accurate count of revRel wires
           revRelState = 100;
           fluxDispState = 0;
           //Give indication that the machine is ready

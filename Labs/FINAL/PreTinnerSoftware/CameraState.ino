@@ -51,7 +51,7 @@ void cameraLoop() {
   }
   
 
-  if(partState != 100){
+  if(!partPlacerDone){
     switch(cameraState){
         case 1:
           //HOLD by rotating up

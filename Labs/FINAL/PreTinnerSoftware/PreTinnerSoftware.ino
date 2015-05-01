@@ -13,9 +13,15 @@ void setup()
   LEDSetup();
   cameraSetup(); 
   //code useful for modification or debug
-  //revRelState = 4;
-  fluxDispState = 0;
+  
+  
+  
+  
+  revRelState = 0;
+  revRelCount = 0;
+  fluxDispState = 100;
   partPlacerDone = true;
+  partState = 100;
   //partPos = ;
   //partPlacerDone = ;
 }

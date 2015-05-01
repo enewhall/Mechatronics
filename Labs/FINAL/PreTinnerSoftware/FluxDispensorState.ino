@@ -17,7 +17,7 @@ StepperStruct fluxStep = STEPPERINIT(41,39,37,400,800);
 const int fluxStartingPos = 410;
 
 unsigned char fluxDispXCounter = 0;
-unsigned char fluxDispYCounter = 2;
+unsigned char fluxDispYCounter = 0;
 
 void fluxSetup() {
   DCSetup(&fluxDC);
