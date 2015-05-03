@@ -12,7 +12,7 @@ DCStruct hopperDC = DCINIT(50, 52);
 
 // Constants for flipper servo positions
 const int slidingPos = 25;
-const int restingPos = 15;
+const int restingPos = 14;
 const int flipPos = 180;
 // Constant for camera Servo
 const int holdingPos = 20;
