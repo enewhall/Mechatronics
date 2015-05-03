@@ -17,11 +17,11 @@ void setup()
   
   
   
-  revRelState = 0;
-  revRelCount = 0;
-  fluxDispState = 100;
-  partPlacerDone = true;
-  partState = 100;
+  //revRelState = 100;
+  //revRelCount = 0;
+  //fluxDispState = 100;
+  //partPlacerDone = true;
+  //partState = 100;
   //partPos = ;
   //partPlacerDone = ;
 }
