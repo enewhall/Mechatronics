@@ -17,7 +17,7 @@ int fluxDispState = 100; //starts when revRelState finishes
 //const char dirPin2 = 49;
 //const char enPin2 = 51;
 //const char stepPin2 = 53;
-StepperStruct trayStep = STEPPERINIT(49,51,53,200,800);
+StepperStruct trayStep = STEPPERINIT(49,51,53,200,400);
 
 //const char dirPin3 = 22;
 //const char enPin3 = 24;

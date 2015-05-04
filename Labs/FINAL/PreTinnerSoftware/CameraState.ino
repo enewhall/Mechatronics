@@ -126,11 +126,11 @@ void cameraLoop() {
               cameraTime = millis();
             }else if(serialValue == '3'){
               cameraState = 3;
-              partPosTemp = 1;
+              partPosTemp = 2;
               cameraTime = millis();
             }else if(serialValue == '4'){
               cameraState = 3;
-              partPosTemp = 2;
+              partPosTemp = 1;
               cameraTime = millis();
             }
                     

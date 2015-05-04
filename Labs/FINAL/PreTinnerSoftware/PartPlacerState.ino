@@ -52,11 +52,11 @@ void placerLoop() {
       if(partPos)
       {
         currentPartPos = partPos;
-        /*if(partStepperYCounter == 3)
+        if(partStepperYCounter == 3)
           partState = 1;
         else
-          partState = 11;*/
-        partState = 1;
+          partState = 11;
+        //partState = 1;
         
         partPlacerTimer = millis();
         
@@ -180,7 +180,7 @@ void placerLoop() {
   
     case 14:
       //move the tray to the proper part in the code
-      rotateDegrees(&trayStep, (2200)*4, LOW); //2*(2300 - 600)
+      rotateDegrees(&trayStep, (2275)*4, LOW); //2*(2300 - 600)
       partState = 15;
       break;
   
