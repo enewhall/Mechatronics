@@ -19,9 +19,9 @@ void setup()
   
   //revRelState = 0;
   //revRelCount = 0;
-  fluxDispState = 0;
-  partPlacerDone = true;
-  partState = 100;
+  //fluxDispState = 0;
+  //partPlacerDone = true;
+  //partState = 100;
   //partPos = ;
   //partPlacerDone = ;
 }
@@ -30,9 +30,8 @@ void loop()
 {
   cameraLoop();
   LEDLoop();
-  partPos = 1;
   placerLoop();
-  //revLoop();
+  revLoop();
   fluxLoop();
 }
 

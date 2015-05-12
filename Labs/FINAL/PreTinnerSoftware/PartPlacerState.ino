@@ -52,11 +52,11 @@ void placerLoop() {
       if(partPos)
       {
         currentPartPos = partPos;
-        if(partStepperYCounter == 3)
+        if(partStepperYCounter != 0) //ignore first
           partState = 1;
         else
           partState = 11;
-        //partState = 1;
+        partState = 1;
         
         partPlacerTimer = millis();
         

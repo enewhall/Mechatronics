@@ -162,8 +162,7 @@ void fluxLoop() {
           fluxDispXCounter = 0;
           fluxDispYCounter++;
           fluxDispState = 17; //move in the Y direction
-          fluxDispState = 100;//DEBUG: Please remove piece
-          if(fluxDispYCounter == 4) //all 20 pieces have been fluxed and wired
+          if(fluxDispYCounter == 3) //all 20 pieces have been fluxed and wired
           {
             fluxDispState = 100;
           }          

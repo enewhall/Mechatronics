@@ -5,8 +5,6 @@ const char flipper_mag_pin = 4;
 const char flipperServoPin = 5;
 const char cameraServoPin = 11;
 
-//const char hopper_pin_fow = 50;
-//const char hopper_pin_rev = 52;
 DCStruct hopperDC = DCINIT(50, 52);
 
 
